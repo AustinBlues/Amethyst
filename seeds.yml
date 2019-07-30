@@ -1,0 +1,28 @@
+---
+- :rss_url: http://feeds.feedburner.com/pressfieldblog?format=xml
+  :title: Steven Pressfield
+- :rss_url: https://xkcd.com/rss.xml
+- :rss_url: http://blog.zaml.us/feed/
+- :rss_url: https://www.nytimes.com/column/david-brooks
+- :rss_url: http://gordonatkinson.net/feed
+- :rss_url: http://feeds.feedburner.com/brainpickings/rss
+- :rss_url: https://jackkornfield.com/feed/
+- :rss_url: https://cindyhuyser.wordpress.com/feed/
+- :rss_url: http://www.kallistogaiapress.org/feed/
+- :rss_url: https://austinkleon.com/feed/
+- :rss_url: https://www.nextavenue.org/feed/
+- :rss_url: http://feeds.feedburner.com/johnmauldin/newsletters
+- :rss_url: https://bluebirdsw.blogspot.com/feeds/posts/default
+- :rss_url: https://55mph-traveler.blogspot.com/feeds/posts/default?alt=rss
+- :rss_url: https://www.patheos.com/blogs/carlmccolman/feed/
+- :rss_url: https://cariejuettner.com/feed/
+- :rss_url: https://johnpavlovitz.com/feed/
+- :rss_url: https://lefsetz.com/wordpress/feed/
+- :rss_url: https://blogs.biomedcentral.com/on-health/feed/
+- :rss_url: http://dailymeditationswithmatthewfox.org/feed/
+- :rss_url: https://ashleybdavis.wordpress.com/feed/
+- :rss_url: https://annieneugebauer.com/feed/
+- :rss_url: https://dianalconces.blogspot.com/feeds/posts/default
+- :rss_url: https://radicalscholarship.wordpress.com/feed/
+- :rss_url: https://thejosevilson.com/feed/
+- :rss_url: https://beverlylanzetta.net/feed/
