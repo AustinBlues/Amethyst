@@ -1,0 +1,18 @@
+#! /usr/bin/sh
+#
+# workaround for daily jobs on a lapop, runs several times during the day.
+#set -x -v
+
+if [ -n "${0%cron-daily}" ]
+then
+  cd ${0%cron-daily}
+fi
+
+# Is datestamp new?
+date -I | diff -N -w - .cron.daily > /dev/null
+if [ $? -ne 0 ]
+then
+   SINATRA_ACTIVESUPPORT_WARNING=false ~/.rvm/wrappers/ruby-2.4.0/bundle exec padrino rake db:backup -e development MAX=6
+#  ~/.rvm/wrappers/ruby-2.4.0/bundle exec padrino rake db:backup -e production MAX=6
+  date -I > .cron.daily
+fi
