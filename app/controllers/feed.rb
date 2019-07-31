@@ -1,23 +1,47 @@
 Amethyst::App.controllers :feed do
-  
-  # get :index, :map => '/foo/bar' do
-  #   session[:foo] = 'bar'
-  #   render 'index'
-  # end
+  get :index do
+    @feeds = Feed.all
+    render 'index'
+  end
 
-  # get :sample, :map => '/sample/url', :provides => [:any, :js] do
-  #   case content_type
-  #     when :js then ...
-  #     else ...
-  # end
 
-  # get :foo, :with => :id do
-  #   "Maps to url '/foo/#{params[:id]}'"
-  # end
-
-  # get '/example' do
-  #   'Hello world!'
-  # end
+  get :show, '/feed/:id' do
+    @feed = Feed.with_pk! params[:id]
+    @button = button_to 'Create', @url
+    render 'show'
+  end
   
 
+  post :create, '/feed' do
+    # I'm surprised I have to do this.
+    params.delete('authenticity_token')
+
+    # if no genre specified, use N/A.
+    params[:genre] = Feed::GENRE.find_index(params[:genre]) || 0
+    params[:notes].strip!
+
+    # use NULL if filename is empty or blank
+    params[:filename].strip!
+    params.delete(:filename) if params[:filename] == ''
+
+    begin
+      w = Feed.create(params)
+    rescue Sequel::UniqueConstraintViolation => e
+      flash[:error] = (/unique_(\w+)s'/ =~ e.to_s) ? "Duplicate #{$~[1]}." : 'Unique Constraint Violation'
+      case $~[1]
+      when 'title'
+        w = Feed.where(title: params[:title]).first
+      when 'filename'
+        w = Feed.where(filename: params[:filename]).first
+      else
+        w = Feed.first
+      end
+    rescue
+      flash[:error] = 'Unknown exception'
+      w = Feed.first
+    end
+
+    # Redirect to index where new feed will appear.
+    redirect url_for(:feed, :index, page: w.page_number)
+  end
 end

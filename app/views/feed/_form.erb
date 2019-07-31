@@ -1,0 +1,41 @@
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Feed</h4>
+        </div>
+        <div class="modal-body">
+  	  <% form_tag url, {:id => 'feed_form', :class => 'form-horizontal'} do %>
+	    <div class="form-group">
+	      <%= label_tag :title, class: 'control-label col-sm-2' %>
+	      <div class="col-sm-10">
+	        <%= text_field_tag :title, {value: form.title, class: 'form-control'} %>
+	      </div>
+	    </div>
+
+	    <div class="form-group">
+	      <%= label_tag :rss_url, class: 'control-label col-sm-2' %>
+	      <div class="col-sm-10">
+	        <%= text_field_tag :rss_url, class: 'form-control', value: form.rss_url %>
+	      </div>
+	    </div>
+
+	    <div class="form-group">
+	      <label class="control-label col-sm-2" for="title">Title:</label>
+	      <div class="col-sm-10">
+	        <%= text_field_tag :title, class: 'form-control', id: 'title', value: form.title %>
+	      </div>
+	    </div>
+
+	    <div class="form-group"> 
+	      <div class="col-sm-2 col-sm-offset-2">
+	        <%= button %>
+	      </div>
+
+	      <div class="col-sm-2">
+	        <%= link_to('Cancel', url_for(:feed, :index, page: form.page_number)) %>
+	      </div>
+	    </div>
+	  <% end %>
+        </div>
+      </div>

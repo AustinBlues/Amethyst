@@ -1,6 +1,6 @@
 module Amethyst
   class App < Padrino::Application
-    register Padrino::Mailer
+#    register Padrino::Mailer
     register Padrino::Helpers
     enable :sessions
 
@@ -60,5 +60,10 @@ module Amethyst
     #     render 'errors/500'
     #   end
     #
+
+    # default (home) page is Feeds
+    get :home, :map => '/' do
+      redirect '/feed'
+    end
   end
 end

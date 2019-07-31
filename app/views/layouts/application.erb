@@ -1,0 +1,98 @@
+<%# app/views/layouts/application.erb %>
+
+<!DOCTYPE html>
+<html lang="en_us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Amethyst: <%= @context %></title>
+
+    <!-- Bootstrap -->
+    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <%= stylesheet_link_tag 'amethyst' %>
+  </head>
+  <body>
+    <div id="header">
+      <div id="logo" style="height:1in">
+      <a href="<%= url_for(:home) %>">
+	<span style="font-size:x-large; color:purple; font-style:oblique; font-family:sans-serif">
+	  Amethyst
+	</span>		  
+      </a>			  
+      </div>
+    </div>
+
+    <div id="body" class="container" style="max-width:60em">
+      <%= yield %>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+    <div id="contextMenu" class="dropdown clearfix">
+      <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="display:block;position:static;margin-bottom:5px;">
+        <li><a id="show" tabindex="-1" href="#">Show</a></li>
+        <li><a id="edit" tabindex="-1" data-toggle="modal" href="#" data-target="#myModal">Edit</a></li>
+        <li><a id="delete" tabindex="-1" href="#">Delete</a></li>
+        <li class="divider"></li>
+        <li><a id="close" tabindex="-1" href="#">Close</a></li>
+      </ul>
+    </div>
+ 
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<!--
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+-->
+    <script src="/javascripts/jquery.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="/javascripts/bootstrap.min.js"></script>
+    <script type="text/javascript">
+      $(function() {
+        var $contextMenu = $("#contextMenu");
+  
+        function set_contextmenu(e) {
+	  var m = e.target.parentElement.getAttribute("id").match(/([a-z_]+)(\d+)/);
+	  var origin = escape(window.location.href.match(/http:\/\/[^/]*(\/.*)/)[1]);
+
+          $contextMenu.css({
+            display: "block",
+            left: e.pageX,
+            top: e.pageY
+          });
+	  $contextMenu.find("a#show").attr("href", "/"+m[1]+"/"+m[2]+"?origin="+origin);
+	  $contextMenu.find("a#edit").attr("href", "/"+m[1]+"/"+m[2]+"/edit?origin="+origin);
+	  $contextMenu.find("a#delete").attr("href", "/"+m[1]+"/"+m[2]+"/delete?origin"+origin);
+	  $contextMenu.find("a#close").attr("href", window.location.href);
+
+          return false;
+        }
+
+        $("table tbody").on("contextmenu", "tr", set_contextmenu);
+
+        $("table tbody").dblclick("tr", set_contextmenu);
+  
+        $contextMenu.on("click", "a", function() {
+          $contextMenu.hide();
+        });
+  
+      });
+    </script>
+  </body>
+</html>
