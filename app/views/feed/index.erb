@@ -1,12 +1,12 @@
 <% url = url_for(:feed, :create, page: @page) %>
 
-<div class="panel panel-primary">
-  <div class="panel-heading">
+<div class="card">
+  <div class="card-heading bg-info">
     <button type="button" class="btn btn-default btn-sm"  data-toggle="modal"
           data-target="#writingForm" aria-label="Add" style="float:right; font-size:20pt">
 	  +
     </button>
-    <h2 class="panel-title" style="text-align:center">Feeds</h2>
+    <h2 class="card-title" style="text-align:center">Feeds</h2>
     <%= partial 'layouts/flash' %>
   </div>
 
@@ -19,7 +19,7 @@
   </div>
 
   <% if @feeds.count == 0 %>
-    <h2 class="panel-content" style="text-align: center">
+    <h2 class="card-content" style="text-align: center">
       No feeds
     </h2>
   <% else %>
