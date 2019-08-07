@@ -1,4 +1,7 @@
+# All periodic refresh of Feeds policy is in this module.
+#
 require "redis"
+
 
 module Refresh
   CYCLE_TIME = 3600	# time to refresh all Feeds: 1 hour
