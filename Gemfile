@@ -35,3 +35,5 @@ gem 'padrino', '0.14.4'
 # %w(core support gen helpers cache mailer admin).each do |g|
 #   gem 'padrino-' + g, '0.14.4'
 # end
+
+gem 'resque'
