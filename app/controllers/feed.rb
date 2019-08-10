@@ -1,6 +1,6 @@
 Amethyst::App.controllers :feed do
   get :index do
-    @feeds = Feed.all
+    @feeds = Feed.order(Sequel.desc(:name)).all
     render 'index'
   end
 
