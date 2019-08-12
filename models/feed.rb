@@ -1,4 +1,6 @@
 class Feed < Sequel::Model
+  one_to_many :post
+  
   def name
     title || rss_url
   end
