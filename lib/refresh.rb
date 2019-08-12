@@ -1,6 +1,7 @@
 # All periodic refresh of Feeds policy is in this module.
 #
 require 'redis'
+require 'ruby_rss'
 
 
 module Refresh
@@ -8,6 +9,7 @@ module Refresh
   INTERVAL_TIME = 300	# how often to refresh a slice: 5 minutes
   INTERVALS = CYCLE_TIME/INTERVAL_TIME
   REDIS_KEY = 'residue'
+  include RubyRSS
   
   @@redis = Redis.new
 
@@ -28,9 +30,10 @@ module Refresh
     # Update all Feeds in the slice
     feeds = Feed.slice(slice_size).all
     feeds.each do |f|
-      puts "Refresh: #{f.name} (#{f.refresh_at})."
+      RubyRSS.refresh_feed(f)
       f.refresh_at = next_refresh
       f.save
+      puts "Refreshed: #{f.name} (#{f.refresh_at})."
     end
 
     # Report progress

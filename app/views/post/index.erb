@@ -1,0 +1,27 @@
+<div class="card">
+  <div class="card-heading bg-info">
+    <button type="button" class="btn btn-default btn-sm"  data-toggle="modal"
+          data-target="#writingForm" aria-label="Add" style="float:right; font-size:20pt">
+	  +
+    </button>
+    <h2 class="card-title" style="text-align:center">Posts</h2>
+    <%= partial 'layouts/flash' %>
+  </div>
+
+  <% if @posts.size == 0 %>
+    <h2 class="card-content" style="text-align: center">
+      No posts
+    </h2>
+  <% else %>
+    <%= partial('layouts/pagination', object: @posts, locals: {view: :post}) if ENV['TOP_PAGINATION']%>
+
+    <table id="post" class="table table-striped">
+      <tbody>
+        <%= partial 'post/post', collection: @posts %>
+      </tbody>
+    </table>
+
+    <%= partial('layouts/pagination', object: @posts, locals: {view: :post}) if !ENV['TOP_PAGINATION']%>
+  <% end %>
+</div>
+

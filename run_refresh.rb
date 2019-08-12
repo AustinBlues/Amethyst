@@ -1,0 +1,3 @@
+require 'refresh'
+
+Refresh.perform
