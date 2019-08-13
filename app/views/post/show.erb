@@ -1,0 +1,15 @@
+<div class="card">
+  <div class="card">
+    <div class="card-header bg-warning">
+      <h2 style="text-align:center"><%= link_to @post.title, @post.url %></h2>
+    </div>
+    <%= partial 'layouts/flash' %>
+
+    <div class="card-body">
+      <p class="card-text">
+        <%== @post.description %>
+      </p>
+    </div>
+  </div>
+</div>
+

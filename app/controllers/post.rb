@@ -9,4 +9,9 @@ Amethyst::App.controllers :post do
     end
     render 'index'
   end
+
+  get :show, '/post/:id' do
+    @post = Post.with_pk! params[:id]
+    render 'show'
+  end
 end
