@@ -29,32 +29,30 @@ module RubyRSS
 
             case post.class.to_s
             when 'RSS::Atom::Feed::Entry'
-              description = post.dc_description
-              ident = post.dc_identifier
+              description = post.content
+              ident = post.id.to_s
               published_at = strip_tags(post.updated.to_s)
-            #            STDERR.puts "ID: #{ident}."
-            #            STDERR.puts "UPDATED: #{published_at}."
-            #            STDERR.puts "METHODS(#{post.class}): #{post.methods}"
+              STDERR.puts "ID: #{ident}."
+              STDERR.puts "UPDATED: #{published_at}."
+#              STDERR.puts "METHODS(#{post.class}): #{post.methods}"
             else
-              #            STDERR.puts "GUID: #{post.guid}."
-              #            STDERR.puts "PubDATE: #{post.pubDate}."
-              #            STDERR.puts "DATE: #{post.date}."
+#              STDERR.puts "GUID: #{post.guid}."
+#              STDERR.puts "PubDATE: #{post.pubDate}."
+#              STDERR.puts "DATE: #{post.date}."
               description = post.description
               ident = post.guid
               published_at = post.pubDate || post.date
             end
 
-            #          STDIN.gets
-            
             tmp = Post.find_or_create(feed_id: feed.id, title: title) do |p|
               STDERR.puts "Post: '#{title}'."
               p.feed_id = feed.id
               p.title = title
               p.description = description
               p.ident = ident
-              p.published_at = published_at
-              p.time = Time.now	# KLUDGE: not sure what this should be
-              #            STDERR.puts "POST: #{post.methods}"
+              p.published_at = published_at	# TimeDate object
+              p.time = published_at	# actual String
+#              STDERR.puts "POST: #{post.methods}"
               p.url = post.link
               feed.moving_avg += Aging::ALPHA
               STDERR.puts "  #{p.inspect}"
@@ -63,8 +61,10 @@ module RubyRSS
         end
       end
     rescue Net::OpenTimeout
+      feed.status = 'timeout'
       STDERR.puts "TIMEOUT: #{feed.name}."
     rescue
+      feed.status = $!.class
       STDERR.puts "Exception: #{$!}."
     end
   end
