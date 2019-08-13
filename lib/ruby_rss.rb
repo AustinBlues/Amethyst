@@ -56,6 +56,7 @@ module RubyRSS
               p.time = Time.now	# KLUDGE: not sure what this should be
               #            STDERR.puts "POST: #{post.methods}"
               p.url = post.link
+              feed.moving_avg += Aging::ALPHA
               STDERR.puts "  #{p.inspect}"
             end
           end

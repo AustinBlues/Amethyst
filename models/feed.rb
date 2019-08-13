@@ -22,4 +22,12 @@ class Feed < Sequel::Model
 #    where{refresh_at <= limit}
     where(Sequel.lit('refresh_at <= ?', limit))
   end
+
+  def self.age
+    self.all do |f|
+      f.score *= Aging::ONE_MINUS_ALPHA
+      f.moving_avg *= Aging::ONE_MINUS_ALPHA
+      f.save
+    end
+  end
 end
