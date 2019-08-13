@@ -7,7 +7,7 @@
 
     <div class="card-body">
       <p class="card-text">
-        <%== @post.description %>
+        <%== @post.description || '<b><em>Missing description</em></b>' %>
       </p>
     </div>
   </div>
