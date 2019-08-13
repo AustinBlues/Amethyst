@@ -31,9 +31,9 @@ module Refresh
     feeds = Feed.slice(slice_size).all
     feeds.each do |f|
       RubyRSS.refresh_feed(f)
+      puts "Refreshed: #{f.name} (#{f.refresh_at})."
       f.refresh_at = next_refresh
       f.save
-      puts "Refreshed: #{f.name} (#{f.refresh_at})."
     end
 
     # Report progress
