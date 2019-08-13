@@ -1,7 +1,7 @@
 Amethyst::App.controllers :post do
   get :index do
-    if params[:id]
-      @posts = Post.where(feed_id: params[:id]).order(Sequel.desc(:published_at)).all
+    if params[:feed_id]
+      @posts = Post.where(feed_id: params[:feed_id]).order(Sequel.desc(:published_at)).all
       @context = @posts[0].feed.title
     else
       @posts = Post.order(Sequel.desc(:published_at)).all
