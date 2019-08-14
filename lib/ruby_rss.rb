@@ -54,7 +54,7 @@ module RubyRSS
               p.time = published_at	# actual String
 #              STDERR.puts "POST: #{post.methods}"
               p.url = post.link
-              feed.moving_avg += Aging::ALPHA
+              feed.ema_volume += Aging::ALPHA
               STDERR.puts "  #{p.inspect}"
             end
           end

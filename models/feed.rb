@@ -26,7 +26,7 @@ class Feed < Sequel::Model
   def self.age
     self.all do |f|
       f.score *= Aging::ONE_MINUS_ALPHA
-      f.moving_avg *= Aging::ONE_MINUS_ALPHA
+      f.ema_volume *= Aging::ONE_MINUS_ALPHA
       f.save
     end
   end
