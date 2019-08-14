@@ -6,6 +6,8 @@ Amethyst::App.controllers :feed do
 
 
   get :show, '/feed/:id' do
+    @origin = get_origin!
+    
     @feed = Feed.with_pk! params[:id]
     @button = button_to 'Create', @url
     render 'show'

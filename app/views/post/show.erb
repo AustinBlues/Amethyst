@@ -1,6 +1,10 @@
 <div class="card">
   <div class="card">
     <div class="card-header bg-warning">
+      <a href="<%= url_for @origin %>" class="btn btn-light" style="display: inline; font-size: xx-large">
+        &larr;
+      </a>
+      
       <h2 style="text-align:center"><%= link_to @post.title, @post.url %></h2>
     </div>
     <%= partial 'layouts/flash' %>
