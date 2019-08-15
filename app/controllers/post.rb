@@ -1,7 +1,7 @@
 Amethyst::App.controllers :post do
   get :index do
     @origin = get_origin!
-    
+
     if params[:feed_id].nil?
       @posts = Post.where(click: false, hide: false).order(Sequel.desc(:published_at)).all
       @context = 'Posts'
