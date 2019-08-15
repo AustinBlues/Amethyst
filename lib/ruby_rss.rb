@@ -40,14 +40,17 @@ module RubyRSS
 #              STDERR.puts "PubDATE: #{post.pubDate}."
 #              STDERR.puts "DATE: #{post.date}."
               description = post.description
-              ident = post.guid
+              ident = post.guid.to_s
               published_at = post.pubDate || post.date
             end
 
-            tmp = Post.find_or_create(feed_id: feed.id, title: title) do |p|
+            ident = title if ident.empty?
+            
+#            tmp = Post.find_or_create(feed_id: feed.id, title: (title.nil? || title.blank?) ident : title) do |p|
+            tmp = Post.find_or_create(feed_id: feed.id, ident: ident) do |p|
               STDERR.puts "Post: '#{title}'."
               p.feed_id = feed.id
-              p.title = title
+              p.title = title.empty? ? nil : title
               p.description = description
               p.ident = ident
               p.published_at = published_at	# TimeDate object

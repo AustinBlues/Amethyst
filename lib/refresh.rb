@@ -30,6 +30,7 @@ module Refresh
     # Update all Feeds in the slice
     feeds = Feed.slice(slice_size).all
     feeds.each do |f|
+      f.status = nil
       RubyRSS.refresh_feed(f)
       puts "Refreshed: #{f.name} (#{f.refresh_at})."
       f.refresh_at = next_refresh
