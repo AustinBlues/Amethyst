@@ -1,5 +1,5 @@
 <tr id="post<%= post.id %>">
   <td>
-    <%= link_to post.title, url_for(:post, :show, id: post.id, origin: @origin) %>
+    <%= link_to(post.name, url_for(:post, :show, id: post.id, origin: @origin)) %>
   </td>
 </tr>
