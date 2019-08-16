@@ -24,10 +24,7 @@ class Feed < Sequel::Model
   end
 
   def self.age
-    self.all do |f|
-      f.score *= Aging::ONE_MINUS_ALPHA
-      f.ema_volume *= Aging::ONE_MINUS_ALPHA
-      f.save
-    end
+    dataset.update(score: Sequel[:score]*Aging::ONE_MINUS_ALPHA)
+    dataset.update(ema_volume: Sequel[:ema_volume]*Aging::ONE_MINUS_ALPHA)
   end
 end
