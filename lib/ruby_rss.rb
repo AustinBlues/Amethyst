@@ -1,12 +1,15 @@
 require 'rss'
-require 'open-uri'
+
 
 module RubyRSS
   extend Padrino::Helpers::FormatHelpers
   
   def self.refresh_feed(feed)
     begin
-      open(feed.rss_url) do |rss|
+      # open-uri is gagging on IPv6 address and doesn't support forcing to IPv4
+      # libcurl and curb Gem appear to have same limitation.
+      # Invoking curl is fast enough
+      open("|curl -s -4 #{feed.rss_url}") do |rss|
         f = RSS::Parser.parse(rss)
 
         if f.respond_to?(:channel)
@@ -63,9 +66,9 @@ module RubyRSS
           end
         end
       end
-    rescue Net::OpenTimeout
-      feed.status = 'timeout'
-      STDERR.puts "TIMEOUT: #{feed.name}."
+#    rescue Net::OpenTimeout
+#      feed.status = 'timeout'
+#      STDERR.puts "TIMEOUT: #{feed.name}."
     rescue
       feed.status = $!.class
       STDERR.puts "Exception: #{$!}."
