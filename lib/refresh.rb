@@ -5,7 +5,7 @@ require 'ruby_rss'
 
 
 module Refresh
-  CYCLE_TIME = 3600	# time to refresh all Feeds: 1 hour
+  CYCLE_TIME = 60 * 60	# time to refresh all Feeds: 1 hour
   INTERVAL_TIME = 300	# how often to refresh a slice: 5 minutes
   INTERVALS = CYCLE_TIME/INTERVAL_TIME
   REDIS_KEY = 'residue'
