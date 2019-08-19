@@ -1,19 +1,17 @@
 <div class="card">
-  <div class="card">
-    <div class="card-header bg-warning">
-      <a href="<%= url_for @origin %>" class="btn btn-link" style="display: inline; font-size: xx-large">
-        &larr;
-      </a>
+  <div class="card-header bg-warning">
+    <a href="<%= url_for @origin %>" class="btn btn-link" style="display: inline; font-size: xx-large">
+      &larr;
+    </a>
       
-      <h2 style="text-align:center"><%= link_to @post.name, @post.url, target: '_blank' %></h2>
-    </div>
-    <%= partial 'layouts/flash' %>
+    <h2 style="text-align:center"><%= link_to @post.name, @post.url, target: '_blank' %></h2>
 
-    <div class="card-body">
-      <p class="card-text">
-        <%== @post.description || '<b><em>Missing description</em></b>' %>
-      </p>
-    </div>
+    <%= partial 'layouts/flash' %>
+  </div>
+
+  <div class="card-body">
+    <p class="card-text">
+      <%== @post.description || '<b><em>Missing description</em></b>' %>
+    </p>
   </div>
 </div>
-

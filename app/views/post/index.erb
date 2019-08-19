@@ -1,8 +1,10 @@
 <div class="card">
   <div class="card-heading bg-info">
-    <a href="/feed">
-      <h2 class="card-title" style="text-align:center; color:black"><%= @context %></h2>
+    <a href="<%= url_for :feed, :index %>" class="btn btn-link" style="display: inline; color: black; font-size: xx-large">
+      &larr;
     </a>
+
+    <h2 class="card-title" style="text-align:center"><%= @context %></h2>
     <%= partial 'layouts/flash' %>
   </div>
 

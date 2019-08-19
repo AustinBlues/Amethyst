@@ -2,13 +2,16 @@
 
 <div class="card">
   <div class="card-heading bg-info">
+    <a href="<%= url_for :post, :index %>" class="btn btn-link" style="display: inline; color: black; font-size: xx-large">
+      &larr;
+    </a>
+      
     <button type="button" class="btn btn-default btn-sm"  data-toggle="modal"
           data-target="#writingForm" aria-label="Add" style="float:right; font-size:20pt">
 	  +
     </button>
-    <a href="/post">
-      <h2 class="card-title" style="text-align:center; color:black">Feeds</h2>
-    </a>
+
+    <h2 class="card-title" style="text-align:center; color:black">Feeds</h2>
     <%= partial 'layouts/flash' %>
   </div>
 
