@@ -64,12 +64,7 @@ module RubyRSS
               STDERR.puts "  #{p.inspect}"
             end
 
-            if true
-              tmp.update(previous_refresh: now)
-            else
-              tmp.previous_refresh = now
-              tmp.save
-            end
+            tmp.update(previous_refresh: now)
           end
         end
       end
