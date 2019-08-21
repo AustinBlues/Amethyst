@@ -4,7 +4,7 @@ require 'rss'
 module RubyRSS
   extend Padrino::Helpers::FormatHelpers
   
-  def self.refresh_feed(feed)
+  def self.refresh_feed(feed, now)
     begin
       # open-uri is gagging on IPv6 address and doesn't support forcing to IPv4
       # libcurl and curb Gem appear to have same limitation.
@@ -62,6 +62,13 @@ module RubyRSS
               p.url = post.link
               feed.ema_volume += Aging::ALPHA
               STDERR.puts "  #{p.inspect}"
+            end
+
+            if true
+              tmp.update(previous_refresh: now)
+            else
+              tmp.previous_refresh = now
+              tmp.save
             end
           end
         end

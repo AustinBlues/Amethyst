@@ -13,18 +13,18 @@ class Feed < Sequel::Model
 
   # Sequel dataset (query) for a slice of the oldest Feeds
   def self.slice(size)
-    limit(size).order(:refresh_at)
+    limit(size).order(:previous_refresh)
   end
 
 
   # Sequel dataset (query) for Feeds to be refreshed on or before limit
   def self.refreshable(limit)
-#    where{refresh_at <= limit}
-    where(Sequel.lit('refresh_at <= ?', limit))
+#    where{previous_refresh <= limit}
+    where(Sequel.lit('previous_refresh <= ?', limit))
   end
 
   def self.age
-    dataset.update(score: Sequel[:score]*Aging::ONE_MINUS_ALPHA)
-    dataset.update(ema_volume: Sequel[:ema_volume]*Aging::ONE_MINUS_ALPHA)
+    dataset.update(score: Sequel[:score]*(1.0 - Aging::ALPHA))
+    dataset.update(ema_volume: Sequel[:ema_volume]*(1.0 - Aging::ALPHA))
   end
 end
