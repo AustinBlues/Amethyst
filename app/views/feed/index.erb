@@ -1,17 +1,18 @@
 <% url = url_for(:feed, :create, page: @page) %>
 
 <div class="card">
-  <div class="card-heading bg-info">
-    <a href="<%= url_for :post, :index %>" class="btn btn-link" style="display: inline; color: black; font-size: xx-large">
+  <div class="card-header bg-info">
+    <a href="<%= url_for :post, :index %>" class="btn btn-link">
       &larr;
     </a>
       
-    <button type="button" class="btn btn-default btn-sm"  data-toggle="modal"
+    <button type="button" class="btn btn-light btn-circle"  data-toggle="modal"
           data-target="#writingForm" aria-label="Add" style="float:right; font-size:20pt">
 	  +
     </button>
 
-    <h2 class="card-title" style="text-align:center; color:black">Feeds</h2>
+    <h2 class="card-title text-center">Feeds</h2>
+    
     <%= partial 'layouts/flash' %>
   </div>
 

@@ -2,3 +2,17 @@
     position: absolute;
     display:none;
 }
+
+h2.card-title {
+    text-align: center;
+}
+
+.card-title a {
+    color: black;
+}
+
+.card-header a {
+    display: inline;
+    color: black;
+    font-size: xx-large;
+}
