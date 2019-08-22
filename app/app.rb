@@ -63,7 +63,7 @@ module Amethyst
 
     # default (home) page is Feeds
     get :home, :map => '/' do
-      redirect '/feed'
+      redirect '/post'
     end
   end
 end
