@@ -1,6 +1,9 @@
 Amethyst::App.controllers :feed do
   get :index do
     @feeds = Feed.order(Sequel.desc(:score)).all
+    @feeds.each do |f|
+      f[:count] = Post.where(feed_id: f.id, click: 0, hide: 0).count
+    end if @feeds
     render 'index'
   end
 
