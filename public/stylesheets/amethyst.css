@@ -16,3 +16,12 @@ h2.card-title {
     color: black;
     font-size: xx-large;
 }
+tr.zombie a {
+    font-style: italic;
+}
+tr.hidden a {
+    text-decoration: line-through;
+}
+tr.clicked a {
+    text-color: gray;
+}

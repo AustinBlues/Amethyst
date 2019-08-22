@@ -3,9 +3,16 @@
 module Amethyst
   class App
     module PostHelper
-      # def simple_helper_method
-      # ...
-      # end
+      def post_classes(post)
+        classes = []
+        classes << 'zombie' if post.zombie?
+        if post.hide
+          classes << 'hidden'
+        elsif post.click
+          classes << 'clicked'
+        end
+        classes.join(' ')
+      end
     end
 
     helpers PostHelper

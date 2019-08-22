@@ -1,4 +1,4 @@
-<tr id="post<%= post.id %>">
+<tr id="post<%= post.id %>" class="<%= post_classes(post) %>">
   <td>
     <%= link_to(post.name, url_for(:post, :show, id: post.id, origin: @origin)) %>
   </td>

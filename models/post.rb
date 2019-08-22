@@ -8,7 +8,7 @@ class Post < Sequel::Model
 
 
   def zombie?
-    previous_refresh < feed.previous_refresh
+    previous_refresh.nil? || previous_refresh < feed.previous_refresh
   end
   
 
@@ -29,6 +29,7 @@ class Post < Sequel::Model
         where(click: 0, hide: 0).where(Sequel.lit('? < previous_refresh AND previous_refresh <= ?', from, to)).all.each do |p|
           puts "'#{p.name}' on #{p.feed.name}."
         end
+      end
       puts "#{i} day zombies: #{zombie_cnt}, #{unread_cnt} unread."
     end
   end
