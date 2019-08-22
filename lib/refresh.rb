@@ -9,9 +9,22 @@ module Refresh
   INTERVAL_TIME = 5 * 60	# how often to refresh a slice: 5 minutes
   INTERVALS = CYCLE_TIME/INTERVAL_TIME
   REDIS_KEY = 'residue'
-  include RubyRSS
-  
+  extend RubyRSS
+  extend Padrino::Helpers::FormatHelpers
+
+
   @@redis = Redis.new
+
+  
+  def self.time_ago_in_words(from_time, include_seconds = false)
+    distance_in_minutes = ((Time.now - from_time) / 60.0).round
+    case distance_in_minutes
+    when 2..99
+      "#{distance_in_minutes} minutes"
+    else
+      distance_of_time_in_words(from_time, Time.now, include_seconds)
+    end
+  end
 
 
   def self.perform
@@ -32,14 +45,19 @@ module Refresh
     feeds.each do |f|
       f.status = nil
       refreshed_at = f.previous_refresh
-      RubyRSS.refresh_feed(f, now)
-      puts "Refreshed: #{f.name} (#{refreshed_at})."
       f.previous_refresh = now
+      f.update(previous_refresh: now)	# so zombie check works
+      RubyRSS.refresh_feed(f, now)
+      if refreshed_at
+        puts "Refreshed: #{f.name} (#{time_ago_in_words(refreshed_at, true)} ago)."
+      else
+        puts "Refreshed: #{f.name} (no previous refresh)."
+      end
       f.save
     end
 
     # Report progress
     tmp = (feeds.size == max_refresh) ? max_refresh : "#{feeds.size}:#{max_refresh}"
-    puts "Fetched #{tmp}/#{feed_count} channels at #{Time.now.strftime('%H:%M')}."
+    puts "Fetched #{tmp}/#{feed_count} channels at #{Time.now.strftime('%l:%M%P').strip!}."
   end
 end
