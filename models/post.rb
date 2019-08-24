@@ -21,9 +21,9 @@ class Post < Sequel::Model
     puts "10+ day zombies: #{zombie_cnt}, #{unread_cnt} unread."
 
     9.downto(1).each do |i|
-      from = now - i*ONE_DAY
-      to = now - (i-1)*ONE_DAY
-      zombie_cnt = where(Sequel.lit('? < previous_refresh AND previous_refresh <= ?', from, to)).count
+      from = now - (i+1)*ONE_DAY
+      to = now - i*ONE_DAY
+      zombie_cnt = where(Sequel.lit('? <= previous_refresh AND previous_refresh < ?', from, to)).count
       unread_cnt = where(click: 0, hide: 0).where(Sequel.lit('? < previous_refresh AND previous_refresh <= ?', from, to)).count
       if 0 < unread_cnt && unread_cnt <= 10
         where(click: 0, hide: 0).where(Sequel.lit('? < previous_refresh AND previous_refresh <= ?', from, to)).all.each do |p|
