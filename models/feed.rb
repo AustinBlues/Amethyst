@@ -13,14 +13,13 @@ class Feed < Sequel::Model
   
   # Sequel dataset (query) for a slice of the oldest Feeds
   def self.slice(size)
-    limit(size).order(:previous_refresh)
+    limit(size).order(:next_refresh)
   end
 
 
   # Sequel dataset (query) for Feeds to be refreshed on or before limit
   def self.refreshable(limit)
-#    where{previous_refresh <= limit}
-    where(Sequel.lit('previous_refresh <= ?', limit))
+    where(Sequel.lit('next_refresh <= ?', limit))
   end
 
   def self.age

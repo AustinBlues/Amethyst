@@ -30,8 +30,8 @@ module Refresh
   def self.perform
     # grab time now before lengthy downloads
     now = Time.now
-    next_refresh = now + CYCLE_TIME
-    max_refresh = Feed.refreshable(now - CYCLE_TIME + INTERVAL_TIME/2).count
+
+    max_refresh = Feed.refreshable(now + INTERVAL_TIME/2).count
 
     # Refresh distribution of uneven slices
     residue = (@@redis.get(REDIS_KEY) || 0).to_i
@@ -45,14 +45,13 @@ module Refresh
     feeds.each do |f|
       f.status = nil
       refreshed_at = f.previous_refresh
-      f.previous_refresh = now
-      f.update(previous_refresh: now)	# so zombie check works
       RubyRSS.refresh_feed(f, now)
       if refreshed_at
         puts "Refreshed: #{f.name} (#{time_ago_in_words(refreshed_at, true)} ago)."
       else
         puts "Refreshed: #{f.name} (no previous refresh)."
       end
+      f.next_refresh = now + CYCLE_TIME
       f.save
     end
 

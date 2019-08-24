@@ -8,7 +8,7 @@ module RubyRSS
     begin
       # open-uri is gagging on IPv6 address and doesn't support forcing to IPv4
       # libcurl and curb Gem appear to have same limitation.
-      # Invoking curl is fast enough
+      # Invoking curl CLI is fast enough
       open("|curl -s -4 #{feed.rss_url}") do |rss|
         f = RSS::Parser.parse(rss)
 
@@ -20,9 +20,7 @@ module RubyRSS
           feed.title ||= strip_tags(f.title.to_s)
         else
           STDERR.puts "MISSING TITLE: '#{feed.name}'."
-          #        STDERR.puts "METHODS(#{f.class}): #{f.methods}"
         end
-        feed.save
         
         if f.items.size == 0
           STDERR.puts "Feed '#{feed.name}' is empty."
@@ -44,12 +42,11 @@ module RubyRSS
 #              STDERR.puts "DATE: #{post.date}."
               description = post.description
               ident = post.guid.to_s
-              published_at = post.pubDate || post.date
+              published_at = post.pubDate || post.date || post.dc_date || Time.now
             end
 
             ident = title if ident.empty?
             
-#            tmp = Post.find_or_create(feed_id: feed.id, title: (title.nil? || title.blank?) ident : title) do |p|
             tmp = Post.find_or_create(feed_id: feed.id, ident: ident) do |p|
               STDERR.puts "Post: '#{title}'."
               p.feed_id = feed.id
@@ -58,7 +55,6 @@ module RubyRSS
               p.ident = ident
               p.published_at = published_at	# TimeDate object
               p.time = published_at	# actual String
-#              STDERR.puts "POST: #{post.methods}"
               p.url = post.link
               feed.ema_volume += Aging::ALPHA
               STDERR.puts "  #{p.inspect}"
@@ -74,6 +70,8 @@ module RubyRSS
     rescue
       feed.status = $!.class
       STDERR.puts "Exception: #{$!}."
+    else
+      feed.previous_refresh = now
     end
   end
 end
