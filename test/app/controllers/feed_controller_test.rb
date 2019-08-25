@@ -5,7 +5,7 @@ describe "/feed" do
     get "/feed"
   end
 
-  it "should return hello world text" do
-    assert_equal "Hello World", last_response.body
+  it "should return Feeds index" do
+    assert_match(/Feeds/, last_response.body)
   end
 end

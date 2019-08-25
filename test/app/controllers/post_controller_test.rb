@@ -5,7 +5,7 @@ describe "/post" do
     get "/post"
   end
 
-  it "should return hello world text" do
-    assert_equal "Hello World", last_response.body
+  it "should return Posts index" do
+    assert_match(/Posts/, last_response.body)
   end
 end

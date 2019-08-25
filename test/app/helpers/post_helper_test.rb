@@ -10,7 +10,7 @@ describe "Amethyst::App::PostHelper" do
     @helpers
   end
 
-  it "should return nil" do
-    assert_nil helpers.foo
-  end
+#  it "should return nil" do
+#    assert_nil helpers.foo
+#  end
 end
