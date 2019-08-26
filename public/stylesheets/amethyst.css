@@ -11,11 +11,20 @@ h2.card-title {
     color: black;
 }
 
-.card-header a {
+.card-header a.navigation {
     display: inline;
     color: black;
     font-size: xx-large;
+    float: left;
 }
+
+.card-header a.action {
+    display: inline;
+    color: white;
+    font-size: xx-large;
+    float: right;
+}
+
 tr.zombie a {
     font-style: italic;
 }

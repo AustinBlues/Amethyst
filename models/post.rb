@@ -8,19 +8,19 @@ class Post < Sequel::Model
 
 
   def clicked?
-    @click
+    self[:click]
   end
 
 
   def click!
-    @click = true
+    self[:click] = true
     feed.score += 1.0
     feed.clicks += 1
     feed.save
   end
 
   def unclick!
-    @click = false
+    self[:click] = false
     feed.score -= 1.0
     feed.clicks -= 1
     feed.save
@@ -28,19 +28,19 @@ class Post < Sequel::Model
   
 
   def hidden?
-    @hide
+    self[:hide]
   end
 
 
   def hide!
-    if @click	# click?  Undo
-      @click = false
+    if self[:click]	# click?  Undo
+      self[:click] = false
       feed.score -= 1.0
       feed.clicks -= 1
     end
 
-    if !@hide
-      @hide = true
+    if !self[:hide]
+      self[:hide] = true
       self.feed.score -= 0.25
       self.feed.hides += 1
     end
@@ -50,8 +50,8 @@ class Post < Sequel::Model
 
   
   def unhide!
-    if @hide
-      @hide = false
+    if self[:hide]
+      self[:hide] = false
       feed.score += 0.25
       feed.hides -= 1
       feed.save

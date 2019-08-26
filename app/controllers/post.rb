@@ -26,4 +26,16 @@ Amethyst::App.controllers :post do
 
     render 'show'
   end
+
+  
+  put :hide, '/post/:id/hide' do
+    @origin = get_origin!
+    
+    @post = Post.with_pk! params[:id]
+    @post.hide!
+    @post.save
+
+#    redirect '/post'
+    redirect @origin
+  end
 end
