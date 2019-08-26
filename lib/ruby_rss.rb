@@ -4,6 +4,26 @@ require 'rss'
 module RubyRSS
   extend Padrino::Helpers::FormatHelpers
   
+  def self.first_nonblank(*args)
+    if args.nil?
+      nil
+    elsif args.size == 1
+      if args[0].respond_to?(:empty?) && args[0].empty?
+        nil
+      else
+        tmp = args[0].to_s.strip
+        (tmp != '') ? tmp : nil
+      end
+    else
+      args.each do |a|
+        tmp = first_nonblank(a)
+        return tmp unless tmp.nil?
+      end
+      nil
+    end
+  end
+
+
   def self.refresh_feed(feed, now)
     begin
       # open-uri is gagging on IPv6 address and doesn't support forcing to IPv4
@@ -42,7 +62,8 @@ module RubyRSS
 #              STDERR.puts "DATE: #{post.date}."
               description = post.description
               ident = post.guid.to_s
-              published_at = post.pubDate || post.date || post.dc_date || Time.now
+#              published_at = post.pubDate || post.date || post.dc_date || Time.now
+              published_at = first_nonblank(post.pubDate, post.date, post.dc_date, Time.now)
             end
 
             ident = title if ident.empty?
