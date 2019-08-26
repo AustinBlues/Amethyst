@@ -7,6 +7,58 @@ class Post < Sequel::Model
   end
 
 
+  def clicked?
+    @click
+  end
+
+
+  def click!
+    @click = true
+    feed.score += 1.0
+    feed.clicks += 1
+    feed.save
+  end
+
+  def unclick!
+    @click = false
+    feed.score -= 1.0
+    feed.clicks -= 1
+    feed.save
+  end
+  
+
+  def hidden?
+    @hide
+  end
+
+
+  def hide!
+    if @click	# click?  Undo
+      @click = false
+      feed.score -= 1.0
+      feed.clicks -= 1
+    end
+
+    if !@hide
+      @hide = true
+      self.feed.score -= 0.25
+      self.feed.hides += 1
+    end
+    
+    feed.save
+  end
+
+  
+  def unhide!
+    if @hide
+      @hide = false
+      feed.score += 0.25
+      feed.hides -= 1
+      feed.save
+    end
+  end
+
+  
   def zombie?
     previous_refresh.nil? || previous_refresh < feed.previous_refresh
   end

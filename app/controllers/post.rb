@@ -21,12 +21,8 @@ Amethyst::App.controllers :post do
     @origin = get_origin!
     
     @post = Post.with_pk! params[:id]
-    @post.click = true
+    @post.click!
     @post.save
-
-    @post.feed.score += 1.0
-    @post.feed.clicks += 1
-    @post.feed.save
 
     render 'show'
   end
