@@ -63,6 +63,9 @@ module RubyRSS
               description = post.description
               ident = post.guid.to_s
 #              published_at = post.pubDate || post.date || post.dc_date || Time.now
+              if post.pubDate != post.date
+                STDERR.puts "DATES: pubDate: #{post.pubDate}, date: #{post.date},  dc_date: #{post.dc_date}."
+              end
               published_at = first_nonblank(post.pubDate, post.date, post.dc_date, Time.now)
             end
 
