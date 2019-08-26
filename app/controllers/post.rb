@@ -28,14 +28,26 @@ Amethyst::App.controllers :post do
   end
 
   
-  put :hide, '/post/:id/hide' do
+#  put :hide, '/post/:id/hide' do
+  get :hide, '/post/:id/hide' do
     @origin = get_origin!
     
     @post = Post.with_pk! params[:id]
     @post.hide!
     @post.save
 
-#    redirect '/post'
+    redirect @origin
+  end
+
+  
+#  put :unclick, '/post/:id/unclick' do
+  get :unclick, '/post/:id/unclick' do
+    @origin = get_origin!
+    
+    @post = Post.with_pk! params[:id]
+    @post.unclick!
+    @post.save
+
     redirect @origin
   end
 end
