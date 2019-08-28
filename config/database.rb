@@ -5,4 +5,5 @@ Sequel::Model.db = case Padrino.env
   when :production  then Sequel.connect("mysql2://rails:db4ruby@localhost/amethyst_development",  :loggers => [logger])
   when :test        then Sequel.connect("mysql2://rails:db4ruby@localhost/amethyst_test",        :loggers => [logger])
 end
-Sequel::Model.db.extension(:pagination)
+Sequel::Model.db.extension :pagination
+Sequel::Model.plugin :update_or_create	# includes find_or_new() method
