@@ -51,8 +51,7 @@ module Refresh
       else
         puts "Refreshed: #{f.name} (no previous refresh)."
       end
-      f.next_refresh = now + CYCLE_TIME
-      f.save
+      f.update(next_refresh: now + CYCLE_TIME, previous_refresh: f.previous_refresh, ema_volume: f.ema_volume)
     end
 
     # Report progress
