@@ -8,8 +8,8 @@
     </a>
     
     <div style="float: right">
+      <%= link_to(SafeBuffer.new('&#x27F2;'), unclick_url, method: :put, class: 'btn btn-link action', style: 'font-size: x-large') %>
       <%= link_to(SafeBuffer.new('&times;'), hide_url, method: :put, class: 'btn btn-link action') %>
-      <%= link_to(SafeBuffer.new('&#x27F2;'), unclick_url, method: :put, class: 'btn btn-link action') %>
     </div>
     
     <h2 class="card-title"><%= link_to @post.name, @post.url, target: '_blank' %></h2>
