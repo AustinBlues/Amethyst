@@ -31,7 +31,7 @@ module RubyRSS
       # Invoking curl CLI is fast enough
       open("|curl -s -4 #{feed.rss_url}") do |rss|
         f = RSS::Parser.parse(rss)
-
+        
         if f.respond_to?(:channel)
           # Is this what I want, hand-edited title overridden?
           feed.title ||= strip_tags(f.channel.title)
@@ -62,7 +62,7 @@ module RubyRSS
 #              STDERR.puts "DATE: #{post.date}."
               description = post.description
               ident = post.guid.to_s
-#              published_at = post.pubDate || post.date || post.dc_date || Time.now
+
               if post.pubDate != post.date
                 STDERR.puts "DATES: pubDate: #{post.pubDate}, date: #{post.date},  dc_date: #{post.dc_date}."
               end
@@ -71,26 +71,22 @@ module RubyRSS
 
             ident = title if ident.empty?
             
-            tmp = Post.find_or_create(feed_id: feed.id, ident: ident) do |p|
-              STDERR.puts "Post: '#{title}'."
-              p.feed_id = feed.id
-              p.title = title.empty? ? nil : title
-              p.description = description
-              p.ident = ident
-              p.published_at = published_at	# TimeDate object
-              p.time = published_at	# actual String
-              p.url = post.link
-              feed.ema_volume += Aging::ALPHA
-              STDERR.puts "  #{p.inspect}"
+            Post.update_or_create(feed_id: feed.id, ident: ident) do |p|
+              STDERR.puts "Post: #{title.inspect}."
+              if p.new?
+                feed.ema_volume += Aging::ALPHA 
+                p.title = title.empty? ? nil : title
+                p.description = description
+                p.published_at = published_at	# TimeDate object
+                p.time = published_at	# actual String
+                p.url = post.link
+              end
+              p.previous_refresh = now
+#              STDERR.puts "  #{p.inspect}"
             end
-
-            tmp.update(previous_refresh: now)
           end
         end
       end
-#    rescue Net::OpenTimeout
-#      feed.status = 'timeout'
-#      STDERR.puts "TIMEOUT: #{feed.name}."
     rescue
       feed.status = $!.class
       STDERR.puts "Exception: #{$!}."
