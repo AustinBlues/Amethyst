@@ -11,17 +11,16 @@ class Post < Sequel::Model
     self[:click]
   end
 
-
   def click!
     self[:click] = true
-    feed.score += 1.0
+    feed.add_score(1.0)
     feed.clicks += 1
     feed.save
   end
 
   def unclick!
     self[:click] = false
-    feed.score -= 1.0
+    feed.add_score(-1.0)
     feed.clicks -= 1
     feed.save
   end
@@ -31,28 +30,26 @@ class Post < Sequel::Model
     self[:hide]
   end
 
-
   def hide!
     if self[:click]	# click?  Undo
       self[:click] = false
-      feed.score -= 1.0
+      feed.add_score(-1.0)
       feed.clicks -= 1
     end
 
     if !self[:hide]
       self[:hide] = true
-      self.feed.score -= 0.25
+      self.feed.add_score(-0.25)
       self.feed.hides += 1
     end
     
     feed.save
   end
 
-  
   def unhide!
     if self[:hide]
       self[:hide] = false
-      feed.score += 0.25
+      feed.add_score(0.25)
       feed.hides -= 1
       feed.save
     end

@@ -10,6 +10,11 @@ class Feed < Sequel::Model
     1
   end
 
+  def add_score(amt)
+    self[:score] += amt + [2.0/self[:ema_volume], amt].min
+    STDERR.puts "SCORE: #{self[:score]}."
+  end
+
   
   # Sequel dataset (query) for a slice of the oldest Feeds
   def self.slice(size)
