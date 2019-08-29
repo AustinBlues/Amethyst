@@ -11,8 +11,8 @@ class Feed < Sequel::Model
   end
 
   def add_score(amt)
+    STDERR.puts "SCORE: #{amt + [2.0/self[:ema_volume], amt].min}."
     self[:score] += amt + [2.0/self[:ema_volume], amt].min
-    STDERR.puts "SCORE: #{self[:score]}."
   end
 
   
