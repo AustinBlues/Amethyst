@@ -34,17 +34,22 @@ module NokogiriRSS
 
         standard = f.at_css('rss').name
         version = f.at_css('rss')['version']
+
+        unless standard == 'rss' && version == '2.0'
+          feed.status = "#{standard.upcase} #{version}"
+          STDERR.puts("#{feed.status}.")
+        end
         
-        STDERR.puts("#{standard.upcase} #{version}.") unless standard == 'rss' && version == '2.0'
-            
         # Is this what I want, hand-edited title overridden?
         feed.title ||= f.at_css('channel title').content
         if feed.title.empty?
+          feed.status = 'missing title'
           STDERR.puts "MISSING TITLE: '#{feed.name}'."
         end
 
         item = f.css('item')
         if item.size == 0
+          feed.status = 'empty'
           STDERR.puts "Feed '#{feed.name}' is empty."
         else
           item.each do |post|
@@ -59,6 +64,7 @@ module NokogiriRSS
                       elsif (tmp = post.at_css('link'))
                         tmp.to_s
                       else
+                        feed.status = 'missing indent'
                         STDERR.puts "NO IDENT: "#{title}'."
                         title
                       end
@@ -69,6 +75,7 @@ module NokogiriRSS
                      elsif (tmp = post.at_css('dc|date'))
                        tmp.content
                      else
+                       feed.status = 'missing post date'
                        STDERR.puts "NO DATE: "#{title}'."
                        now.to_s
                      end
