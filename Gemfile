@@ -37,3 +37,4 @@ gem 'padrino', '0.14.4'
 # end
 
 gem 'resque'
+gem 'nokogiri'

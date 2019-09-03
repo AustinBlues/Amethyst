@@ -1,7 +1,7 @@
 # All periodic refresh of Feeds policy is in this module.
 #
 require 'redis'
-require 'ruby_rss'
+require 'nokogiri_rss'
 
 
 module Refresh
@@ -9,7 +9,7 @@ module Refresh
   INTERVAL_TIME = 5 * 60	# how often to refresh a slice: 5 minutes
   INTERVALS = CYCLE_TIME/INTERVAL_TIME
   REDIS_KEY = 'residue'
-  extend RubyRSS
+  extend NokogiriRSS
   extend Padrino::Helpers::FormatHelpers
 
 
@@ -45,7 +45,7 @@ module Refresh
     feeds.each do |f|
       f.status = nil
       refreshed_at = f.previous_refresh
-      RubyRSS.refresh_feed(f, now)
+      NokogiriRSS.refresh_feed(f, now)
       if refreshed_at
         puts "Refreshed: #{f.name} (#{time_ago_in_words(refreshed_at, true)} ago)."
       else
