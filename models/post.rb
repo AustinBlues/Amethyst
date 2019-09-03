@@ -64,10 +64,12 @@ class Post < Sequel::Model
   def self.zombie_killer
     now = Time.now
     
-    # Just report, no actually deleting dropped Posts
-    zombie_cnt = where(Sequel.lit('previous_refresh <= ?', now - 10*ONE_DAY)).count
+    zombie = where(Sequel.lit('previous_refresh <= ?', now - 10*ONE_DAY))
     unread_cnt = where(click: 0, hide: 0).where(Sequel.lit('previous_refresh <= ?', now - 10*ONE_DAY)).count
-    puts "10+ day zombies: #{zombie_cnt}, #{unread_cnt} unread."
+    puts "Deleting all 10+ day zombies: #{zombie.count}, #{unread_cnt} unread."
+    zombie.all.each do |z|
+      z.destroy
+    end
 
     9.downto(1).each do |i|
       from = now - (i+1)*ONE_DAY
