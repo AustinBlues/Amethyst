@@ -66,14 +66,14 @@ module RubyRSS
               if post.pubDate != post.date
                 STDERR.puts "DATES: pubDate: #{post.pubDate}, date: #{post.date},  dc_date: #{post.dc_date}."
               end
-              published_at = first_nonblank(post.pubDate, post.date, post.dc_date, Time.now)
+              published_at = first_nonblank(post.pubDate, post.date, post.dc_date, now)
             end
 
             ident = title if ident.empty?
             
             Post.update_or_create(feed_id: feed.id, ident: ident) do |p|
-              STDERR.puts "Post: #{title.inspect}."
               if p.new?
+                STDERR.puts "NEW: #{title.inspect}."
                 feed.ema_volume += Aging::ALPHA 
                 p.title = title.empty? ? nil : title
                 p.description = description
