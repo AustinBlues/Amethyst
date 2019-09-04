@@ -53,6 +53,7 @@ module NokogiriRSS
           STDERR.puts "Feed '#{feed.name}' is empty."
         else
           item.each do |post|
+            status = nil	# force scope
 #            title = strip_tags(post.at_css('title').content)
             title = post.at_css('title').content
 
@@ -64,18 +65,20 @@ module NokogiriRSS
                       elsif (tmp = post.at_css('link'))
                         tmp.to_s
                       else
-                        feed.status = 'missing indent'
+                        status = 'missing indent'
                         STDERR.puts "NO IDENT: "#{title}'."
                         title
                       end
               date = if (tmp = post.at_css('pubDate'))
                        tmp.content
                      elsif (tmp = post.at_css('date'))
+                       status = 'date'
                        tmp.content
                      elsif (tmp = post.at_css('dc|date'))
+                       status = 'dc:date'
                        tmp.content
                      else
-                       feed.status = 'missing post date'
+                       status = 'missing post date'
                        STDERR.puts "NO DATE: "#{title}'."
                        now.to_s
                      end
@@ -100,6 +103,7 @@ module NokogiriRSS
                 p.time = date	# actual String
                 p.url = post.at_css('link').content
               end
+              p.status = status
               p.previous_refresh = now
 #              STDERR.puts "  #{p.inspect}"
             end
