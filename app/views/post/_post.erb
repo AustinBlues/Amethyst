@@ -1,8 +1,17 @@
+<% hide_url = url_for(:post, :hide, id: post.id, origin: @origin) %>
+<% down_url = url_for(:post, :down, id: post.id, origin: @origin) %>
+
 <tr id="post<%= post.id %>" class="<%= post_classes(post) %>">
   <td>
     <%= link_to(post.name, url_for(:post, :show, id: post.id, origin: @origin)) %>
   </td>
   <td>
     <%= post.status %>
+  </td>
+  <td style="width: 3em">
+    <div>
+      <%= link_to(SafeBuffer.new('&times;'), hide_url, method: :put, class: 'btn btn-link action', style: 'padding: 0') %>
+      <%= link_to(SafeBuffer.new('&darr;'), down_url, method: :put, class: 'btn btn-link action', style: 'padding: 0') %>
+    </div>
   </td>
 </tr>

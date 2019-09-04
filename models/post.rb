@@ -2,44 +2,59 @@ class Post < Sequel::Model
   many_to_one :feed
   ONE_DAY = 24 * 60 * 60
 
+  # state enumeration
+  UNREAD = 0
+  READ = 1
+  HIDDEN = 2
+  DOWN_VOTED = 3
+
+  
   def name
     (!title.nil? && !title.empty?) ? title : SafeBuffer.new("<b><em>Post #{id}</em></b>")
   end
 
 
   def clicked?
-    self[:click]
+#    self[:click]
+    self[:state] == READ
   end
 
   def click!
     self[:click] = true
+    self[:state] = READ
     feed.add_score(1.0)
     feed.clicks += 1
     feed.save
   end
 
   def unclick!
-    self[:click] = false
-    feed.add_score(-1.0)
-    feed.clicks -= 1
-    feed.save
+    if self[:state] == READ
+      self[:click] = false
+      self[:state] = UNREAD
+      feed.add_score(-1.0)
+      feed.clicks -= 1
+      feed.save
+    end
   end
   
 
   def hidden?
-    self[:hide]
+#    self[:hide]
+    self[:state] == HIDDEN
   end
 
   def hide!
-    if self[:click]	# click?  Undo
+#    if self[:click]	# click?  Undo
+    if self[:state] == READ	# click?  Undo
       self[:click] = false
-      feed.add_score(-1.0)
+      feed.add_score(-1.0)	# back out click
       feed.clicks -= 1
     end
 
-    if !self[:hide]
+#    if !self[:hide]
+    if self[:state] != HIDDEN
       self[:hide] = true
-      self.feed.add_score(-0.25)
+      self[:state] = HIDDEN
       self.feed.hides += 1
     end
     
@@ -47,12 +62,29 @@ class Post < Sequel::Model
   end
 
   def unhide!
-    if self[:hide]
+    if self[:state] == HIDDEN	# self[:hide]
       self[:hide] = false
-      feed.add_score(0.25)
+      self[:STATE] = UNREAD
       feed.hides -= 1
       feed.save
     end
+  end
+
+  def down_vote!
+    if self[:state] == READ	# self[:click]
+      self[:click] = false
+      feed.clicks -= 1
+      feed.save
+    end
+    if self[:state] == HIDDEN	# self[:hide]
+      self[:hide] = false
+      feed.hides -= 1
+      feed.save
+    end
+    self[:state] = DOWN_VOTED
+    feed.add_score(-0.25)
+    feed.down_votes += 1
+    feed.save
   end
 
   
@@ -67,7 +99,8 @@ class Post < Sequel::Model
     zombie = where(Sequel.lit('previous_refresh <= ?', now - 10*ONE_DAY))
     unread_cnt = where(click: 0, hide: 0).where(Sequel.lit('previous_refresh <= ?', now - 10*ONE_DAY)).count
     puts "Deleting all 10+ day zombies: #{zombie.count}, #{unread_cnt} unread."
-    zombie.all.each do |z|
+#    zombie.all.each do |z|
+    zombie.each do |z|
       z.destroy
     end
 

@@ -7,7 +7,7 @@ module Amethyst
                  else
                    params.delete(:origin)
                  end
-        puts "ORIGIN: #{origin}."
+#        puts "ORIGIN: #{origin}."
         origin
       end
 

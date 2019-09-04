@@ -3,10 +3,10 @@ Amethyst::App.controllers :post do
     @origin = get_origin!
 
     if params[:feed_id].nil?
-      @posts = Post.where(click: false, hide: false).order(Sequel.desc(:published_at)).all
+      @posts = Post.where(state: Post::UNREAD).order(Sequel.desc(:published_at)).all
       @context = 'Posts'
     else
-      @posts = Post.where(feed_id: params[:feed_id], click: false, hide: false).order(Sequel.desc(:published_at)).all
+      @posts = Post.where(feed_id: params[:feed_id], state: Post::UNREAD).order(Sequel.desc(:published_at)).all
       if !@posts.empty?
         @context = @posts[0].feed.title
       else
@@ -34,6 +34,18 @@ Amethyst::App.controllers :post do
     
     @post = Post.with_pk! params[:id]
     @post.hide!
+    @post.save
+
+    redirect @origin
+  end
+
+  
+#  put :down, '/post/:id/down' do
+  get :down, '/post/:id/down' do
+    @origin = get_origin!
+    
+    @post = Post.with_pk! params[:id]
+    @post.down_vote!
     @post.save
 
     redirect @origin
