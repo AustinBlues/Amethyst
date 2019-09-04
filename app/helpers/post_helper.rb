@@ -6,7 +6,7 @@ module Amethyst
       def post_classes(post)
         classes = []
         classes << 'zombie' if post.zombie?
-        if post.hide
+        if post.hide || post.state == Post::DOWN_VOTED
           classes << 'hidden'
         elsif post.click
           classes << 'clicked'

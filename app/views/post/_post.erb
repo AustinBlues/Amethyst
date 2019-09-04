@@ -1,9 +1,10 @@
 <% hide_url = url_for(:post, :hide, id: post.id, origin: @origin) %>
 <% down_url = url_for(:post, :down, id: post.id, origin: @origin) %>
 
-<tr id="post<%= post.id %>" class="<%= post_classes(post) %>">
+
+<tr id="post<%= post.id %>">
   <td>
-    <%= link_to(post.name, url_for(:post, :show, id: post.id, origin: @origin)) %>
+    <%= link_to(post.name, url_for(:post, :show, id: post.id, origin: @origin), class: post_classes(post)) %>
   </td>
   <td>
     <%= post.status %>

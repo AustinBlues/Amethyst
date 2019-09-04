@@ -24,12 +24,12 @@ h2.card-title {
     font-size: xx-large;
 }
 
-tr.zombie a {
+tr a.zombie {
     font-style: italic;
 }
-tr.hidden a {
+tr a.hidden {
     text-decoration: line-through;
 }
-tr.clicked a {
+tr a.clicked {
     text-color: gray;
 }
