@@ -16,6 +16,11 @@ class Feed < Sequel::Model
     self[:score] += adjust
   end
 
+  def destroy
+    Post.where(feed_id: self[:id]).delete
+    super
+  end
+  
   
   # Sequel dataset (query) for a slice of the oldest Feeds
   def self.slice(size)
