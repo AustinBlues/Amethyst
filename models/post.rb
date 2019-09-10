@@ -97,24 +97,23 @@ class Post < Sequel::Model
     now = Time.now
     
     zombie = where(Sequel.lit('previous_refresh <= ?', now - 10*ONE_DAY))
-    unread_cnt = where(click: 0, hide: 0).where(Sequel.lit('previous_refresh <= ?', now - 10*ONE_DAY)).count
-    puts "Deleting all 10+ day zombies: #{zombie.count}, #{unread_cnt} unread."
-#    zombie.all.each do |z|
-    zombie.each do |z|
-      z.destroy
-    end
+    zombie_cnt = zombie.count
+    unread_cnt = zombie.where(state: UNREAD).count
+    puts "Deleting all 10+ day zombies: #{zombie_cnt}, #{unread_cnt} unread."
+    zombie.delete
 
     9.downto(1).each do |i|
       from = now - (i+1)*ONE_DAY
       to = now - i*ONE_DAY
-      zombie_cnt = where(Sequel.lit('? <= previous_refresh AND previous_refresh < ?', from, to)).count
-      unread_cnt = where(click: 0, hide: 0).where(Sequel.lit('? < previous_refresh AND previous_refresh <= ?', from, to)).count
+      zombie = where(Sequel.lit('? <= previous_refresh AND previous_refresh < ?', from, to))
+      unread = zombie.where(state: UNREAD)
+      unread_cnt = unread.count
       if 0 < unread_cnt && unread_cnt <= 10
-        where(click: 0, hide: 0).where(Sequel.lit('? < previous_refresh AND previous_refresh <= ?', from, to)).all.each do |p|
+        unread.each do |p|
           puts "'#{p.name}' on #{p.feed.name}."
         end
       end
-      puts "#{i} day zombies: #{zombie_cnt}, #{unread_cnt} unread."
+      puts "#{i} day zombies: #{zombie.count}, #{unread_cnt} unread."
     end
   end
 end
