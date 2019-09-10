@@ -47,9 +47,9 @@ module Refresh
       refreshed_at = f.previous_refresh
       NokogiriRSS.refresh_feed(f, now)
       if refreshed_at
-        puts "Refreshed: #{f.name} (#{time_ago_in_words(refreshed_at, true)} ago)."
+        puts "Refreshed #{time_ago_in_words(refreshed_at, true)} ago: #{f.name}."
       else
-        puts "Refreshed: #{f.name} (no previous refresh)."
+        puts "Refreshed (no previous refresh): #{f.name}."
       end
       f.update(next_refresh: now + CYCLE_TIME, previous_refresh: f.previous_refresh, ema_volume: f.ema_volume)
     end
