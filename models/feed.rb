@@ -1,5 +1,11 @@
 class Feed < Sequel::Model
   one_to_many :post
+
+  def initialize(args)
+    super(args)
+    self[:score] ||= (Feed.avg(:score) + Feed.order(:score).first.score)/2.0
+  end
+
   
   def name
     title || rss_url
