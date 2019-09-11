@@ -25,6 +25,7 @@ module NokogiriRSS
 
 
   def self.refresh_feed(feed, now)
+    feed.status = nil
     begin
       # open-uri is gagging on IPv6 address and doesn't support forcing to IPv4
       # libcurl and curb Gem appear to have same limitation.
@@ -33,6 +34,7 @@ module NokogiriRSS
         f = Nokogiri::XML.parse(rss)
 
         if f.at_css('rss').nil?
+          feed.status = 'download failed'
           STDERR.puts "OOPS(#{feed.name}): #{f.inspect}."
         else
           standard = f.at_css('rss').name
