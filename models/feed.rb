@@ -4,7 +4,8 @@ class Feed < Sequel::Model
   
   def before_create
     self.score ||= (Feed.avg(:score) + Feed.order(:score).first.score)/2.0
-    self.next_refresh = Time.now
+    # prevent refresh by Resque
+    self.next_refresh = Time.now + Refresh::CYCLE_TIME
     super
   end
 
