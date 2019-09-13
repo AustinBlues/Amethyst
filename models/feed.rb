@@ -1,9 +1,11 @@
 class Feed < Sequel::Model
   one_to_many :post
 
-  def initialize(*args)
-    super(args)
-    self[:score] ||= (Feed.avg(:score) + Feed.order(:score).first.score)/2.0
+  
+  def before_create
+    self.score ||= (Feed.avg(:score) + Feed.order(:score).first.score)/2.0
+    self.next_refresh = Time.now
+    super
   end
 
   
@@ -16,6 +18,7 @@ class Feed < Sequel::Model
     1
   end
 
+  
   def add_score(amt)
     # refresh for new Feed may not have occurred yet, i.e. ema_volume == 0.0; so no low volume adjust
     adjust = (self[:ema_volume] == 0.0) ? 1.0 : amt * (1.0 + [1.0/self[:ema_volume], 4.0].min)
@@ -23,6 +26,7 @@ class Feed < Sequel::Model
     self[:score] += adjust
   end
 
+  
   def destroy
     Post.where(feed_id: self[:id]).delete
     super
