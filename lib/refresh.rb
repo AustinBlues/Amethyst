@@ -43,7 +43,6 @@ module Refresh
     # Update all Feeds in the slice
     feeds = Feed.slice(slice_size).all
     feeds.each do |f|
-      f.status = nil
       refreshed_at = f.previous_refresh
       NokogiriRSS.refresh_feed(f, now)
       if refreshed_at
@@ -51,7 +50,6 @@ module Refresh
       else
         puts "Refreshed (no previous refresh): #{f.name}."
       end
-      f.update(next_refresh: now + CYCLE_TIME, previous_refresh: f.previous_refresh, ema_volume: f.ema_volume)
     end
 
     # Report progress
