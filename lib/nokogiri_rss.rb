@@ -14,7 +14,7 @@ module NokogiriRSS
         if f.at_css('rss').nil?
           feed.status = 'download failed'
           STDERR.puts "OOPS(#{feed.name}): #{f.inspect}."
-          STDERR.puts "METHODS: #{feed.methods}."
+          STDERR.puts "METHODS: #{f.methods}."
         else
           standard = f.at_css('rss').name
           version = f.at_css('rss')['version']
