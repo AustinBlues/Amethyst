@@ -2,28 +2,6 @@ require 'nokogiri'
 
 
 module NokogiriRSS
-  extend Padrino::Helpers::FormatHelpers
-  
-  def self.first_nonblank(*args)
-    if args.nil?
-      nil
-    elsif args.size == 1
-      if args[0].respond_to?(:empty?) && args[0].empty?
-        nil
-      else
-        tmp = args[0].to_s.strip
-        (tmp != '') ? tmp : nil
-      end
-    else
-      args.each do |a|
-        tmp = first_nonblank(a)
-        return tmp unless tmp.nil?
-      end
-      nil
-    end
-  end
-
-
   def self.refresh_feed(feed, now)
     feed.status = nil
     begin
@@ -36,6 +14,7 @@ module NokogiriRSS
         if f.at_css('rss').nil?
           feed.status = 'download failed'
           STDERR.puts "OOPS(#{feed.name}): #{f.inspect}."
+          STDERR.puts "METHODS: #{feed.methods}."
         else
           standard = f.at_css('rss').name
           version = f.at_css('rss')['version']
