@@ -82,7 +82,15 @@ module NokogiriRSS
                   p.description = description
                   p.published_at = published_at	# TimeDate object
                   p.time = date	# actual String
-                  p.url = post.at_css('link').content
+                  p.url = if !(link = post.at_css('link')).nil?
+                            link.content
+                          elsif !(link = post.at_css('enclosure')).nil?
+                            link['url']
+                          else
+                            p.status = 'missing URL'
+                            STDERR.puts "MISSING URL: '#{p.name}'."
+                            feed.rss_url
+                          end
                 end
                 p.status = status
                 p.previous_refresh = now
