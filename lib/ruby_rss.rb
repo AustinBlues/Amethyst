@@ -25,6 +25,8 @@ module ParseRSS
 
 
   def self.refresh_feed(feed, now)
+    feed.status = nil
+    refreshed_at = feed.previous_refresh
     begin
       # open-uri is gagging on IPv6 address and doesn't support forcing to IPv4
       # libcurl and curb Gem appear to have same limitation.
@@ -92,6 +94,11 @@ module ParseRSS
       STDERR.puts "Exception: #{$!}."
     else
       feed.previous_refresh = now
+    end
+    if refreshed_at
+      puts "Refreshed #{time_ago_in_words(refreshed_at, true)} ago: #{feed.name}."
+    else
+      puts "Refreshed (no previous refresh): #{feed.name}."
     end
   end
 end

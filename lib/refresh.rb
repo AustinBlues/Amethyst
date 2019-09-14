@@ -43,13 +43,7 @@ module Refresh
     # Update all Feeds in the slice
     feeds = Feed.slice(slice_size).all
     feeds.each do |f|
-      refreshed_at = f.previous_refresh
       ParseRSS.refresh_feed(f, now)
-      if refreshed_at
-        puts "Refreshed #{time_ago_in_words(refreshed_at, true)} ago: #{f.name}."
-      else
-        puts "Refreshed (no previous refresh): #{f.name}."
-      end
     end
 
     # Report progress
