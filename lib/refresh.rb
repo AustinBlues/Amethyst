@@ -9,7 +9,7 @@ module Refresh
   INTERVAL_TIME = 5 * 60	# how often to refresh a slice: 5 minutes
   INTERVALS = CYCLE_TIME/INTERVAL_TIME
   REDIS_KEY = 'residue'
-  extend NokogiriRSS
+  extend ParseRSS
   extend Padrino::Helpers::FormatHelpers
 
 
@@ -44,7 +44,7 @@ module Refresh
     feeds = Feed.slice(slice_size).all
     feeds.each do |f|
       refreshed_at = f.previous_refresh
-      NokogiriRSS.refresh_feed(f, now)
+      ParseRSS.refresh_feed(f, now)
       if refreshed_at
         puts "Refreshed #{time_ago_in_words(refreshed_at, true)} ago: #{f.name}."
       else

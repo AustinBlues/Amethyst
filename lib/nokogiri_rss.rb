@@ -1,7 +1,15 @@
 require 'nokogiri'
 
 
-module NokogiriRSS
+module ParseRSS
+  @queue = :Refresh
+
+  # for Resque
+  def self.perform(feed_id)
+    refresh_feed(Feed.with_pk!(feed_id), Time.now)
+  end
+
+  
   def self.refresh_feed(feed, now)
     feed.status = nil
     begin

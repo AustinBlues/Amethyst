@@ -1,7 +1,7 @@
 require 'rss'
 
 
-module RubyRSS
+module ParseRSS
   extend Padrino::Helpers::FormatHelpers
   
   def self.first_nonblank(*args)

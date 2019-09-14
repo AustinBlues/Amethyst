@@ -1,3 +1,6 @@
+require 'resque'
+
+
 Amethyst::App.controllers :feed do
   get :index do
     @feeds = Feed.order(Sequel.desc(:score)).all
@@ -44,6 +47,8 @@ Amethyst::App.controllers :feed do
     rescue
       flash[:error] = 'Unknown exception'
       w = Feed.first
+    else
+      Resque.enqueue(ParseRSS, w[:id])
     end
 
     # Redirect to index where new feed will appear.
