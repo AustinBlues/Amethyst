@@ -108,7 +108,7 @@ module NokogiriRSS
       feed.previous_refresh = now
     end
     feed.next_refresh = now + Refresh::CYCLE_TIME
-    feed.save 
+    feed.save(changed: true)
 #    feed.update(next_refresh: now + CYCLE_TIME, previous_refresh: feed.previous_refresh, ema_volume: feed.ema_volume)
   end
 end
