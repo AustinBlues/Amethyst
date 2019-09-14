@@ -28,7 +28,7 @@ class Feed < Sequel::Model
   end
 
   
-  def destroy
+  def before_destroy
     Post.where(feed_id: self[:id]).delete
     super
   end
