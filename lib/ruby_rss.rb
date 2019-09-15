@@ -1,10 +1,8 @@
 require 'rss'
 
 
-module ParseRSS
-  extend Padrino::Helpers::FormatHelpers
-  
-  def self.first_nonblank(*args)
+module RubyRSS
+  def first_nonblank(*args)
     if args.nil?
       nil
     elsif args.size == 1
@@ -24,7 +22,7 @@ module ParseRSS
   end
 
 
-  def self.refresh_feed(feed, now)
+  def refresh_feed(feed, now)
     feed.status = nil
     refreshed_at = feed.previous_refresh
     begin
@@ -95,6 +93,10 @@ module ParseRSS
     else
       feed.previous_refresh = now
     end
+
+    feed.next_refresh = now + Refresh::CYCLE_TIME
+    feed.save(changed: true)
+
     if refreshed_at
       puts "Refreshed #{time_ago_in_words(refreshed_at, true)} ago: #{feed.name}."
     else

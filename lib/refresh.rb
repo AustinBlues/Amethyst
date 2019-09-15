@@ -2,6 +2,7 @@
 #
 require 'redis'
 require 'nokogiri_rss'
+#require 'ruby_rss'
 
 
 module Refresh
@@ -9,9 +10,10 @@ module Refresh
   INTERVAL_TIME = 5 * 60	# how often to refresh a slice: 5 minutes
   INTERVALS = CYCLE_TIME/INTERVAL_TIME
   REDIS_KEY = 'residue'
-  extend ParseRSS
   extend Padrino::Helpers::FormatHelpers
-
+#  extend RubyRSS
+  extend NokogiriRSS
+  
 
   @@redis = Redis.new
 
@@ -27,7 +29,18 @@ module Refresh
   end
 
 
-  def self.perform
+  def self.perform(args = nil)
+    if args.nil?
+      refresh_slice
+    elsif args.is_a?(Integer)
+      refresh_feed(Feed.with_pk(args), Time.now)
+    else
+      STDERR.puts "Invalid argument: #{args.inspect}."
+    end
+  end
+
+
+  def self.refresh_slice
     # grab time now before lengthy downloads
     now = Time.now
 
@@ -43,7 +56,7 @@ module Refresh
     # Update all Feeds in the slice
     feeds = Feed.slice(slice_size).all
     feeds.each do |f|
-      ParseRSS.refresh_feed(f, now)
+      refresh_feed(f, now)
     end
 
     # Report progress

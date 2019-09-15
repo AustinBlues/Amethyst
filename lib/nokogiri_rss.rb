@@ -1,16 +1,8 @@
 require 'nokogiri'
 
 
-module ParseRSS
-  @queue = :Refresh
-
-  # for Resque
-  def self.perform(feed_id)
-    refresh_feed(Feed.with_pk!(feed_id), Time.now)
-  end
-
-  
-  def self.refresh_feed(feed, now)
+module NokogiriRSS
+  def refresh_feed(feed, now)
     feed.status = nil
     refreshed_at = feed.previous_refresh
     begin
@@ -116,11 +108,12 @@ module ParseRSS
     else
       feed.previous_refresh = now
     end
+
     feed.next_refresh = now + Refresh::CYCLE_TIME
     feed.save(changed: true)
 
     if refreshed_at
-      puts "Refreshed #{time_ago_in_words(refreshed_at, true)} ago: #{feed.name}."
+      puts "Refreshed #{Refresh.time_ago_in_words(refreshed_at, true)} ago: #{feed.name}."
     else
       puts "Refreshed (no previous refresh): #{feed.name}."
     end
