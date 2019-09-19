@@ -24,7 +24,7 @@ class Post < Sequel::Model
     self[:state] = READ
     feed.add_score(1.0)
     feed.clicks += 1
-    feed.save
+    feed.save(changed: true)
   end
 
   def unclick!
@@ -33,7 +33,7 @@ class Post < Sequel::Model
       self[:state] = UNREAD
       feed.add_score(-1.0)
       feed.clicks -= 1
-      feed.save
+      feed.save(changed: true)
     end
   end
   
@@ -58,7 +58,7 @@ class Post < Sequel::Model
       self.feed.hides += 1
     end
     
-    feed.save
+    feed.save(changed: true)
   end
 
   def unhide!
@@ -66,25 +66,23 @@ class Post < Sequel::Model
       self[:hide] = false
       self[:STATE] = UNREAD
       feed.hides -= 1
-      feed.save
+      feed.save(changed: true)
     end
   end
 
   def down_vote!
     if self[:state] == READ	# self[:click]
       self[:click] = false
+      feed.add_score(-1.0)
       feed.clicks -= 1
-      feed.save
-    end
-    if self[:state] == HIDDEN	# self[:hide]
+    elsif self[:state] == HIDDEN	# self[:hide]
       self[:hide] = false
       feed.hides -= 1
-      feed.save
     end
     self[:state] = DOWN_VOTED
     feed.add_score(-0.25)
     feed.down_votes += 1
-    feed.save
+    feed.save(changed: true)
   end
 
   

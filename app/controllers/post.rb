@@ -22,7 +22,7 @@ Amethyst::App.controllers :post do
     
     @post = Post.with_pk! params[:id]
     @post.click!
-    @post.save
+    @post.save(changed: true)
 
     render 'show'
   end
@@ -34,7 +34,7 @@ Amethyst::App.controllers :post do
     
     @post = Post.with_pk! params[:id]
     @post.hide!
-    @post.save
+    @post.save(changed: true)
 
     redirect @origin
   end
