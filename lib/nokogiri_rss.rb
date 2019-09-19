@@ -63,16 +63,37 @@ module NokogiriRSS
                       nil
                     end
 
-            Post.update_or_create(feed_id: feed.id, ident: attrs[:ident]) do |p|
-#              puts "ATTRS: #{attrs.inspect}."
-              if p.new?
-                STDERR.puts "NEW: #{attrs[:title]}."
-                feed.ema_volume += Aging::ALPHA 
-                
-                p.set(attrs)
+            retries = 0
+            begin
+              Post.update_or_create(feed_id: feed.id, ident: attrs[:ident]) do |p|
+                if p.new?
+                  STDERR.puts "NEW: #{attrs[:title]}."
+                  feed.ema_volume += Aging::ALPHA 
+
+                  p.set(attrs)
+                end
+                p.previous_refresh = now
               end
-              p.previous_refresh = now
-              #              STDERR.puts "  #{p.inspect}"
+            rescue Sequel::DatabaseError
+              retries += 1
+              if retries > 3
+                STDERR.puts 'Too many retries'
+                raise
+              else
+                case $!.to_s
+                when /description/
+                  attrs[:description] = nil
+                when /synopsis/
+                  attrs[:synopsis] = nil
+                when /title/
+                  attrs[:title] = nil
+                else
+                  STDERR.puts 'No field name match'
+                  raise
+                end
+                STDERR.puts "Deleting #{$&}."
+                retry
+              end
             end
           end
         end
@@ -82,6 +103,7 @@ module NokogiriRSS
       STDERR.puts e.backtrace.join('\n')
       feed.status = e.class
       STDERR.puts "Exception: #{e}."
+      STDERR.puts "CLASS: #{e.class}."
     else
       feed.previous_refresh = now
     end
