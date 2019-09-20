@@ -14,7 +14,8 @@
       <%= link_to(SafeBuffer.new('&darr;'), down_url, method: :put, class: 'btn btn-link action') %>
     </div>
     
-    <h2 class="card-title"><%= link_to @post.name, @post.url, target: '_blank' %></h2>
+    <h2 class="card-title"><%= link_to(@post.name, @post.url, target: '_blank',
+	  title: "#{@post.feed.name}  #{short_datetime(@post.published_at)}") %></h2>
 
     <%= partial 'layouts/flash' %>
   </div>

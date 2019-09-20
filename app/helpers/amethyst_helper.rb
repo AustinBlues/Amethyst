@@ -21,6 +21,18 @@ module Amethyst
           'alert-warning'
         end
       end
+
+      def short_datetime(time)
+        today = Date.today
+        fmt = if time.to_date == today
+                 '%-l:%M%P'
+              elsif time.year == today.year
+                '%-m/%-e'
+              else
+                '%-m/%-e/%y'
+              end
+        time.strftime(fmt)
+      end
     end
 
     helpers AmethystHelper
