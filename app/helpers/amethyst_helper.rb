@@ -29,6 +29,7 @@ module Amethyst
               elsif time.year == today.year
                 '%-m/%-e'
               else
+                # should be extended for full century?
                 '%-m/%-e/%y'
               end
         time.strftime(fmt)
