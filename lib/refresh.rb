@@ -2,6 +2,7 @@
 #
 require 'redis'
 require 'nokogiri_rss'
+require 'time'
 #require 'ruby_rss'
 
 
@@ -16,6 +17,26 @@ module Refresh
   
 
   @@redis = Redis.new
+
+
+  def self.raw2time(raw)
+    tmp = case raw
+          when /^\w+, \d+ \w+ \d+ \d+:\d+:\d+ [-+]\d+$/
+            time = Time.rfc2822(raw)
+            STDERR.puts "SUPPORTED: '#{raw}' => '#{time}'."
+            STDERR.puts("AUTO: '#{raw}'.") if time == Time.parse(raw)
+            time
+          # this case ISO8601 is handled by Time.parse
+          when /^\d+-\d+-\d+T\d+:\d+:\d+-\d+:\d+$/
+            Time.iso8601(raw)
+          else
+            time = Time.parse(raw)
+            STDERR.puts "UNSUPPORTED: '#{raw}' => '#{time}'."
+            time
+          end
+    STDERR.puts "TIME: '#{raw}' => '#{tmp}'."
+    tmp
+  end
 
   
   def self.time_ago_in_words(from_time, include_seconds = false)

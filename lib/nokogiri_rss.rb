@@ -1,5 +1,6 @@
 # coding: utf-8
 require 'nokogiri'
+require 'time'
 
 
 module NokogiriRSS
@@ -70,6 +71,7 @@ module NokogiriRSS
                   STDERR.puts "NEW: #{attrs[:title]}."
                   feed.ema_volume += Aging::ALPHA 
 
+                  STDERR.puts "TIME: '#{attrs[:time]}' => '#{attrs[:published_at]}'."
                   p.set(attrs)
                 end
                 p.previous_refresh = now
@@ -188,7 +190,8 @@ module NokogiriRSS
                      STDERR.puts "NO DATE: "#{title}'."
                      now.to_s
                    end
-    attrs[:published_at] = Time.parse(attrs[:time])
+#    attrs[:published_at] = Time.parse(attrs[:time])
+    attrs[:published_at] = Refresh.raw2time(attrs[:time])
     attrs[:url] = if !(link = post.at_css('link')).nil?
                    link['href']
                  elsif !(link = post.at_css('enclosure')).nil?
