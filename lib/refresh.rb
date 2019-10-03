@@ -23,18 +23,21 @@ module Refresh
     tmp = case raw
           when /^\w+, \d+ \w+ \d+ \d+:\d+:\d+ [-+]\d+$/
             time = Time.rfc2822(raw)
-            STDERR.puts "SUPPORTED: '#{raw}' => '#{time}'."
-            STDERR.puts("AUTO: '#{raw}'.") if time == Time.parse(raw)
+#            STDERR.puts "SUPPORTED: '#{raw}' => '#{time}'."
+#            STDERR.puts("AUTO: '#{raw}'.") if time == Time.parse(raw)
             time
-          # this case ISO8601 is handled by Time.parse
+          # this case ISO8601 can also be handled by Time.parse
           when /^\d+-\d+-\d+T\d+:\d+:\d+-\d+:\d+$/
+#            STDERR.puts "ISO8601"
             Time.iso8601(raw)
           else
             time = Time.parse(raw)
-            STDERR.puts "UNSUPPORTED: '#{raw}' => '#{time}'."
+#            STDERR.puts "UNSUPPORTED: '#{raw}' => '#{time}'."
             time
           end
-    STDERR.puts "TIME: '#{raw}' => '#{tmp}'."
+    # KLUDGE
+    tmp = tmp.localtime if tmp.zone.nil?
+#    STDERR.puts "TIME: '#{raw}' => '#{tmp}'."
     tmp
   end
 
