@@ -20,24 +20,29 @@ module Refresh
 
 
   def self.raw2time(raw)
+    verbose = false
     tmp = case raw
-          when /^\w+, \d+ \w+ \d+ \d+:\d+:\d+ [-+]\d+$/
+          when /^[a-zA-Z]+, \d+ [a-zA-Z]+ \d+ \d+:\d+:\d+ [-+]\d+$/
             time = Time.rfc2822(raw)
-#            STDERR.puts "SUPPORTED: '#{raw}' => '#{time}'."
-#            STDERR.puts("AUTO: '#{raw}'.") if time == Time.parse(raw)
+#            STDERR.puts "RFC2822: '#{raw}' => '#{time}' (#{time.zone})"
             time
           # this case ISO8601 can also be handled by Time.parse
           when /^\d+-\d+-\d+T\d+:\d+:\d+-\d+:\d+$/
-#            STDERR.puts "ISO8601"
-            Time.iso8601(raw)
+            time = Time.iso8601(raw)
+#            STDERR.puts "ISO8601: '#{raw}' => '#{time}' (#{time.zone})"
+            time
+          when /^[a-zA-Z]+, \d+ [a-zA-Z]+ \d+ \d+:\d+:\d+ (GMT|UTC)$/
+            time = Time.httpdate(raw)
+#            STDERR.puts "RFC 2616: '#{raw}' => '#{time}' (#{time.zone})"
+            time
           else
             time = Time.parse(raw)
-#            STDERR.puts "UNSUPPORTED: '#{raw}' => '#{time}'."
+            verbose = true
             time
           end
     # KLUDGE
     tmp = tmp.localtime if tmp.zone.nil?
-#    STDERR.puts "TIME: '#{raw}' => '#{tmp}'."
+    STDERR.puts("TIME: '#{raw}' => '#{tmp}' (#{tmp.zone})") if verbose
     tmp
   end
 

@@ -71,7 +71,7 @@ module NokogiriRSS
                   STDERR.puts "NEW: #{attrs[:title]}."
                   feed.ema_volume += Aging::ALPHA 
 
-                  STDERR.puts "TIME: '#{attrs[:time]}' => '#{attrs[:published_at]}' (#{attrs[:published_at].zone})."
+#                  STDERR.puts "TIME: '#{attrs[:time]}' => '#{attrs[:published_at]}' (#{attrs[:published_at].zone})."
                   p.set(attrs)
                 end
                 p.previous_refresh = now
