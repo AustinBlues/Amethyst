@@ -21,28 +21,34 @@ module Refresh
 
   def self.raw2time(raw)
     verbose = false
-    tmp = case raw
-          when /^[a-zA-Z]+, \d+ [a-zA-Z]+ \d+ \d+:\d+:\d+ [-+]\d+$/
-            time = Time.rfc2822(raw)
-#            STDERR.puts "RFC2822: '#{raw}' => '#{time}' (#{time.zone})"
-            time
-          # this case ISO8601 can also be handled by Time.parse
-          when /^\d+-\d+-\d+T\d+:\d+:\d+-\d+:\d+$/
-            time = Time.iso8601(raw)
-#            STDERR.puts "ISO8601: '#{raw}' => '#{time}' (#{time.zone})"
-            time
-          when /^[a-zA-Z]+, \d+ [a-zA-Z]+ \d+ \d+:\d+:\d+ (GMT|UTC)$/
-            time = Time.httpdate(raw)
-#            STDERR.puts "RFC 2616: '#{raw}' => '#{time}' (#{time.zone})"
-            time
-          else
-            time = Time.parse(raw)
-            verbose = true
-            time
-          end
+    if true
+      tmp = Time.parse(raw)
+      verbose = true
+    else
+      tmp = case raw
+            when /^[a-zA-Z]+, \d+ [a-zA-Z]+ \d+ \d+:\d+:\d+ [-+]\d+$/
+              time = Time.rfc2822(raw)
+#              STDERR.puts "RFC2822: '#{raw}' => '#{time}' (#{time.zone})"
+              time
+            # this case ISO8601 can also be handled by Time.parse
+            when /^\d+-\d+-\d+T\d+:\d+:\d+-\d+:\d+$/
+              time = Time.iso8601(raw)
+#              STDERR.puts "ISO8601: '#{raw}' => '#{time}' (#{time.zone})"
+              time
+            when /^[a-zA-Z]+, \d+ [a-zA-Z]+ \d+ \d+:\d+:\d+ (GMT|UTC)$/
+              time = Time.httpdate(raw)
+#              STDERR.puts "RFC 2616: '#{raw}' => '#{time}' (#{time.zone})"
+              time
+            else
+              time = Time.parse(raw)
+              verbose = true
+              time
+            end
+    end
     # KLUDGE
     tmp = tmp.localtime if tmp.zone.nil?
-    STDERR.puts("TIME: '#{raw}' => '#{tmp}' (#{tmp.zone})") if verbose
+#    STDERR.puts("TIME: '#{raw}' => '#{tmp}' (#{tmp.zone})") if verbose 
+    STDERR.puts("TIME: '#{raw}' => '#{tmp}' (#{tmp.zone})") if tmp.zone.nil?
     tmp
   end
 
@@ -67,7 +73,7 @@ module Refresh
       STDERR.puts "Invalid argument: #{args.inspect}."
     end
   end
-
+  
 
   def self.refresh_slice
     # grab time now before lengthy downloads
