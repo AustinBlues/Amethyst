@@ -29,7 +29,7 @@ class Feed < Sequel::Model
 
 
   def unread
-    Post.where(feed_id: this.id, state: Post::UNREAD).count
+    Post.where(feed_id: self[:id], state: Post::UNREAD).count
   end
   
   
