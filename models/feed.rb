@@ -27,6 +27,11 @@ class Feed < Sequel::Model
     self[:score] += adjust
   end
 
+
+  def unread
+    Post.where(feed_id: this.id, state: Post::UNREAD).count
+  end
+  
   
   def before_destroy
     Post.where(feed_id: self[:id]).delete

@@ -3,10 +3,7 @@ require 'resque'
 
 Amethyst::App.controllers :feed do
   get :index do
-    @feeds = Feed.order(Sequel.desc(:score)).all
-    @feeds.each do |f|
-      f[:count] = Post.where(feed_id: f.id, state: Post::UNREAD).count
-    end if @feeds
+    @feeds = Feed.order(Sequel.desc(:score))
     render 'index'
   end
 

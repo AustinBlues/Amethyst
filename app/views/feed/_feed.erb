@@ -1,7 +1,8 @@
+<% count = feed.unread %>
 <tr id="feed<%= feed.id %>">
   <td>
     <%= link_to feed.name, url_for(:post, :index, feed_id: feed.id) %>
-    <%= (feed[:count] == 0) ? '' : "(#{feed[:count]})" %>
+    <%= (count == 0) ? '' : "(#{count})" %>
   </td>
   <td>
     <%= feed.status %>
