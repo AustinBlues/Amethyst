@@ -1,4 +1,4 @@
-<% count = feed.unread %>
+<% count = feed.unread.count %>
 <tr id="feed<%= feed.id %>">
   <td>
     <%= link_to feed.name, url_for(:post, :index, feed_id: feed.id) %>

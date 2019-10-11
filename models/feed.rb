@@ -3,9 +3,9 @@ class Feed < Sequel::Model
 
   
   def before_create
-    self.score ||= (Feed.avg(:score) + Feed.order(:score).first.score)/2.0
+    self[:score] ||= (Feed.count == 0) ? 0.0 : (Feed.avg(:score) + Feed.order(:score).first.score)/2.0
     # prevent refresh by Resque
-    self.next_refresh = Time.now + Refresh::CYCLE_TIME
+    self[:next_refresh] = Time.now + Refresh::CYCLE_TIME
     super
   end
 
@@ -29,7 +29,7 @@ class Feed < Sequel::Model
 
 
   def unread
-    Post.where(feed_id: self[:id], state: Post::UNREAD).count
+    Post.unread.where(feed_id: self[:id])
   end
   
   

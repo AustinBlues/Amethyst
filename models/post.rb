@@ -64,7 +64,7 @@ class Post < Sequel::Model
   def unhide!
     if self[:state] == HIDDEN	# self[:hide]
       self[:hide] = false
-      self[:STATE] = UNREAD
+      self[:state] = UNREAD
       feed.hides -= 1
       feed.save(changed: true)
     end
@@ -89,6 +89,11 @@ class Post < Sequel::Model
   def zombie?
     previous_refresh.nil? || previous_refresh < feed.previous_refresh
   end
+
+  
+  def self.unread
+    where(state: UNREAD)
+  end
   
 
   def self.zombie_killer
@@ -96,7 +101,7 @@ class Post < Sequel::Model
     
     zombie = where(Sequel.lit('previous_refresh <= ?', now - 10*ONE_DAY))
     zombie_cnt = zombie.count
-    unread_cnt = zombie.where(state: UNREAD).count
+    unread_cnt = zombie.unread.count
     puts "Deleting all 10+ day zombies: #{zombie_cnt}, #{unread_cnt} unread."
     zombie.delete
 
@@ -106,11 +111,11 @@ class Post < Sequel::Model
       zombie = where(Sequel.lit('? <= previous_refresh AND previous_refresh < ?', from, to))
       unread = zombie.where(state: UNREAD)
       unread_cnt = unread.count
-      if 0 < unread_cnt && unread_cnt <= 10
+#      if unread_cnt > 0
         unread.each do |p|
           puts "'#{p.name}' on #{p.feed.name}."
         end
-      end
+#      end
       puts "#{i} day zombies: #{zombie.count}, #{unread_cnt} unread."
     end
   end

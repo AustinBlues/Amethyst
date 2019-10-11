@@ -3,10 +3,10 @@ Amethyst::App.controllers :post do
     @origin = get_origin!
 
     if params[:feed_id].nil?
-      @posts = Post.where(state: Post::UNREAD).order(Sequel.desc(:published_at)).all
+      @posts = Post.unread.order(Sequel.desc(:published_at)).all
       @context = 'Posts'
     else
-      @posts = Post.where(feed_id: params[:feed_id], state: Post::UNREAD).order(Sequel.desc(:published_at)).all
+      @posts = Post.unread.where(feed_id: params[:feed_id]).order(Sequel.desc(:published_at)).all
       if !@posts.empty?
         @context = @posts[0].feed.title
       else
