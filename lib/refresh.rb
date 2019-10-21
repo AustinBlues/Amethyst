@@ -14,9 +14,32 @@ module Refresh
   extend Padrino::Helpers::FormatHelpers
 #  extend RubyRSS
   extend NokogiriRSS
-  
+#  include Amethyst::App::AmethystHelper
+#  extend AmethystHelper
+
+
 
   @@redis = Redis.new
+
+
+  def self.error_msg(txt)
+    # Red text
+    STDERR.puts "\033[31m#{txt}\033[0m"
+  end
+
+  def self.warning_msg(txt)
+    # Yellow text
+    STDERR.puts "\033[33m#{txt}\033[0m"
+  end
+
+  def self.highlight_msg(txt)
+    # Green text
+    STDERR.puts "\033[32m#{txt}\033[0m"
+  end
+
+  def self.info_msg(txt)
+    STDERR.puts "\033[0m#{txt}"
+  end
 
 
   def self.raw2time(raw)
@@ -96,6 +119,6 @@ module Refresh
 
     # Report progress
     tmp = (feeds.size == max_refresh) ? max_refresh : "#{feeds.size}:#{max_refresh}"
-    puts "Fetched #{tmp}/#{feed_count} channels at #{Time.now.strftime('%l:%M%P').strip}."
+    info_msg "Fetched #{tmp}/#{feed_count} channels at #{Time.now.strftime('%l:%M%P').strip}."
   end
 end

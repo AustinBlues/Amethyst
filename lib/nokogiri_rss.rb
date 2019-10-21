@@ -20,14 +20,14 @@ module NokogiriRSS
 
           unless standard == 'rss' && version == '2.0'
             feed.status = "#{standard.upcase} #{version}"
-            STDERR.puts("#{feed.status}.")
+            Refresh.warning_msg("#{feed.status}.")
           end
           
           # Is this what I want, hand-edited title overridden?
           feed.title ||= f.at_css('channel title').content
           if feed.title.empty?
             feed.status = 'missing title'
-            STDERR.puts "MISSING TITLE: '#{feed.name}'."
+            Refresh.warning_msg("MISSING TITLE: '#{feed.name}'.")
           end
 
           item = f.css('item')
@@ -38,14 +38,14 @@ module NokogiriRSS
           item = f.css('entry')
         else
           feed.status = 'download or RSS parse failed'
-#          STDERR.puts "OOPS(#{feed.name}): #{f.inspect}."
-#          STDERR.puts "METHODS: #{f.methods}."
+#          Refresh.error_msg "OOPS(#{feed.name}): #{f.inspect}."
+#          Refresh.debug_msg "METHODS: #{f.methods}."
           item = []
         end
 
         if item.size == 0
           feed.status = 'empty'
-          STDERR.puts "Feed '#{feed.name}' is empty."
+          Refresh.warning_msg "Feed '#{feed.name}' is empty."
         else
           item.each do |post|
             
@@ -58,9 +58,9 @@ module NokogiriRSS
                       #              description = post.content
                       #              ident = post.id.to_s
                       #              published_at = strip_tags(post.updated.to_s)
-                      #              STDERR.puts "ID: #{ident}."
-                      #              STDERR.puts "UPDATED: #{published_at}."
-                      STDERR.puts "METHODS: #{post.methods}"
+                      #              Refresh.debug_msg "ID: #{ident}."
+                      #              Refresh.debug_msg "UPDATED: #{published_at}."
+                      Refresh.debug_msg "METHODS: #{post.methods}"
                       nil
                     end
 
@@ -68,7 +68,7 @@ module NokogiriRSS
             begin
               Post.update_or_create(feed_id: feed.id, ident: attrs[:ident]) do |p|
                 if p.new?
-                  STDERR.puts "NEW: #{attrs[:title]}."
+                  Refresh.highlight_msg "NEW: #{attrs[:title]}."
                   feed.ema_volume += Aging::ALPHA 
 
 #                  STDERR.puts "TIME: '#{attrs[:time]}' => '#{attrs[:published_at]}' (#{attrs[:published_at].zone})."
@@ -79,7 +79,7 @@ module NokogiriRSS
             rescue Sequel::DatabaseError
               retries += 1
               if retries > 3
-                STDERR.puts 'Too many retries'
+                Refresh.error_msg 'Too many retries'
                 raise
               else
                 case $!.to_s
@@ -90,10 +90,10 @@ module NokogiriRSS
                 when /title/
                   attrs[:title] = nil
                 else
-                  STDERR.puts 'No field name match'
+                  Refresh.error_msg 'No field name match'
                   raise
                 end
-                STDERR.puts "Deleting #{$&}."
+                Refresh.warning_msg "Deleting #{$&}."
                 retry
               end
             end
@@ -104,7 +104,7 @@ module NokogiriRSS
     rescue Exception => e
       STDERR.puts e.backtrace.join('\n')
       feed.status = e.class
-      STDERR.puts "Exception: #{e}."
+      Refresh.error_msg "Exception: #{e}."
       STDERR.puts "CLASS: #{e.class}."
     else
       feed.previous_refresh = now
@@ -114,9 +114,9 @@ module NokogiriRSS
     feed.save(changed: true)
 
     if refreshed_at
-      puts "Refreshed #{Refresh.time_ago_in_words(refreshed_at, true)} ago: #{feed.name}."
+      Refresh.info_msg "Refreshed #{Refresh.time_ago_in_words(refreshed_at, true)} ago: #{feed.name}."
     else
-      puts "Refreshed (no previous refresh): #{feed.name}."
+      Refresh.info_msg "Refreshed (no previous refresh): #{feed.name}."
     end
   end
 
@@ -133,7 +133,7 @@ module NokogiriRSS
                       tmp.to_s
                     else
                       attrs[:status] = 'missing ident'
-                      STDERR.puts "NO IDENT: "#{title}'."
+                      Refresh.warning_msg "NO IDENT: "#{title}'."
                       post.feed.title
                     end
     attrs[:time] = if (tmp = post.at_css('pubDate'))
@@ -144,7 +144,7 @@ module NokogiriRSS
                      tmp.content
                    else
                      attrs[:status] = 'missing date'
-                     STDERR.puts "NO DATE: "#{title}'."
+                     Refresh.warning_msg "NO DATE: "#{title}'."
                      now.to_s
                    end
 #    attrs[:published_at] = Time.parse(attrs[:time])
@@ -155,7 +155,7 @@ module NokogiriRSS
                    link['url']
                  else
                    p.status = 'missing URL'
-                   STDERR.puts "MISSING URL: '#{p.name}'."
+                   Refresh.error_msg "MISSING URL: '#{p.name}'."
                    post.feed.rss_url
                  end
     attrs
@@ -177,7 +177,7 @@ module NokogiriRSS
                       tmp['href']
                     else
                       attrs[:status] = 'missing ident'
-                      STDERR.puts "NO IDENT: "#{title}'."
+                      Refresh.warning_msg "NO IDENT: "#{title}'."
                       post.feed.title
                     end
     attrs[:time] = if (tmp = post.at_css('published'))
@@ -188,7 +188,7 @@ module NokogiriRSS
                      tmp.content
                    else
                      attrs[:status] = 'missing date'
-                     STDERR.puts "NO DATE: "#{title}'."
+                     Refresh.warning_msg "NO DATE: "#{title}'."
                      now.to_s
                    end
 #    attrs[:published_at] = Time.parse(attrs[:time])
@@ -199,7 +199,7 @@ module NokogiriRSS
                    link['url']
                  else
                    p.status = 'missing URL'
-                   STDERR.puts "MISSING URL: '#{p.name}'."
+                   Refresh.error_msg "MISSING URL: '#{p.name}'."
                    post.feed.rss_url
                  end
     attrs
