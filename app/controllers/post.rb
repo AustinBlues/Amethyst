@@ -5,10 +5,12 @@ Amethyst::App.controllers :post do
     if params[:feed_id].nil?
       @posts = Post.unread.order(Sequel.desc(:published_at))
       @context = 'Posts'
+      @datetime_only = false
     else
       feed = Feed.with_pk! params[:feed_id]
       @context = feed.title
       @posts = Post.unread.where(feed_id: params[:feed_id]).order(Sequel.desc(:published_at))
+      @datetime_only = true
     end
     render 'index'
   end

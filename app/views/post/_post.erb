@@ -6,7 +6,7 @@
   <td>
     <%= link_to(post.name, url_for(:post, :show, id: post.id, origin: @origin),
           class: post_classes(post),
-	  title: "#{post.feed.name}  #{short_datetime(post.published_at)}") %>
+	  title: @datetime_only ? "#{short_datetime(post.published_at)}" : "#{post.feed.name}  #{short_datetime(post.published_at)}") %>
   </td>
   <td>
     <%= post.status %>
