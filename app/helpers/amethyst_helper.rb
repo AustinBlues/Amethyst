@@ -1,6 +1,16 @@
+#require 'logger'
+
+
 module Amethyst
   class App
     module AmethystHelper
+      LVL2CLR = {error: :red, warning: :yellow, highlight: :green, info: :default, debug: :cyan, devel: :magenta}
+      
+      def log(msg, level = :default)
+        logger << msg.colorize(LVL2CLR[level] || :default)
+      end
+      
+
       def get_origin!
         origin = if [:index].include?(request.action)
                    request.fullpath

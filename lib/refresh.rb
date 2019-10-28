@@ -4,7 +4,8 @@ require 'redis'
 require 'nokogiri_rss'
 require 'time'
 #require 'ruby_rss'
-
+require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/amethyst_helper.rb')
+require 'logger'
 
 module Refresh
   CYCLE_TIME = 60 * 60	# time to refresh all Feeds: 1 hour
@@ -14,32 +15,9 @@ module Refresh
   extend Padrino::Helpers::FormatHelpers
 #  extend RubyRSS
   extend NokogiriRSS
-#  include Amethyst::App::AmethystHelper
-#  extend AmethystHelper
-
-
+  extend Amethyst::App::AmethystHelper
 
   @@redis = Redis.new
-
-
-  def self.error_msg(txt)
-    # Red text
-    STDERR.puts "\033[31m#{txt}\033[0m"
-  end
-
-  def self.warning_msg(txt)
-    # Yellow text
-    STDERR.puts "\033[33m#{txt}\033[0m"
-  end
-
-  def self.highlight_msg(txt)
-    # Green text
-    STDERR.puts "\033[32m#{txt}\033[0m"
-  end
-
-  def self.info_msg(txt)
-    STDERR.puts "\033[0m#{txt}"
-  end
 
 
   def self.raw2time(raw)
@@ -93,7 +71,7 @@ module Refresh
     elsif args.is_a?(Integer)
       refresh_feed(Feed.with_pk(args), Time.now)
     else
-      STDERR.puts "Invalid argument: #{args.inspect}."
+      log "Invalid argument: #{args.inspect}.", :error
     end
   end
   
@@ -119,6 +97,6 @@ module Refresh
 
     # Report progress
     tmp = (feeds.size == max_refresh) ? max_refresh : "#{feeds.size}:#{max_refresh}"
-    info_msg "Fetched #{tmp}/#{feed_count} channels at #{Time.now.strftime('%l:%M%P').strip}."
+    log "Fetched #{tmp}/#{feed_count} channels at #{Time.now.strftime('%l:%M%P').strip}."
   end
 end

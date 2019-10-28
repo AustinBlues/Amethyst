@@ -20,14 +20,14 @@ module NokogiriRSS
 
           unless standard == 'rss' && version == '2.0'
             feed.status = "#{standard.upcase} #{version}"
-            Refresh.warning_msg("#{feed.status}.")
+            Refresh.log "#{feed.status}.", :warning
           end
           
           # Is this what I want, hand-edited title overridden?
           feed.title ||= f.at_css('channel title').content
           if feed.title.empty?
             feed.status = 'missing title'
-            Refresh.warning_msg("MISSING TITLE: '#{feed.name}'.")
+            Refresh.log "MISSING TITLE: '#{feed.name}'.", :warning
           end
 
           item = f.css('item')
@@ -38,14 +38,15 @@ module NokogiriRSS
           item = f.css('entry')
         else
           feed.status = 'download or RSS parse failed'
-#          Refresh.error_msg "OOPS(#{feed.name}): #{f.inspect}."
-#          Refresh.debug_msg "METHODS: #{f.methods}."
+#          Refresh.log "OOPS(#{feed.name}): #{f.inspect}.", :error
+#          Refresh.log "METHODS: #{f.methods}.", :debug
           item = []
         end
 
         if item.size == 0
           feed.status = 'empty'
-          Refresh.warning_msg "Feed '#{feed.name}' is empty."
+          # KLUDGE: warning is yellow, not very readable.
+          Refresh.log "Feed '#{feed.name}' is empty.", :warning
         else
           item.each do |post|
             
@@ -58,9 +59,9 @@ module NokogiriRSS
                       #              description = post.content
                       #              ident = post.id.to_s
                       #              published_at = strip_tags(post.updated.to_s)
-                      #              Refresh.debug_msg "ID: #{ident}."
-                      #              Refresh.debug_msg "UPDATED: #{published_at}."
-                      Refresh.debug_msg "METHODS: #{post.methods}"
+                      #              Refresh.log "ID: #{ident}.", :debug
+                      #              Refresh.log "UPDATED: #{published_at}.", :debug
+                      Refresh.log "METHODS: #{post.methods}", :debug
                       nil
                     end
 
@@ -68,10 +69,10 @@ module NokogiriRSS
             begin
               Post.update_or_create(feed_id: feed.id, ident: attrs[:ident]) do |p|
                 if p.new?
-                  Refresh.highlight_msg "NEW: #{attrs[:title]}."
+                  Refresh.log "NEW: #{attrs[:title]}.", :highlight
                   feed.ema_volume += Aging::ALPHA 
 
-#                  STDERR.puts "TIME: '#{attrs[:time]}' => '#{attrs[:published_at]}' (#{attrs[:published_at].zone})."
+#                  Refresh.log "TIME: '#{attrs[:time]}' => '#{attrs[:published_at]}' (#{attrs[:published_at].zone}).", :devel
                   p.set(attrs)
                 end
                 p.previous_refresh = now
@@ -79,7 +80,7 @@ module NokogiriRSS
             rescue Sequel::DatabaseError
               retries += 1
               if retries > 3
-                Refresh.error_msg 'Too many retries'
+                Refresh.log 'Too many retries', :warning
                 raise
               else
                 case $!.to_s
@@ -90,10 +91,10 @@ module NokogiriRSS
                 when /title/
                   attrs[:title] = nil
                 else
-                  Refresh.error_msg 'No field name match'
+                  Refresh.log 'No field name match', :error
                   raise
                 end
-                Refresh.warning_msg "Deleting #{$&}."
+                Refresh.log "Deleting #{$&}.", :warning
                 retry
               end
             end
@@ -104,8 +105,8 @@ module NokogiriRSS
     rescue Exception => e
       STDERR.puts e.backtrace.join('\n')
       feed.status = e.class
-      Refresh.error_msg "Exception: #{e}."
-      STDERR.puts "CLASS: #{e.class}."
+      Refresh.log "Exception: #{e}.", :error
+      Refresh.log "CLASS: #{e.class}.", :debug
     else
       feed.previous_refresh = now
     end
@@ -114,9 +115,9 @@ module NokogiriRSS
     feed.save(changed: true)
 
     if refreshed_at
-      Refresh.info_msg "Refreshed #{Refresh.time_ago_in_words(refreshed_at, true)} ago: #{feed.name}."
+      Refresh.log "Refreshed #{Refresh.time_ago_in_words(refreshed_at, true)} ago: #{feed.name}."
     else
-      Refresh.info_msg "Refreshed (no previous refresh): #{feed.name}."
+      Refresh.log "Refreshed (no previous refresh): #{feed.name}."
     end
   end
 
@@ -133,7 +134,7 @@ module NokogiriRSS
                       tmp.to_s
                     else
                       attrs[:status] = 'missing ident'
-                      Refresh.warning_msg "NO IDENT: "#{title}'."
+                      Refresh.log "NO IDENT: "#{title}'.", :warning
                       post.feed.title
                     end
     attrs[:time] = if (tmp = post.at_css('pubDate'))
@@ -144,7 +145,7 @@ module NokogiriRSS
                      tmp.content
                    else
                      attrs[:status] = 'missing date'
-                     Refresh.warning_msg "NO DATE: "#{title}'."
+                     Refresh.log "NO DATE: "#{title}'.", :warning
                      now.to_s
                    end
 #    attrs[:published_at] = Time.parse(attrs[:time])
@@ -155,7 +156,7 @@ module NokogiriRSS
                    link['url']
                  else
                    p.status = 'missing URL'
-                   Refresh.error_msg "MISSING URL: '#{p.name}'."
+                   Refresh.log "MISSING URL: '#{p.name}'.", :error
                    post.feed.rss_url
                  end
     attrs
@@ -177,7 +178,7 @@ module NokogiriRSS
                       tmp['href']
                     else
                       attrs[:status] = 'missing ident'
-                      Refresh.warning_msg "NO IDENT: "#{title}'."
+                      Refresh.log "NO IDENT: "#{title}'.", :warning
                       post.feed.title
                     end
     attrs[:time] = if (tmp = post.at_css('published'))
@@ -188,7 +189,7 @@ module NokogiriRSS
                      tmp.content
                    else
                      attrs[:status] = 'missing date'
-                     Refresh.warning_msg "NO DATE: "#{title}'."
+                     Refresh.log "NO DATE: "#{title}'.", :warning
                      now.to_s
                    end
 #    attrs[:published_at] = Time.parse(attrs[:time])
@@ -199,7 +200,7 @@ module NokogiriRSS
                    link['url']
                  else
                    p.status = 'missing URL'
-                   Refresh.error_msg "MISSING URL: '#{p.name}'."
+                   Refresh.log "MISSING URL: '#{p.name}'.", :error
                    post.feed.rss_url
                  end
     attrs
