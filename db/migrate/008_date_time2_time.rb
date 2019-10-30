@@ -1,13 +1,13 @@
 Sequel.migration do
   up do
     alter_table :feeds do
-      set_column_type :previous_refresh, :Time, only_time: false
-      set_column_type :next_refresh, :Time, only_time: false
+      set_column_type :previous_refresh, :timestamp
+      set_column_type :next_refresh, :timestamp
     end
     alter_table :posts do
-      set_column_type :dropped_at, :Time, only_time: false
-      set_column_type :previous_refresh, :Time, only_time: false
-      set_column_type :published_at, :Time, only_time: false
+      set_column_type :dropped_at, :timestamp
+      set_column_type :previous_refresh, :timestamp
+      set_column_type :published_at, :timestamp
     end
   end
 
