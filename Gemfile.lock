@@ -66,7 +66,7 @@ GEM
       redis-namespace (~> 1.6)
       sinatra (>= 0.9.2)
       vegas (~> 0.1.2)
-    sequel (5.22.0)
+    sequel (5.25.0)
     sinatra (2.0.5)
       mustermann (~> 1.0)
       rack (~> 2.0)
