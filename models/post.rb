@@ -15,12 +15,10 @@ class Post < Sequel::Model
 
 
   def clicked?
-#    self[:click]
     self[:state] == READ
   end
 
   def click!
-    self[:click] = true
     self[:state] = READ
     feed.add_score(1.0)
     feed.clicks += 1
@@ -29,31 +27,25 @@ class Post < Sequel::Model
 
   def unclick!
     if self[:state] == READ
-      self[:click] = false
-      self[:state] = UNREAD
       feed.add_score(-1.0)
       feed.clicks -= 1
       feed.save(changed: true)
+      self[:state] = UNREAD
     end
   end
   
 
   def hidden?
-#    self[:hide]
     self[:state] == HIDDEN
   end
 
   def hide!
-#    if self[:click]	# click?  Undo
     if self[:state] == READ	# click?  Undo
-      self[:click] = false
       feed.add_score(-1.0)	# back out click
       feed.clicks -= 1
     end
 
-#    if !self[:hide]
     if self[:state] != HIDDEN
-      self[:hide] = true
       self[:state] = HIDDEN
       self.feed.hides += 1
     end
@@ -62,21 +54,18 @@ class Post < Sequel::Model
   end
 
   def unhide!
-    if self[:state] == HIDDEN	# self[:hide]
-      self[:hide] = false
-      self[:state] = UNREAD
+    if self[:state] == HIDDEN
       feed.hides -= 1
       feed.save(changed: true)
+      self[:state] = UNREAD
     end
   end
 
   def down_vote!
-    if self[:state] == READ	# self[:click]
-      self[:click] = false
+    if self[:state] == READ
       feed.add_score(-1.0)
       feed.clicks -= 1
-    elsif self[:state] == HIDDEN	# self[:hide]
-      self[:hide] = false
+    elsif self[:state] == HIDDEN
       feed.hides -= 1
     end
     self[:state] = DOWN_VOTED
@@ -111,11 +100,9 @@ class Post < Sequel::Model
       zombie = where(Sequel.lit('? <= previous_refresh AND previous_refresh < ?', from, to))
       unread = zombie.where(state: UNREAD)
       unread_cnt = unread.count
-#      if unread_cnt > 0
-        unread.each do |p|
-          puts "'#{p.name}' on #{p.feed.name}."
-        end
-#      end
+      unread.each do |p|
+        puts "'#{p.name}' on #{p.feed.name}."
+      end
       puts "#{i} day zombies: #{zombie.count}, #{unread_cnt} unread."
     end
   end
