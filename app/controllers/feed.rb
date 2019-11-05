@@ -3,7 +3,8 @@ require 'resque'
 
 Amethyst::App.controllers :feed do
   get :index do
-    @feeds = Feed.order(Sequel.desc(:score))
+    @page = (params[:page] || 1).to_i
+    @feeds = Feed.order(Sequel.desc(:score)).paginate(@page, PAGE_SIZE)
     render 'index'
   end
 

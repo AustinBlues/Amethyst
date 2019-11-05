@@ -2,14 +2,15 @@ Amethyst::App.controllers :post do
   get :index do
     @origin = get_origin!
 
+    @page = (params[:page] || 1).to_i
     if params[:feed_id].nil?
-      @posts = Post.unread.order(Sequel.desc(:published_at))
+      @posts = Post.unread.order(Sequel.desc(:published_at)).paginate(@page, PAGE_SIZE)
       @context = 'Posts'
       @datetime_only = false
     else
       feed = Feed.with_pk! params[:feed_id]
       @context = feed.title
-      @posts = Post.unread.where(feed_id: params[:feed_id]).order(Sequel.desc(:published_at))
+      @posts = Post.unread.where(feed_id: params[:feed_id]).order(Sequel.desc(:published_at)).paginate(@page, PAGE_SIZE)
       @datetime_only = true
     end
     render 'index'
