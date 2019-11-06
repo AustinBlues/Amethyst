@@ -39,11 +39,13 @@ module RubyRSS
           # Is this what I want, hand-edited title overridden?
           feed.title ||= strip_tags(f.title.to_s)
         else
-          STDERR.puts "MISSING TITLE: '#{feed.name}'."
+          Refresh.log "MISSING TITLE: '#{feed.name}'.", :warning
         end
         
-        if f.items.size == 0
-          STDERR.puts "Feed '#{feed.name}' is empty."
+        if f.items.nil?
+          Refresh.log "Feed '#{feed.name}' items is non-existant.", :error
+        elsif f.items.size == 0
+          Refresh.log "Feed '#{feed.name}' is empty.", :warning
         else
           f.items.each do |post|
             title = strip_tags(post.title.to_s)
@@ -53,18 +55,18 @@ module RubyRSS
               description = post.content
               ident = post.id.to_s
               published_at = strip_tags(post.updated.to_s)
-              STDERR.puts "ID: #{ident}."
-              STDERR.puts "UPDATED: #{published_at}."
-#              STDERR.puts "METHODS(#{post.class}): #{post.methods}"
+#              Refresh.log "ID: #{ident}.", :debug
+#              Refresh.log "UPDATED: #{published_at}.", :debug
+#              Refresh.log "METHODS(#{post.class}): #{post.methods}", :debug
             else
-#              STDERR.puts "GUID: #{post.guid}."
-#              STDERR.puts "PubDATE: #{post.pubDate}."
-#              STDERR.puts "DATE: #{post.date}."
+#              Refresh.log "GUID: #{post.guid}.", :debug
+#              Refresh.log "PubDATE: #{post.pubDate}.", :debug
+#              Refresh.log "DATE: #{post.date}.", :debug
               description = post.description
-              ident = post.guid.to_s
+              ident = post.guid ? post.guid.to_s : post.link
 
               if post.pubDate != post.date
-                STDERR.puts "DATES: pubDate: #{post.pubDate}, date: #{post.date},  dc_date: #{post.dc_date}."
+                Refresh.log "DATES: pubDate: #{post.pubDate}, date: #{post.date},  dc_date: #{post.dc_date}.", :warning
               end
               published_at = first_nonblank(post.pubDate, post.date, post.dc_date, now)
             end
@@ -73,7 +75,7 @@ module RubyRSS
             
             Post.update_or_create(feed_id: feed.id, ident: ident) do |p|
               if p.new?
-                STDERR.puts "NEW: #{title.inspect}."
+                Refresh.log "NEW: #{title.inspect}.", :highlight
                 feed.ema_volume += Aging::ALPHA 
                 p.title = title.empty? ? nil : title
                 p.description = description
@@ -82,14 +84,14 @@ module RubyRSS
                 p.url = post.link
               end
               p.previous_refresh = now
-#              STDERR.puts "  #{p.inspect}"
+#              Refresh.log "  #{p.inspect}", :debug
             end
           end
         end
       end
     rescue
       feed.status = $!.class
-      STDERR.puts "Exception: #{$!}."
+      Refresh.log "Exception: #{$!}.", :error
     else
       feed.previous_refresh = now
     end
@@ -98,9 +100,9 @@ module RubyRSS
     feed.save(changed: true)
 
     if refreshed_at
-      puts "Refreshed #{time_ago_in_words(refreshed_at, true)} ago: #{feed.name}."
+      Refresh.log "Refreshed #{time_ago_in_words(refreshed_at, true)} ago: #{feed.name}."
     else
-      puts "Refreshed (no previous refresh): #{feed.name}."
+      Refresh.log "Refreshed (no previous refresh): #{feed.name}."
     end
   end
 end
