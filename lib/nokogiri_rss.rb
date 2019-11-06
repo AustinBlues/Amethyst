@@ -131,7 +131,7 @@ module NokogiriRSS
     attrs[:ident] = if (tmp = post.at_css('guid'))
                       tmp.to_s
                     elsif (tmp = post.at_css('link'))
-                      tmp.to_s
+                      tmp.content
                     else
                       attrs[:status] = 'missing ident'
                       Refresh.log "NO IDENT: "#{title}'.", :warning
