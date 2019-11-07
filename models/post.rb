@@ -94,7 +94,7 @@ class Post < Sequel::Model
     puts "Deleting all 10+ day zombies: #{zombie_cnt}, #{unread_cnt} unread."
     zombie.delete
 
-    9.downto(1).each do |i|
+    DAYS_OF_THE_DEAD.downto(1).each do |i|
       from = now - (i+1)*ONE_DAY
       to = now - i*ONE_DAY
       zombie = where(Sequel.lit('? <= previous_refresh AND previous_refresh < ?', from, to))
