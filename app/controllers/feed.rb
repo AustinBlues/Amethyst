@@ -42,11 +42,9 @@ Amethyst::App.controllers :feed do
       else
         w = Feed.first
       end
-    rescue
-      flash[:error] = 'Unknown exception'
+    rescue Exception => e
+      flash[:error] = "Unknown exception: #{e}."
       w = Feed.first
-    else
-      Resque.enqueue(ParseRSS, w[:id])
     end
 
     # Redirect to index where new feed will appear.
