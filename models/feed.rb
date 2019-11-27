@@ -10,6 +10,7 @@ class Feed < Sequel::Model
   end
 
   def after_create
+    super
     Resque.enqueue(Refresh, self[:id])
   end
 
