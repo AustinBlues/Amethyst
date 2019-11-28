@@ -14,7 +14,7 @@
       No posts
     </h2>
   <% else %>
-    <%= partial('layouts/pagination', object: @posts, locals: {view: :post, feed_id: @feed_id}) if ENV['TOP_PAGINATION']%>
+    <%= partial('layouts/pagination', object: @posts, locals: {view: :post, feed_id: @feed_id}) if (PAGINATION & POST_TOP) != 0 %>
 
     <table id="post" class="table table-striped">
       <tbody>
@@ -22,7 +22,7 @@
       </tbody>
     </table>
 
-    <%= partial('layouts/pagination', object: @posts, locals: {view: :post, feed_id: @feed_id}) if !ENV['TOP_PAGINATION']%>
+    <%= partial('layouts/pagination', object: @posts, locals: {view: :post, feed_id: @feed_id}) if (PAGINATION & POST_BOTTOM) != 0%>
   <% end %>
 </div>
 

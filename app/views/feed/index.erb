@@ -29,7 +29,7 @@
       No feeds
     </h2>
   <% else %>
-    <%= partial('layouts/pagination', object: @feeds, locals: {view: :feed, feed_id: nil}) if ENV['TOP_PAGINATION']%>
+    <%= partial('layouts/pagination', object: @feeds, locals: {view: :feed, feed_id: nil}) if (PAGINATION & FEED_TOP) != 0 %>
 
     <table id="feed" class="table table-striped">
       <tbody>
@@ -37,7 +37,7 @@
       </tbody>
     </table>
 
-    <%= partial('layouts/pagination', object: @feeds, locals: {view: :feed, feed_id: nil}) if !ENV['TOP_PAGINATION']%>
+    <%= partial('layouts/pagination', object: @feeds, locals: {view: :feed, feed_id: nil}) if (PAGINATION & FEED_BOTTOM) != 0 %>
   <% end %>
 </div>
 

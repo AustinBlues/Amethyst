@@ -1,11 +1,23 @@
-require 'resque'
+#require 'resque'
 
 
 Amethyst::App.controllers :feed do
   get :index do
+    record_count = Feed.count
+    last_page = page_number(record_count)
     @page = (params[:page] || 1).to_i
-    @feeds = Feed.order(Sequel.desc(:score)).paginate(@page, PAGE_SIZE)
-    render 'index'
+    if @page > last_page && last_page > 0
+      redirect url_for(:feed, :index, page: last_page)
+    elsif @page <= 0
+      redirect url_for(:feed, :index, page: 1)
+    else
+      @feeds = if !PAGINATED
+                 Feed.order(Sequel.desc(:score))
+               else
+                 Feed.order(Sequel.desc(:score)).paginate(@page, PAGE_SIZE)
+               end
+      render 'index'
+    end
   end
 
 
