@@ -21,6 +21,12 @@ module Amethyst
         origin
       end
 
+
+      def page_number(count)
+        (count-1)/PAGE_SIZE + 1
+      end
+
+
       def flash_class(level)
         case level
         when :notice then 'alert alert-info'

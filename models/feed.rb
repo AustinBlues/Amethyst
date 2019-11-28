@@ -4,9 +4,14 @@ class Feed < Sequel::Model
   
   def before_create
     self[:score] ||= (Feed.count == 0) ? 0.0 : (Feed.avg(:score) + Feed.order(:score).first.score)/2.0
-    # prevent refresh by Resque
+    # prevent refresh by scheduled Resque
     self[:next_refresh] = Time.now + Refresh::CYCLE_TIME
     super
+  end
+
+  def after_create
+    super
+    Resque.enqueue(Refresh, self[:id])
   end
 
   

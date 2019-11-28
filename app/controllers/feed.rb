@@ -1,10 +1,23 @@
-require 'resque'
+#require 'resque'
 
 
 Amethyst::App.controllers :feed do
   get :index do
-    @feeds = Feed.order(Sequel.desc(:score))
-    render 'index'
+    record_count = Feed.count
+    last_page = page_number(record_count)
+    @page = (params[:page] || 1).to_i
+    if @page > last_page && last_page > 0
+      redirect url_for(:feed, :index, page: last_page)
+    elsif @page <= 0
+      redirect url_for(:feed, :index, page: 1)
+    else
+      @feeds = if !PAGINATED
+                 Feed.order(Sequel.desc(:score))
+               else
+                 Feed.order(Sequel.desc(:score)).paginate(@page, PAGE_SIZE)
+               end
+      render 'index'
+    end
   end
 
 
@@ -41,11 +54,9 @@ Amethyst::App.controllers :feed do
       else
         w = Feed.first
       end
-    rescue
-      flash[:error] = 'Unknown exception'
+    rescue Exception => e
+      flash[:error] = "Unknown exception: #{e}."
       w = Feed.first
-    else
-      Resque.enqueue(ParseRSS, w[:id])
     end
 
     # Redirect to index where new feed will appear.
