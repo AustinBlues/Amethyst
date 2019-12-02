@@ -15,7 +15,7 @@ Amethyst::App.controllers :post do
       @posts = Post.unread.where(feed_id: @feed_id).order(Sequel.desc(:published_at))
       @datetime_only = true
     end
-    @posts = @post.paginate(@page, PAGE_SIZE) if PAGINATED
+    @posts = @posts.paginate(@page, PAGE_SIZE) if PAGINATED
 
     render 'index'
   end
