@@ -88,7 +88,7 @@ class Post < Sequel::Model
   def self.zombie_killer
     now = Time.now
     
-    zombie = where(Sequel.lit('previous_refresh <= ?', now - 10*ONE_DAY))
+    zombie = where(Sequel.lit('previous_refresh <= ?', now - DAYS_OF_THE_DEAD*ONE_DAY))
     zombie_cnt = zombie.count
     unread_cnt = zombie.where(state: UNREAD).count
     puts "Deleting all #{DAYS_OF_THE_DEAD}+ day zombies: #{zombie_cnt}, #{unread_cnt} unread."
