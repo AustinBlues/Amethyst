@@ -11,7 +11,8 @@ class Feed < Sequel::Model
 
   def after_create
     super
-    Resque.enqueue(Refresh, self[:id])
+    puts "ENV: #{Padrino.env}."
+    Resque.enqueue(Refresh, self[:id]) if Padrino.env != :test
   end
 
   
