@@ -8,9 +8,6 @@
           class: post_classes(post),
 	  title: @datetime_only ? "#{short_datetime(post.published_at)}" : "#{post.feed.name}  #{short_datetime(post.published_at)}") %>
   </td>
-  <td>
-    <%= post.status %>
-  </td>
   <td style="width: 3em">
     <div>
       <%= link_to(SafeBuffer.new('&times;'), hide_url, method: :put, class: 'btn btn-link action', style: 'padding: 0') %>
