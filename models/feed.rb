@@ -1,5 +1,6 @@
 class Feed < Sequel::Model
   one_to_many :post
+  extend Amethyst::App::AmethystHelper
 
   
   def before_create
@@ -22,7 +23,7 @@ class Feed < Sequel::Model
 
   
   def page_number
-    1
+    Feed.page_number(Feed.order(Sequel.desc(:score)).count)
   end
 
   

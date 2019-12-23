@@ -11,6 +11,7 @@ Amethyst::App.controllers :post do
     else
       @feed_id = params[:feed_id]
       feed = Feed.with_pk! @feed_id
+      @feed_page = feed.page_number
       @context = feed.title
       @posts = Post.unread.where(feed_id: @feed_id).order(Sequel.desc(:published_at))
       @datetime_only = true
