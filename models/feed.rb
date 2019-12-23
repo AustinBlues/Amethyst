@@ -12,7 +12,6 @@ class Feed < Sequel::Model
 
   def after_create
     super
-    puts "ENV: #{Padrino.env}."
     Resque.enqueue(Refresh, self[:id]) if Padrino.env != :test
   end
 
@@ -24,8 +23,6 @@ class Feed < Sequel::Model
   
   def page_number
     tmp = self[:score]
-    puts "SCORE: #{tmp.inspect}."
-    puts "COUNT: #{Feed.where{score > tmp}.count+1}."
     Feed.page_number(Feed.where{score > tmp}.count + 1)
   end
 
