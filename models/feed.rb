@@ -23,7 +23,10 @@ class Feed < Sequel::Model
 
   
   def page_number
-    Feed.page_number(Feed.order(Sequel.desc(:score)).count)
+    tmp = self[:score]
+    puts "SCORE: #{tmp.inspect}."
+    puts "COUNT: #{Feed.where{score > tmp}.count+1}."
+    Feed.page_number(Feed.where{score > tmp}.count + 1)
   end
 
   
