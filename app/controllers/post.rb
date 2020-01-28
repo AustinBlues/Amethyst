@@ -14,6 +14,8 @@ Amethyst::App.controllers :post do
       @feed_page = feed.page_number
       @context = feed.title
       @posts = Post.unread.where(feed_id: @feed_id).order(Sequel.desc(:published_at))
+      pages = page_number(@posts.count)
+      @page = pages if @page > pages 
       @datetime_only = true
     end
     @posts = @posts.paginate(@page, PAGE_SIZE) if PAGINATED
