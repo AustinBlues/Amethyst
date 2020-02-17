@@ -4,12 +4,12 @@
 
     <div style="font-size: x-large; text-align: center">
       <% url = url_for(view, :index) %>
-      <% feed = feed_id.nil? ? '' : "&feed_id=#{feed_id}" %>
-      <%= pagination.first_page? ? '<<' : link_to('<<', "#{url}?page=1#{feed}") %>
-      <%= pagination.first_page? ? '<' : link_to('<', "#{url}?page=#{pagination.prev_page}#{feed}") %>
+      <% feed = feed_id.nil? ? '' : "feed_id=#{feed_id}&" %>
+      <%= pagination.first_page? ? '<<' : link_to('<<', "#{url}?#{feed}page=1") %>
+      <%= pagination.first_page? ? '<' : link_to('<', "#{url}?#{feed}page=#{pagination.prev_page}") %>
       <span style="font-size: large"> <%= "#{pagination.current_page} of #{pagination.page_count}" %> </span>
-      <%= pagination.last_page? ? '>' : link_to('>', "#{url}?page=#{pagination.next_page}#{feed}") %>
-      <%= pagination.last_page? ? '>>' : link_to('>>', "#{url}?page=#{pagination.page_count}#{feed}") %>
+      <%= pagination.last_page? ? '>' : link_to('>', "#{url}?#{feed}page=#{pagination.next_page}") %>
+      <%= pagination.last_page? ? '>>' : link_to('>>', "#{url}?#{feed}page=#{pagination.page_count}") %>
     </div>
 
     <% if ENV['TOP_PAGINATION'] %>

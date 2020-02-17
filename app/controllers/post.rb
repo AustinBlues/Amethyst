@@ -24,7 +24,7 @@ Amethyst::App.controllers :post do
       @posts = Post.unread.where(feed_id: @feed_id).order(Sequel.desc(:published_at))
       tmp = pages_limit(@page, @posts.count)
       if tmp != @page
-        redirect url_for(:post, :index, page: tmp, feed_id: @feed_id)
+        redirect url_for(:post, :index, feed_id: @feed_id, page: tmp)
       else
         @datetime_only = true
         @posts = @posts.paginate(@page, PAGE_SIZE) if PAGINATED
