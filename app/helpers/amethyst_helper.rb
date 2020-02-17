@@ -29,7 +29,11 @@ module Amethyst
 
 
       def pages_limit(page, count)
-        [1, [page, page_number(count)].min].max
+        if true
+          page.clamp(1, page_number(count))
+        else
+          [1, [page, page_number(count)].min].max
+        end
       end
 
 
