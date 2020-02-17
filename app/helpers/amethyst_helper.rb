@@ -17,13 +17,19 @@ module Amethyst
                  else
                    params.delete(:origin)
                  end
-#        puts "ORIGIN: #{origin}."
+        puts "ORIGIN: #{origin}."
+        puts "REFERER: #{request.referer}."
         origin
       end
 
 
       def page_number(count)
         (count-1)/PAGE_SIZE + 1
+      end
+
+
+      def pages_limit(page, count)
+        [1, [page, page_number(count)].min].max
       end
 
 

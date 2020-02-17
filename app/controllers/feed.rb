@@ -4,12 +4,10 @@
 Amethyst::App.controllers :feed do
   get :index do
     record_count = Feed.count
-    last_page = page_number(record_count)
     @page = (params[:page] || 1).to_i
-    if @page > last_page && last_page > 0
-      redirect url_for(:feed, :index, page: last_page)
-    elsif @page <= 0
-      redirect url_for(:feed, :index, page: 1)
+    tmp = pages_limit(@page, record_count)
+    if tmp != @page
+      redirect url_for(:feed, :index, page: tmp)
     else
       @feeds = if !PAGINATED
                  Feed.order(Sequel.desc(:score))

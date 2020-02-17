@@ -6,21 +6,32 @@ Amethyst::App.controllers :post do
     if params[:feed_id].nil?
       @feed_id = nil
       @posts = Post.unread.order(Sequel.desc(:published_at))
-      @context = 'Posts'
-      @datetime_only = false
+      tmp = pages_limit(@page, @posts.count)
+      if tmp != @page
+        redirect url_for(:post, :index, page: tmp)
+      else
+        @context = 'Posts'
+        @datetime_only = false
+        @posts = @posts.paginate(@page, PAGE_SIZE) if PAGINATED
+
+        render 'index'
+      end
     else
       @feed_id = params[:feed_id]
       feed = Feed.with_pk! @feed_id
       @feed_page = feed.page_number
       @context = feed.title
       @posts = Post.unread.where(feed_id: @feed_id).order(Sequel.desc(:published_at))
-      pages = page_number(@posts.count)
-      @page = pages if @page > pages 
-      @datetime_only = true
-    end
-    @posts = @posts.paginate(@page, PAGE_SIZE) if PAGINATED
+      tmp = pages_limit(@page, @posts.count)
+      if tmp != @page
+        redirect url_for(:post, :index, page: tmp, feed_id: @feed_id)
+      else
+        @datetime_only = true
+        @posts = @posts.paginate(@page, PAGE_SIZE) if PAGINATED
 
-    render 'index'
+        render 'index'
+      end
+    end
   end
 
   get :show, '/post/:id' do
