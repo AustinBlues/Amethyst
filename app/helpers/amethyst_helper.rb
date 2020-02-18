@@ -29,11 +29,8 @@ module Amethyst
 
 
       def pages_limit(page, count)
-        if true
-          page.clamp(1, page_number(count))
-        else
-          [1, [page, page_number(count)].min].max
-        end
+        pages = page_number(count)
+        (pages == 0) ? 1 : page.clamp(1, pages)
       end
 
 
