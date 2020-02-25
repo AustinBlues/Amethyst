@@ -25,6 +25,7 @@ module NokogiriRSS
           
           # Is this what I want, hand-edited title overridden?
           feed.title ||= f.at_css('channel title').content
+          feed.title.strip!
           if feed.title.empty?
             feed.status = 'missing title'
             Refresh.log "MISSING TITLE: '#{feed.name}'.", :warning
