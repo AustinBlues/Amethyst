@@ -31,7 +31,8 @@ class Feed < Sequel::Model
     # refresh for new Feed may not have occurred yet, i.e. ema_volume == 0.0; so no low volume adjust
 #    adjust = (self[:ema_volume] == 0.0) ? 1.0 : amt * (1.0 + [1.0/self[:ema_volume], 4.0].min)
 #    adjust = (self[:ema_volume] == 0.0) ? 1.0 : amt * (0.5 + [1.0/self[:ema_volume], 4.0].min)
-    adjust = (self[:ema_volume] == 0.0) ? 1.0 : amt * (0.5 + [0.5/self[:ema_volume], 3.0].min)
+#    adjust = (self[:ema_volume] == 0.0) ? 1.0 : amt * (0.5 + [0.5/self[:ema_volume], 3.0].min)
+    adjust = (self[:ema_volume] == 0.0) ? 1.0 : amt * (0.5 + [0.25/self[:ema_volume], 3.0].min)
     STDERR.puts "SCORE: #{adjust}."
     self[:score] += adjust
   end
