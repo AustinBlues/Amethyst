@@ -1,11 +1,22 @@
+<% url = url_for(:feed, :destroy, id: @feed_id) if @feed_id %>
+
+<% puts "URL: '#{url}'." %>
+
 <div class="card">
   <div class="card-header bg-info">
     <a href="<%= url_for :feed, :index, page: @feed_page %>" class="btn btn-link navigation">
       &larr;
     </a>
 
-    <h2 class="card-title"><%= @context %></h2>
+    <% if @feed_id %>
+      <button type="button" class="btn btn-default btn-lg"  data-toggle="modal" data-target="#deleteModal"
+      	      aria-label="Delete" style="float:right">
+        &minus;
+      </button>
+    <% end %>
     
+    <h2 class="card-title"><%= @context %></h2>
+
     <%= partial 'layouts/flash' %>
   </div>
 
@@ -24,5 +35,28 @@
 
     <%= partial('layouts/pagination', object: @posts, locals: {view: :post, feed_id: @feed_id}) if (PAGINATION & POST_BOTTOM) != 0%>
   <% end %>
-</div>
 
+  <% if @feed_id %>
+    <!-- Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteModalLabel">Delete <%= @context %> feed</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            This action cannot be undone.
+        </div>
+        <div class="modal-footer">
+          <% form_tag url(:feed, :destroy, id: @feed_id), method: :delete do %>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
+	    <%= submit_tag 'Delete', class: 'btn btn-danger btn-small' %>
+	  <% end %>
+	</div>
+      </div>
+    </div>
+  <% end %>
+</div>

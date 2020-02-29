@@ -60,4 +60,20 @@ Amethyst::App.controllers :feed do
     # Redirect to index where new feed will appear.
     redirect url_for(:feed, :index, page: w.page_number)
   end
+
+  
+  delete :destroy, with: :id do
+    feed = Feed[params[:id]]
+    if feed
+      if feed.destroy
+        flash[:success] = 'Delete successful'
+      else
+        flash[:error] = 'Delete failed'
+      end
+      redirect url(:feed, :index)
+    else
+      flash[:warning] = pat(:delete_warning, :model => 'feed', :id => "#{params[:id]}")
+      halt 404
+    end
+  end
 end
