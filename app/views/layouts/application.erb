@@ -35,64 +35,10 @@
     <div id="body" class="container" style="max-width:60em">
       <%= yield %>
     </div>
-
-    <!-- Modal -->
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-        </div>
-      </div>
-      <!-- /.modal-dialog -->
-    </div>
-    <!-- /.modal -->
-
-    <div id="contextMenu" class="dropdown clearfix">
-      <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="display:block;position:static;margin-bottom:5px;">
-        <li><a id="show" tabindex="-1" href="#">Show</a></li>
-        <li><a id="edit" tabindex="-1" data-toggle="modal" href="#" data-target="#myModal">Edit</a></li>
-        <li><a id="delete" tabindex="-1" href="#">Delete</a></li>
-        <li class="divider"></li>
-        <li><a id="close" tabindex="-1" href="#">Close</a></li>
-      </ul>
-    </div>
  
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<!--
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
--->
     <script src="/javascripts/jquery.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="/javascripts/bootstrap.min.js"></script>
-    <script type="text/javascript">
-      $(function() {
-        var $contextMenu = $("#contextMenu");
-  
-        function set_contextmenu(e) {
-	  var m = e.target.parentElement.getAttribute("id").match(/([a-z_]+)(\d+)/);
-	  var origin = escape(window.location.href.match(/http:\/\/[^/]*(\/.*)/)[1]);
-
-          $contextMenu.css({
-            display: "block",
-            left: e.pageX,
-            top: e.pageY
-          });
-	  $contextMenu.find("a#show").attr("href", "/"+m[1]+"/"+m[2]+"?origin="+origin);
-	  $contextMenu.find("a#edit").attr("href", "/"+m[1]+"/"+m[2]+"/edit?origin="+origin);
-	  $contextMenu.find("a#delete").attr("href", "/"+m[1]+"/"+m[2]+"/delete?origin"+origin);
-	  $contextMenu.find("a#close").attr("href", window.location.href);
-
-          return false;
-        }
-
-        $("table tbody").on("contextmenu", "tr", set_contextmenu);
-
-        $("table tbody").dblclick("tr", set_contextmenu);
-  
-        $contextMenu.on("click", "a", function() {
-          $contextMenu.hide();
-        });
-  
-      });
-    </script>
+    <script src="/javascripts/bootstrap.js"></script>
   </body>
 </html>
