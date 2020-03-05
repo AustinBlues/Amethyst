@@ -1,3 +1,9 @@
+# Just enough to make Resque work
+module Refresh
+  @queue = :Refresh
+end
+
+
 class Feed < Sequel::Model
   one_to_many :post
   extend Amethyst::App::AmethystHelper

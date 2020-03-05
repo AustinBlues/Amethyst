@@ -7,7 +7,7 @@
     </a>
       
     <button type="button" class="btn btn-light btn-circle"  data-toggle="modal"
-          data-target="#writingForm" aria-label="Add" style="float:right; font-size:20pt">
+          data-target="#feedForm" aria-label="Add" style="float:right; font-size:20pt">
 	  +
     </button>
 
@@ -17,7 +17,7 @@
   </div>
 
   <!-- Modal -->
-  <div class="modal fade" id="feedForm" role="dialog">
+  <div class="modal fade" id="feedForm">
     <div class="modal-dialog">
       <%= partial 'feed/form', object: Feed.new,
             locals: {url: url, page: @page, button: button_to('Submit',  url, class: :form)} %>

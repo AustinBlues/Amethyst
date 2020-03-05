@@ -32,14 +32,6 @@ Amethyst::App.controllers :feed do
     # I'm surprised I have to do this.
     params.delete('authenticity_token')
 
-    # if no genre specified, use N/A.
-    params[:genre] = Feed::GENRE.find_index(params[:genre]) || 0
-    params[:notes].strip!
-
-    # use NULL if filename is empty or blank
-    params[:filename].strip!
-    params.delete(:filename) if params[:filename] == ''
-
     begin
       w = Feed.create(params)
     rescue Sequel::UniqueConstraintViolation => e
