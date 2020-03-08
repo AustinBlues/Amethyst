@@ -127,6 +127,7 @@ module NokogiriRSS
     attrs = {}
 
     attrs[:title] = post.at_css('title').content
+    attrs[:title].strip!
     tmp = post.at_css('description')
     attrs[:description] = tmp ? tmp.content : 'No description'
     # NOTE: ident uses .to_s instead of .content for compatibility with RubyRSS module
