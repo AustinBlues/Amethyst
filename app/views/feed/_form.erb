@@ -18,7 +18,7 @@
           </div>
 
 	  <div class="modal-footer">
-	    <%= link_to 'Cancel', url_for(:feed, :index, page: form.page_number), class: 'btn btn-default' %>
+	    <%= link_to 'Cancel', url_for(:feed, :index, page: @feed_page), class: 'btn btn-default' %>
 	    <%= f.submit 'Save', class: 'btn btn-primary' %>
 	  </div>  
         <% end %>
