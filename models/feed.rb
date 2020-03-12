@@ -28,8 +28,8 @@ class Feed < Sequel::Model
 
   
   def page_number
-    tmp = self[:score]
-    Feed.page_number(Feed.where{score > tmp}.count + 1)
+    feed_id = self[:id]
+    Feed.page_number(Feed.where{score >= Sequel.lit("(SELECT score FROM feeds WHERE id = ?)", feed_id)}.count)
   end
 
   
