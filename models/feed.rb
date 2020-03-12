@@ -29,9 +29,14 @@ class Feed < Sequel::Model
   
   def page_number
     feed_id = self[:id]
-    if false
-      # This should work for any database that uses SQL
-      Feed.page_number(Feed.where{score >= Sequel.lit("(SELECT score FROM feeds WHERE id = ?)", feed_id)}.count)
+    if true
+      if true
+        tmp = Feed.where(id: feed_id).select(:score)
+        Feed.page_number(Feed.where{score >= tmp}.count)
+      else      
+        # This should work for any database that uses SQL
+        Feed.page_number(Feed.where{score >= Sequel.lit("(SELECT score FROM feeds WHERE id = ?)", feed_id)}.count)
+      end
     else
       # these are somewhat MariaDB/MySQL specific in the precision of DOUBLE precision data/calculations.
       if false
