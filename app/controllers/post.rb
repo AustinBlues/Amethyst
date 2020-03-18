@@ -20,7 +20,7 @@ Amethyst::App.controllers :post do
       @feed_id = params[:feed_id]
       feed = Feed.with_pk! @feed_id
       @feed_page = feed.page_number
-      @context = feed.title
+      @context = feed.name	# allow URL for new Feeds that haven't refreshed or have no title tag
       @posts = Post.unread.where(feed_id: @feed_id).order(Sequel.desc(:published_at))
       tmp = pages_limit(@page, @posts.count)
       if tmp != @page
