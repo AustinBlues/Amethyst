@@ -92,7 +92,23 @@ module Refresh
     # Update all Feeds in the slice
     feeds = Feed.slice(slice_size).all
     feeds.each do |f|
+      refreshed_at = f.previous_refresh
+STDERR.puts "About to refresh #{f.title}."
       refresh_feed(f, now)
+
+      if refreshed_at
+        Refresh.log "Refreshed #{Refresh.time_ago_in_words(refreshed_at, true)} ago: #{f.name}."
+      else
+        Refresh.log "Refreshed (no previous refresh): #{f.name}."
+      end
+
+      # Hide unread Posts older than UNREAD_LIMIT
+      times = Post.where(feed_id: f[:id], state: Post::UNREAD).order(Sequel.desc(:published_at)).limit(UNREAD_LIMIT).map(:published_at)
+      if times.size >= UNREAD_LIMIT
+        cutoff = times[-1]
+        n = Post.where(feed_id: f[:id], state: Post::UNREAD).where{published_at < cutoff}.update(state: Post::HIDDEN)
+        STDERR.puts "Marked #{n} older Posts in #{f.name} HIDDEN."
+      end
     end
 
     # Report progress

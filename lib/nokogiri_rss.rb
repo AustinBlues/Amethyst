@@ -6,7 +6,6 @@ require 'time'
 module NokogiriRSS
   def refresh_feed(feed, now)
     feed.status = nil
-    refreshed_at = feed.previous_refresh
     begin
       # open-uri is gagging on IPv6 address and doesn't support forcing to IPv4
       # libcurl and curb Gem appear to have same limitation.
@@ -114,12 +113,6 @@ module NokogiriRSS
 
     feed.next_refresh = now + Refresh::CYCLE_TIME
     feed.save(changed: true)
-
-    if refreshed_at
-      Refresh.log "Refreshed #{Refresh.time_ago_in_words(refreshed_at, true)} ago: #{feed.name}."
-    else
-      Refresh.log "Refreshed (no previous refresh): #{feed.name}."
-    end
   end
 
 

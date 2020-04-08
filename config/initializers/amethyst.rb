@@ -3,6 +3,9 @@ PAGE_SIZE = 8
 # How many days to keep zombies (Posts that have been dropped from their Feed)
 DAYS_OF_THE_DEAD = 30
 
+# How many Unread post to keep visible
+UNREAD_LIMIT = 50
+
 # PAGINATION bitmasks
 FEED_TOP = 0b1000
 FEED_BOTTOM = 0b0100

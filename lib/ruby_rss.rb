@@ -24,7 +24,6 @@ module RubyRSS
 
   def refresh_feed(feed, now)
     feed.status = nil
-    refreshed_at = feed.previous_refresh
     begin
       # open-uri is gagging on IPv6 address and doesn't support forcing to IPv4
       # libcurl and curb Gem appear to have same limitation.
@@ -98,11 +97,5 @@ module RubyRSS
 
     feed.next_refresh = now + Refresh::CYCLE_TIME
     feed.save(changed: true)
-
-    if refreshed_at
-      Refresh.log "Refreshed #{time_ago_in_words(refreshed_at, true)} ago: #{feed.name}."
-    else
-      Refresh.log "Refreshed (no previous refresh): #{feed.name}."
-    end
   end
 end
