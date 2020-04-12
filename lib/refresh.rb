@@ -93,25 +93,24 @@ module Refresh
     feeds = Feed.slice(slice_size).all
     feeds.each do |f|
       refreshed_at = f.previous_refresh
-STDERR.puts "About to refresh #{f.title}."
       refresh_feed(f, now)
+
+      # Hide unread Posts older than UNREAD_LIMIT
+      cutoff = Post.where(feed_id: f[:id], state: Post::UNREAD).order(Sequel.desc(:published_at)).
+                 offset(UNREAD_LIMIT-1).get(:published_at)
+      if cutoff
+        n = Post.where(feed_id: f[:id], state: Post::UNREAD).where{published_at < cutoff}.update(state: Post::HIDDEN)
+        log("Hiding #{n} older post(s).", :debug) if n > 0
+      end
 
       if refreshed_at
         Refresh.log "Refreshed #{Refresh.time_ago_in_words(refreshed_at, true)} ago: #{f.name}."
       else
         Refresh.log "Refreshed (no previous refresh): #{f.name}."
       end
-
-      # Hide unread Posts older than UNREAD_LIMIT
-      times = Post.where(feed_id: f[:id], state: Post::UNREAD).order(Sequel.desc(:published_at)).limit(UNREAD_LIMIT).map(:published_at)
-      if times.size >= UNREAD_LIMIT
-        cutoff = times[-1]
-        n = Post.where(feed_id: f[:id], state: Post::UNREAD).where{published_at < cutoff}.update(state: Post::HIDDEN)
-        STDERR.puts "Marked #{n} older Posts in #{f.name} HIDDEN."
-      end
     end
 
-    # Report progress
+    # Report progress.  The second case is when Amethyst catching up after not running (e.g. hibernation).
     tmp = (feeds.size == max_refresh) ? max_refresh : "#{feeds.size}:#{max_refresh}"
     log "Fetched #{tmp}/#{feed_count} channels at #{Time.now.strftime('%l:%M%P').strip}."
   end
