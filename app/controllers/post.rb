@@ -34,6 +34,23 @@ Amethyst::App.controllers :post do
     end
   end
 
+
+#  get :search, '/post/search' do
+  get :search do
+    @origin = get_origin!
+    puts "SEARCH: '#{params[:search]}'."
+    puts "URL: #{request.url}."
+    puts "PATH_INFO: #{request.path_info}."
+    @context = "Search: '#{params[:search]}'."
+    @page = (params[:page] || 1).to_i
+    @search = params[:search]
+    @posts = Post.dataset.full_text_search([:title, :description], params[:search])
+    @posts = @posts.paginate(@page, PAGE_SIZE) if PAGINATED
+
+    render 'index'
+  end
+
+
   get :show, '/post/:id' do
     @origin = get_origin!
     
@@ -43,8 +60,8 @@ Amethyst::App.controllers :post do
 
     render 'show'
   end
-
   
+
 #  put :hide, '/post/:id/hide' do
   get :hide, '/post/:id/hide' do
     @origin = get_origin!
