@@ -31,5 +31,5 @@ tr a.hidden {
     text-decoration: line-through;
 }
 tr a.clicked {
-    text-color: gray;
+    color: gray;
 }
