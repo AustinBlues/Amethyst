@@ -12,16 +12,16 @@ Amethyst::App.controllers :post do
       if tmp != @page
         redirect url_for(:post, :index, page: tmp)
       else
-        @options[:context] = 'Posts'
+        @context = 'Posts'
         @datetime_only = false
         @posts = @posts.paginate(@page, PAGE_SIZE) if PAGINATED
 
         render 'index'
       end
     else
-      @options[:context] = feed.name	# allow URL for new Feeds that haven't refreshed or have no title tag
-      @options[:feed_id] = params[:feed_id]
+      @options[:feed_id] = @feed_id = params[:feed_id]
       feed = Feed.with_pk! @feed_id
+      @context = feed.name	# allow URL for new Feeds that haven't refreshed or have no title tag
       @feed_page = feed.page_number
       @posts = Post.unread.where(feed_id: @feed_id).order(Sequel.desc(:published_at))
       tmp = pages_limit(@page, @posts.count)
@@ -42,7 +42,8 @@ Amethyst::App.controllers :post do
     @page = (params[:page] || 1).to_i
     @controller = :post
     @action = :search
-    @options = {context: "Search: '#{params[:search]}'", page: @page, search: params[:search]}
+    @context = "Search: '#{params[:search]}'"
+    @options = {page: @page, search: params[:search]}
     @posts = Post.dataset.full_text_search([:title, :description], params[:search])
     @posts = @posts.paginate(@page, PAGE_SIZE) if PAGINATED
 
@@ -52,7 +53,7 @@ Amethyst::App.controllers :post do
 
   get :show, '/post/:id' do
     @origin = get_origin!
-    
+
     @post = Post.with_pk! params[:id]
     @post.click!
     @post.save(changed: true)

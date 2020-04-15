@@ -12,7 +12,7 @@ module Amethyst
       
 
       def get_origin!
-        origin = if [:index].include?(request.action)
+        origin = if [:index, :search].include?(request.action)
                    request.fullpath
                  else
                    params.delete(:origin)
