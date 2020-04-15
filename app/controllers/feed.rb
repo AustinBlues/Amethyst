@@ -11,7 +11,7 @@ Amethyst::App.controllers :feed do
     else
       @controller = :feed
       @action = :index
-      
+      @options = {context: 'Feeds', page: (params[:page] || 1).to_i}
       @feeds = if !PAGINATED
                  Feed.order(Sequel.desc(:score))
                else
