@@ -27,7 +27,13 @@
       <a href="<%= url_for(:home) %>">
 	<span style="font-size:x-large; color:purple; font-style:oblique; font-family:sans-serif">
 	  Amethyst
-	</span>		  
+	</span>
+
+        <% form_tag '/post/search', method: 'get', style: 'float: right' do %>
+          <%= label_tag :search %>
+          <%= search_field_tag :search, placeholder: 'Search this website...' %>
+          <%= submit_tag :search %>
+        <% end %>
       </a>			  
       </div>
     </div>

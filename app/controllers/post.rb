@@ -1,8 +1,10 @@
 Amethyst::App.controllers :post do
   get :index do
     @origin = get_origin!
-
     @page = (params[:page] || 1).to_i
+    @controller = :post
+    @action = :index
+    
     if params[:feed_id].nil?
       @feed_id = nil
       @posts = Post.unread.order(Sequel.desc(:published_at))
@@ -35,13 +37,11 @@ Amethyst::App.controllers :post do
   end
 
 
-#  get :search, '/post/search' do
   get :search do
     @origin = get_origin!
-    puts "SEARCH: '#{params[:search]}'."
-    puts "URL: #{request.url}."
-    puts "PATH_INFO: #{request.path_info}."
-    @context = "Search: '#{params[:search]}'."
+    @controller = :post
+    @action = :search
+    @context = "Search: '#{params[:search]}'"
     @page = (params[:page] || 1).to_i
     @search = params[:search]
     @posts = Post.dataset.full_text_search([:title, :description], params[:search])

@@ -9,6 +9,9 @@ Amethyst::App.controllers :feed do
     if tmp != @page
       redirect url_for(:feed, :index, page: tmp)
     else
+      @controller = :feed
+      @action = :index
+      
       @feeds = if !PAGINATED
                  Feed.order(Sequel.desc(:score))
                else
