@@ -10,9 +10,6 @@ describe "Amethyst::App::FeedHelper" do
     @helpers
   end
 
-  puts "HERE"
-  STDERR.puts "STDERR"
-  
 #  it "should return nil" do
 #    assert_nil helpers.foo
 #  end
