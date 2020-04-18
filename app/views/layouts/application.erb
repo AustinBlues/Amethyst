@@ -24,17 +24,16 @@
   <body>
     <div id="header">
       <div id="logo" style="height:1in">
-      <a href="<%= url_for(:home) %>">
-	<span style="font-size:x-large; color:purple; font-style:oblique; font-family:sans-serif">
-	  Amethyst
-	</span>
+        <a href="<%= url_for(:home) %>">
+	  <span style="font-size:x-large; color:purple; font-style:oblique; font-family:sans-serif">
+	    Amethyst
+	  </span>
+        </a>
 
-        <% form_tag '/post/search', method: 'get', style: 'float: right' do %>
-          <%= label_tag :search %>
+	<% form_tag '/post/search', method: 'get', class: 'form-inline d-flex', style: 'float: right' do %>
+          &#x1F50E;&nbsp;
           <%= search_field_tag :search, placeholder: 'Search this website...' %>
-          <%= submit_tag :search %>
         <% end %>
-      </a>			  
       </div>
     </div>
 
