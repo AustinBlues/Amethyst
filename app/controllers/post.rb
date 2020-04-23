@@ -53,6 +53,7 @@ Amethyst::App.controllers :post do
 
   get :show, '/post/:id' do
     @origin = get_origin!
+    @back_title = (@origin =~ /search/) ? 'to Search' : 'to Posts'
 
     @post = Post.with_pk! params[:id]
     @post.click!

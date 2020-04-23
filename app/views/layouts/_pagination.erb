@@ -4,11 +4,15 @@
     <% end %>
 
     <div style="font-size: x-large; text-align: center">
-      <%= pagination.first_page? ? '<<' : link_to('<<', url_for(@controller, @action, @options.merge(page: 1))) %>
-      <%= pagination.first_page? ? '<' : link_to('<', url_for(@controller, @action, @options.merge(page: pagination.prev_page))) %>
+      <%= pagination.first_page? ? '<<' : link_to('<<', url_for(@controller, @action, @options.merge(page: 1)),
+      	     title: 'first page') %>
+      <%= pagination.first_page? ? '<' : link_to('<', url_for(@controller, @action, @options.merge(page: pagination.prev_page)),
+      	     title: 'previous page') %>
       <span style="font-size: large"> <%= "#{pagination.current_page} of #{pagination.page_count}" %> </span>
-      <%= pagination.last_page? ? '>' : link_to('>', url_for(@controller, @action, @options.merge(page: pagination.next_page))) %>
-      <%= pagination.last_page? ? '>>' : link_to('>>', url_for(@controller, @action, @options.merge(page: pagination.page_count))) %>
+      <%= pagination.last_page? ? '>' : link_to('>', url_for(@controller, @action, @options.merge(page: pagination.next_page)),
+      	     title: 'next page') %>
+      <%= pagination.last_page? ? '>>' : link_to('>>', url_for(@controller, @action, @options.merge(page: pagination.page_count)),
+      	     title: 'last page') %>
     </div>
 
     <% if ENV['TOP_PAGINATION'] %>

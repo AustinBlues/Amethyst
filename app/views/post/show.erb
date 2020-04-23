@@ -4,14 +4,12 @@
 
 <div class="card">
   <div class="card-header bg-info">
-    <a href="<%= url_for @origin %>" class="btn btn-link navigation">
-      &larr;
-    </a>
+    <%= link_to LEFT_ARROW, url_for(@origin), title: @back_title, class: 'btn btn-link navigation' %>
     
     <div style="float: right">
-      <%= link_to(SafeBuffer.new('&#x27F2;'), unclick_url, method: :put, class: 'btn btn-link action', style: 'font-size: x-large') %>
-      <%= link_to(SafeBuffer.new('&times;'), hide_url, method: :put, class: 'btn btn-link action') %>
-      <%= link_to(SafeBuffer.new('&darr;'), down_url, method: :put, class: 'btn btn-link action') %>
+      <%= link_to UNDO, unclick_url, method: :put, title: 'unclick', class: 'btn btn-link action', style: 'font-size: x-large' %>
+      <%= link_to TIMES, hide_url, method: :put, title: 'hide', class: 'btn btn-link action' %>
+      <%= link_to DOWN_ARROW, down_url, method: :put, title: 'down vote', class: 'btn btn-link action' %>
     </div>
     
     <h2 class="card-title"><%= link_to(@post.name, @post.url, target: '_blank',

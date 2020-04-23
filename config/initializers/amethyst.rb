@@ -17,3 +17,12 @@ BOTTOM_PAGINATION = FEED_BOTTOM | POST_BOTTOM
 
 PAGINATION = ENV['AMETHYST_PAGINATION'] ? ENV['AMETHYST_PAGINATION'].to_i(2) : TOP_PAGINATION
 PAGINATED = PAGINATION != 0
+
+
+# HTML entities
+DOWN_ARROW = SafeBuffer.new('&darr;')
+LEFT_ARROW = SafeBuffer.new('&larr;')
+PLUS = SafeBuffer.new('&plus;')
+SEARCH = SafeBuffer.new('&#x1F50E;')
+TIMES = SafeBuffer.new('&times;')
+UNDO = SafeBuffer.new('&#x27F2;')
