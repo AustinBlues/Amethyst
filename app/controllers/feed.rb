@@ -39,14 +39,20 @@ Amethyst::App.controllers :feed do
     begin
       w = Feed.create(params)
     rescue Sequel::UniqueConstraintViolation => e
-      flash[:error] = (/unique_(\w+)s'/ =~ e.to_s) ? "Duplicate #{$~[1]}." : 'Unique Constraint Violation'
-      case $~[1]
-      when 'title'
-        w = Feed.where(title: params[:title]).first
-      when 'filename'
-        w = Feed.where(filename: params[:filename]).first
+      if /unique_(\w+)s'/ !~ e.to_s
+        STDERR.puts "'#{params[:rss_url]}' already followed."
+        w = Feed.where(rss_url: params[:rss_url]).first
+        flash[:warning] = "'#{w.name}' already followed."
       else
-        w = Feed.first
+        flash[:error] = "Duplicate #{$~[1]}."
+        case $~[0]
+        when 'title'
+          w = Feed.where(title: params[:title]).first
+        when 'filename'
+          w = Feed.where(filename: params[:filename]).first
+        else
+          w = Feed.first
+        end
       end
     rescue Exception => e
       flash[:error] = "Unknown exception: #{e}."
