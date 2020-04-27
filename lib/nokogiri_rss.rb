@@ -130,8 +130,8 @@ module NokogiriRSS
                       strip_tags(tmp.content)
                     else
                       attrs[:status] = 'missing ident'
-                      Refresh.log "NO IDENT: "#{title}'.", :warning
-                      post.feed.title
+                      Refresh.log "NO IDENT: "#{attrs[:title]}'.", :warning
+                      attrs[:title]
                     end
     attrs[:time] = if (tmp = post.at_css('pubDate'))
                      tmp.content
