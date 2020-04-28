@@ -66,6 +66,7 @@ module NokogiriRSS
                     end
 
             retries = 0
+            attrs[:title] = attrs[:description].truncate(80, separator: /\s/) if attrs[:title].empty?
             begin
               Post.update_or_create(feed_id: feed.id, ident: attrs[:ident]) do |p|
                 if p.new?
@@ -162,7 +163,8 @@ module NokogiriRSS
   def parse_atom_item(post)
     attrs = {}
 
-    attrs[:title] = post.at_css('title').content
+    attrs[:title] = post.at_css('title').content.truncate(255, separator: /\s/)
+    attrs[:title].strip!
     attrs[:description] = post.at_css('content').content
     if (tmp = post.at_css('summary'))
       attrs[:synopsis] = tmp.content
@@ -175,7 +177,7 @@ module NokogiriRSS
                     else
                       attrs[:status] = 'missing ident'
                       Refresh.log "NO IDENT: "#{title}'.", :warning
-                      post.feed.title
+                      attrs[:title]
                     end
     attrs[:time] = if (tmp = post.at_css('published'))
                      tmp.content
