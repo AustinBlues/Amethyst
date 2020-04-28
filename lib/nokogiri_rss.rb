@@ -69,7 +69,7 @@ module NokogiriRSS
             begin
               Post.update_or_create(feed_id: feed.id, ident: attrs[:ident]) do |p|
                 if p.new?
-                  Refresh.log "NEW: #{attrs[:title]}.", :highlight
+                  Refresh.log "NEW: #{attrs[:title] || attrs[:ident]}.", :highlight
                   feed.ema_volume += Aging::ALPHA 
 
 #                  Refresh.log "TIME: '#{attrs[:time]}' => '#{attrs[:published_at]}' (#{attrs[:published_at].zone}).", :devel
@@ -119,7 +119,7 @@ module NokogiriRSS
   def parse_rss_item(post)
     attrs = {}
 
-    attrs[:title] = post.at_css('title').content
+    attrs[:title] = post.at_css('title').content.truncate(255, separator: /\s/)
     attrs[:title].strip!
     tmp = post.at_css('description')
     attrs[:description] = tmp ? tmp.content : 'No description'
