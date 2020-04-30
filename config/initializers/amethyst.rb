@@ -21,6 +21,7 @@ PAGINATED = PAGINATION != 0
 
 # HTML entities
 DOWN_ARROW = SafeBuffer.new('&darr;')
+ELLIPSIS = SafeBuffer.new('&#x2026;')
 LEFT_ARROW = SafeBuffer.new('&larr;')
 PLUS = SafeBuffer.new('&plus;')
 SEARCH = SafeBuffer.new('&#x1F50E;')

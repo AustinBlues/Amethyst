@@ -66,7 +66,7 @@ module NokogiriRSS
                     end
 
             retries = 0
-            attrs[:title] = attrs[:description].truncate(80, separator: /\s/) if attrs[:title].empty?
+            attrs[:title] = truncate(attrs[:description], 80, separator: /\s/) if attrs[:title].empty?
             begin
               Post.update_or_create(feed_id: feed.id, ident: attrs[:ident]) do |p|
                 if p.new?
@@ -120,7 +120,7 @@ module NokogiriRSS
   def parse_rss_item(post)
     attrs = {}
 
-    attrs[:title] = post.at_css('title').content.truncate(255, separator: /\s/)
+    attrs[:title] = truncate(post.at_css('title').content, 255, separator: /\s/)
     attrs[:title].strip!
     tmp = post.at_css('description')
     attrs[:description] = tmp ? tmp.content : 'No description'
@@ -163,7 +163,7 @@ module NokogiriRSS
   def parse_atom_item(post)
     attrs = {}
 
-    attrs[:title] = post.at_css('title').content.truncate(255, separator: /\s/)
+    attrs[:title] = truncate(post.at_css('title').content, 255, separator: /\s/)
     attrs[:title].strip!
     attrs[:description] = post.at_css('content').content
     if (tmp = post.at_css('summary'))
@@ -202,5 +202,19 @@ module NokogiriRSS
                    post.feed.rss_url
                  end
     attrs
+  end
+
+  def truncate(str, truncate_at = 255, options = {})
+    return str.dup unless str.length > truncate_at
+
+    options[:omission] ||= '...'
+    options[:omission] ||= ELLIPSIS
+    length_with_room_for_omission = truncate_at - options[:omission].length
+    stop = if options[:separator]
+             str.rindex(options[:separator], length_with_room_for_omission) || length_with_room_for_omission
+           else
+             length_with_room_for_omission
+           end
+    "#{str[0...stop]}#{options[:omission]}"
   end
 end
