@@ -120,10 +120,17 @@ module NokogiriRSS
   def parse_rss_item(post)
     attrs = {}
 
-    attrs[:title] = truncate(post.at_css('title').content, 255, separator: /\s/)
+    attrs[:title] = truncate(post.at_css('title').content, VARCHAR_MAX, separator: /\s/)
     attrs[:title].strip!
-    tmp = post.at_css('description')
-    attrs[:description] = tmp ? tmp.content : 'No description'
+    
+    if (tmp = post.at_css('description')).nil?
+      attrs[:description] = 'No description'
+    else
+      attrs[:description] = tmp.content
+      attrs[:description].strip!
+      attrs[:description] = truncate(attrs[:description], TEXT_MAX, separator: /\s/)
+    end
+    
     # NOTE: ident uses .to_s instead of .content for compatibility with RubyRSS module
     attrs[:ident] = if (tmp = post.at_css('guid'))
                       tmp.to_s
@@ -163,9 +170,17 @@ module NokogiriRSS
   def parse_atom_item(post)
     attrs = {}
 
-    attrs[:title] = truncate(post.at_css('title').content, 255, separator: /\s/)
+    attrs[:title] = truncate(post.at_css('title').content, VARCHAR_MAX, separator: /\s/)
     attrs[:title].strip!
-    attrs[:description] = post.at_css('content').content
+
+    if (tmp = post.at_css('content')).nil?
+      attrs[:description] = 'No description'
+    else
+      attrs[:description] = tmp.content
+      attrs[:description].strip!
+      attrs[:description] = truncate(attrs[:description], TEXT_MAX, separator: /\s/)
+    end
+
     if (tmp = post.at_css('summary'))
       attrs[:synopsis] = tmp.content
     end
@@ -204,7 +219,7 @@ module NokogiriRSS
     attrs
   end
 
-  def truncate(str, truncate_at = 255, options = {})
+  def truncate(str, truncate_at, options = {})
     return str.dup unless str.length > truncate_at
 
     options[:omission] ||= '...'
