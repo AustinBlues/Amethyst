@@ -49,7 +49,6 @@ module NokogiriRSS
           Refresh.log "Feed '#{feed.name}' is empty.", :warning
         else
           item.each do |post|
-            
             attrs = case standard
                     when 'rss'
                       parse_rss_item(post)
@@ -64,9 +63,19 @@ module NokogiriRSS
                       Refresh.log "METHODS: #{post.methods}", :debug
                       nil
                     end
+            attrs[:title] = truncate(post.at_css('title').content, VARCHAR_MAX, separator: /\s/)
+            attrs[:title].strip!
+
+            if attrs[:description].nil?
+              attrs[:description] = 'No description'
+            else
+              attrs[:description].strip!
+              attrs[:description] = truncate(attrs[:description], TEXT_MAX, separator: /\s/)
+            end
+
+            attrs[:title] = truncate(attrs[:description], VARCHAR_MAX, separator: /\s/) if attrs[:title].empty?
 
             retries = 0
-            attrs[:title] = truncate(attrs[:description], 80, separator: /\s/) if attrs[:title].empty?
             begin
               Post.update_or_create(feed_id: feed.id, ident: attrs[:ident]) do |p|
                 if p.new?
@@ -120,16 +129,8 @@ module NokogiriRSS
   def parse_rss_item(post)
     attrs = {}
 
-    attrs[:title] = truncate(post.at_css('title').content, VARCHAR_MAX, separator: /\s/)
-    attrs[:title].strip!
-    
-    if (tmp = post.at_css('description')).nil?
-      attrs[:description] = 'No description'
-    else
-      attrs[:description] = tmp.content
-      attrs[:description].strip!
-      attrs[:description] = truncate(attrs[:description], TEXT_MAX, separator: /\s/)
-    end
+    attrs[:title] = post.at_css('title').content
+    attrs[:description] = (tmp = post.at_css('description')).nil? ? nil : tmp.content
     
     # NOTE: ident uses .to_s instead of .content for compatibility with RubyRSS module
     attrs[:ident] = if (tmp = post.at_css('guid'))
@@ -170,16 +171,8 @@ module NokogiriRSS
   def parse_atom_item(post)
     attrs = {}
 
-    attrs[:title] = truncate(post.at_css('title').content, VARCHAR_MAX, separator: /\s/)
-    attrs[:title].strip!
-
-    if (tmp = post.at_css('content')).nil?
-      attrs[:description] = 'No description'
-    else
-      attrs[:description] = tmp.content
-      attrs[:description].strip!
-      attrs[:description] = truncate(attrs[:description], TEXT_MAX, separator: /\s/)
-    end
+    attrs[:title] = post.at_css('title')
+    attrs[:description] = (tmp = post.at_css('content')).nil? ? nil : tmp.content
 
     if (tmp = post.at_css('summary'))
       attrs[:synopsis] = tmp.content
