@@ -1,6 +1,6 @@
 module Aging
   # Exponential Moving Average (i.e. Feed volume and score) parameters
-  DAYS = 30
+  DAYS = 90
   ALPHA = 2.0/(DAYS + 1.0)
 
   # done this way so can be used by Resque
