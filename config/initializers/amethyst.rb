@@ -21,6 +21,7 @@ PAGINATED = PAGINATION != 0
 
 # HTML entities
 DOWN_ARROW = SafeBuffer.new('&darr;')
+EDIT_PENCIL = "\u270E"
 ELLIPSIS = "\u2026"
 LEFT_ARROW = SafeBuffer.new('&larr;')
 PLUS = SafeBuffer.new('&plus;')
