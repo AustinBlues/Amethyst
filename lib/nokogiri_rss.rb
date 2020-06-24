@@ -10,9 +10,11 @@ module NokogiriRSS
       # open-uri is gagging on IPv6 address and doesn't support forcing to IPv4
       # libcurl and curb Gem appear to have same limitation.
       # Invoking curl CLI is fast enough
-      open("|curl -s -4 '#{feed.rss_url}'") do |rss|
-        f = Nokogiri::XML.parse(rss)
-
+#      open("|curl -s -4 '#{feed.rss_url}'") do |rss|
+      rss = %x(curl -s -4 '#{feed.rss_url}')
+#      puts "RSS: #{rss}."
+      f = Nokogiri::XML.parse(rss)
+      begin
         if f.at_css('rss')
           standard = f.at_css('rss').name
           version = f.at_css('rss')['version']
