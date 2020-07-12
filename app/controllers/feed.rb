@@ -1,8 +1,6 @@
-#require 'resque'
-
-
 Amethyst::App.controllers :feed do
   get :index do
+    @origin = get_origin!
     record_count = Feed.count
     @page = (params[:page] || 1).to_i
     tmp = pages_limit(@page, record_count)
@@ -24,11 +22,31 @@ Amethyst::App.controllers :feed do
 
 
   get :show, '/feed/:id' do
-    @origin = get_origin!
-    
+#    @origin = get_origin!
     @feed = Feed.with_pk! params[:id]
-    @button = button_to 'Create', @url
-    render 'show'
+    @page = (params[:page] || 1).to_i
+    @controller = :feed
+    @action = :show
+
+    @options = {page: @page}
+    @options[:id] = params[:id]
+
+    @context = @feed.name	# allow URL for new Feeds that haven't refreshed or have no title tag
+#    @feed_page = @feed.page_number
+    @posts = Post.unread.where(feed_id: @feed.id).order(Sequel.desc(:published_at))
+    tmp = pages_limit(@page, @posts.count)
+    if tmp != @page
+      redirect url_for(:feed, :show, id: @feed.id, page: tmp)
+    else
+#      @datetime_only = true
+      @posts = @posts.paginate(@page, PAGE_SIZE) if PAGINATED
+
+      puts "PAGE_COUNT: #{@posts.page_count}."
+      puts "PAGINATION_RECORD_COUNT: #{@posts.pagination_record_count}."
+      puts "CURRENT_PAGE_RECORD_COUNT: #{@posts.current_page_record_count}."
+#      @button = button_to 'Create', @url
+      render 'show'
+    end
   end
   
 
@@ -63,7 +81,33 @@ Amethyst::App.controllers :feed do
     redirect url_for(:feed, :index, page: w.page_number)
   end
 
+
+  get :edit, with: :id do
+    @feed = Feed.with_pk! params[:id]
+    url = url_for(:feed, :update, id: @feed.id)
+    partial('feed/form', object: @feed, locals: {url: url, button: button_to('Update', url, method: :put, class: :form)})
+  end
+
   
+  put :update, with: :id do
+    # I'm surprised I have to do this.
+    params.delete('authenticity_token')
+    params.delete('_method')
+
+    begin
+      feed = Feed.load(params).save
+    rescue Sequel::UniqueConstraintViolation => e
+      flash[:error] = (/unique_(\w+)s'/ =~ e.to_s) ? "Duplicate #{$~[1]}." : 'Unique Constraint Violation'
+    rescue
+      flash[:error] = 'Unknown exception'
+    ensure
+      feed ||= Feed.with_pk! params[:id]
+    end
+
+    redirect url(:feed, :index, page: feed.page_number)
+  end
+
+
   delete :destroy, with: :id do
     feed = Feed[params[:id]]
     if feed

@@ -1,19 +1,17 @@
 <div class="card">
   <div class="card-header bg-info">
-    <%= link_to LEFT_ARROW, url_for(:feed, :index, page: @feed_page), title: 'to Feeds',
+    <%= link_to LEFT_ARROW, url_for(:feed, :index, page: @page), title: 'to Feeds',
     	class: 'btn btn-link navigation' %>
 
-    <% if @feed_id %>
-      <button type="button" class="btn btn-default btn-lg"  data-toggle="modal" data-target="#deleteModal"
+    <button type="button" class="btn btn-default btn-lg"  data-toggle="modal" data-target="#deleteModal"
             aria-label="Delete" style="float:right">
-        &minus;
-      </button>
+      &minus;
+    </button>
 
-      <button type="button" class="btn btn-default btn-lg"  data-toggle="modal" data-target="#editModal"
-          aria-label="Edit" style="float:right">
-        <%= EDIT_PENCIL %>
-      </button>
-    <% end %>
+    <button type="button" class="btn btn-default btn-lg"  data-toggle="modal" data-target="#editModal"
+        aria-label="Edit" style="float:right">
+      <%= EDIT_PENCIL %>
+    </button>
     
     <h2 class="card-title"><%= @context %></h2>
 
