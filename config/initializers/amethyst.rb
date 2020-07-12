@@ -27,7 +27,7 @@ LEFT_ARROW = SafeBuffer.new('&larr;')
 PLUS = SafeBuffer.new('&plus;')
 SEARCH = "\u{1F50E}"
 TIMES = SafeBuffer.new('&times;')
-UNDO = "\u27F2"
+UNDO = "\u21A9"		# leftward hook arrow
 
 # MySQL column limits
 VARCHAR_MAX = 255
