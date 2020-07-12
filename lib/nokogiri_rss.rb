@@ -30,7 +30,8 @@ module NokogiriRSS
           if feed.title.empty?
             feed.status = 'missing title'
             Refresh.log "MISSING TITLE: '#{feed.name}'.", :warning
-#            feed.title = feed.rss_url
+            #            feed.title = feed.rss_url
+            feed.title = nil
           end
 
           item = f.css('item')
