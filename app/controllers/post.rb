@@ -1,35 +1,22 @@
 Amethyst::App.controllers :post do
   get :index do
-    @origin = get_origin!
+ #   @origin = get_origin!
     @page = (params[:page] || 1).to_i
-    @controller = :post
-    @action = :index
-    @options = {page: @page}
-    
-    if params[:feed_id].nil?
-      @posts = Post.unread.order(Sequel.desc(:published_at))
-      tmp = pages_limit(@page, @posts.count)
-      if tmp != @page
-        redirect url_for(:post, :index, page: tmp)
+    if @page <= 0
+      redirect url_for(:post, :index, page: 1)
+    else
+      @posts = Post.unread.order(Sequel.desc(:published_at)).paginate(@page, PAGE_SIZE)
+      if @page > @posts.page_count
+        redirect url_for(:post, :index, page: @posts.page_count)
       else
         @context = 'Posts'
-        @datetime_only = false
-        @posts = @posts.paginate(@page, PAGE_SIZE) if PAGINATED
 
-        render 'index'
-      end
-    else
-      @options[:feed_id] = @feed_id = params[:feed_id]
-      feed = Feed.with_pk! @feed_id
-      @context = feed.name	# allow URL for new Feeds that haven't refreshed or have no title tag
-      @feed_page = feed.page_number
-      @posts = Post.unread.where(feed_id: @feed_id).order(Sequel.desc(:published_at))
-      tmp = pages_limit(@page, @posts.count)
-      if tmp != @page
-        redirect url_for(:post, :index, feed_id: @feed_id, page: tmp)
-      else
-        @datetime_only = true
-        @posts = @posts.paginate(@page, PAGE_SIZE) if PAGINATED
+        @controller = :post
+        @action = :index
+
+        @options = {page: @page}
+
+        @datetime_only = false
 
         render 'index'
       end

@@ -1,51 +1,46 @@
 Amethyst::App.controllers :feed do
   get :index do
     @origin = get_origin!
-    record_count = Feed.count
     @page = (params[:page] || 1).to_i
-    tmp = pages_limit(@page, record_count)
-    if tmp != @page
-      redirect url_for(:feed, :index, page: tmp)
+    if @page <= 0
+      redirect url_for(:feed, :index, page: 1)
     else
-      @controller = :feed
-      @action = :index
-      @context = 'Feeds'
-      @options = {page: (params[:page] || 1).to_i}
-      @feeds = if !PAGINATED
-                 Feed.order(Sequel.desc(:score))
-               else
-                 Feed.order(Sequel.desc(:score)).paginate(@page, PAGE_SIZE)
-               end
-      render 'index'
+      @feeds = Feed.order(Sequel.desc(:score)).paginate(@page, PAGE_SIZE)
+      if !@feeds.page_range.cover?(@page)
+        redirect url_for(:feed, :index, page: @feeds.page_count)
+      else
+        @context = 'Feeds'
+
+        @controller = :feed
+        @action = :index
+
+        @options = {page: @page}
+
+        render 'index'
+      end
     end
   end
 
 
   get :show, '/feed/:id' do
-#    @origin = get_origin!
     @feed = Feed.with_pk! params[:id]
     @page = (params[:page] || 1).to_i
-    @controller = :feed
-    @action = :show
-
-    @options = {page: @page}
-    @options[:id] = params[:id]
-
-    @context = @feed.name	# allow URL for new Feeds that haven't refreshed or have no title tag
-#    @feed_page = @feed.page_number
-    @posts = Post.unread.where(feed_id: @feed.id).order(Sequel.desc(:published_at))
-    tmp = pages_limit(@page, @posts.count)
-    if tmp != @page
-      redirect url_for(:feed, :show, id: @feed.id, page: tmp)
+    if @page <= 0
+      redirect url_for(:feed, :show, id: @feed.id, page: 1)
     else
-#      @datetime_only = true
-      @posts = @posts.paginate(@page, PAGE_SIZE) if PAGINATED
+      @posts = Post.unread.where(feed_id: @feed.id).order(Sequel.desc(:published_at)).paginate(@page, PAGE_SIZE)
+      if @page > @posts.page_count
+        redirect url_for(:feed, :show, id: @feed.id, page: @posts.page_count)
+      else
+        @context = @feed.name	# allow URL for new Feeds that haven't refreshed or have no title tag
 
-      puts "PAGE_COUNT: #{@posts.page_count}."
-      puts "PAGINATION_RECORD_COUNT: #{@posts.pagination_record_count}."
-      puts "CURRENT_PAGE_RECORD_COUNT: #{@posts.current_page_record_count}."
-#      @button = button_to 'Create', @url
-      render 'show'
+        @controller = :feed
+        @action = :show
+
+        @options = {id: params[:id], page: @page}
+
+        render 'show'
+      end
     end
   end
   
