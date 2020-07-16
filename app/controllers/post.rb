@@ -52,11 +52,12 @@ Amethyst::App.controllers :post do
 
 #  put :hide, '/post/:id/hide' do
   get :hide, '/post/:id/hide' do
+    @origin = get_origin!
     @post = Post.with_pk! params[:id]
     @post.hide!
     @post.save(changed: true)
 
-    redirect request.referer
+    redirect @origin
   end
 
   
