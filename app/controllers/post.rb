@@ -52,10 +52,10 @@ Amethyst::App.controllers :post do
 
 #  put :hide, '/post/:id/hide' do
   get :hide, '/post/:id/hide' do
-    @origin = get_origin!
-    @post = Post.with_pk! params[:id]
-    @post.hide!
-    @post.save(changed: true)
+    origin = get_origin!
+    post = Post.with_pk! params[:id]
+    post.hide!
+    post.save(changed: true)
 
     redirect @origin
   end
@@ -63,20 +63,22 @@ Amethyst::App.controllers :post do
   
 #  put :down, '/post/:id/down' do
   get :down, '/post/:id/down' do
-    @post = Post.with_pk! params[:id]
-    @post.down_vote!
-    @post.save
+    origin = get_origin!
+    post = Post.with_pk! params[:id]
+    post.down_vote!
+    post.save
 
-    redirect request.referer
+    redirect @origin
   end
 
   
 #  put :unclick, '/post/:id/unclick' do
   get :unclick, '/post/:id/unclick' do
-    @post = Post.with_pk! params[:id]
-    @post.unclick!
-    @post.save
+    origin = get_origin!
+    post = Post.with_pk! params[:id]
+    post.unclick!
+    post.save
 
-    redirect request.referer
+    redirect origin
   end
 end
