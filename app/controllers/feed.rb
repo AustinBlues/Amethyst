@@ -23,8 +23,10 @@ Amethyst::App.controllers :feed do
 
 
   get :show, '/feed/:id' do
+    @origin = get_origin!
     @feed = Feed.with_pk! params[:id]
     @page = (params[:page] || 1).to_i
+    puts "ORIGIN: #{@origin}."
     if @page <= 0
       redirect url_for(:feed, :show, id: @feed.id, page: 1)
     else
