@@ -23,15 +23,14 @@ Amethyst::App.controllers :feed do
 
 
   get :show, '/feed/:id' do
-    @origin = get_origin!
+    @origin = request.fullpath
     @feed = Feed.with_pk! params[:id]
-    @page = (params[:page] || 1).to_i
-    puts "ORIGIN: #{@origin}."
-    if @page <= 0
+    page = (params[:page] || 1).to_i
+    if page <= 0
       redirect url_for(:feed, :show, id: @feed.id, page: 1)
     else
-      @posts = Post.unread.where(feed_id: @feed.id).order(Sequel.desc(:published_at)).paginate(@page, PAGE_SIZE)
-      if @page > @posts.page_count
+      @posts = Post.unread.where(feed_id: @feed.id).order(Sequel.desc(:published_at)).paginate(page, PAGE_SIZE)
+      if page > @posts.page_count
         redirect url_for(:feed, :show, id: @feed.id, page: @posts.page_count)
       else
         @context = @feed.name	# allow URL for new Feeds that haven't refreshed or have no title tag
@@ -39,7 +38,9 @@ Amethyst::App.controllers :feed do
         @controller = :feed
         @action = :show
 
-        @options = {id: params[:id], page: @page}
+        @datetime_only = true
+
+        @options = {id: params[:id], page: @feed.page_number}
 
         render 'show'
       end

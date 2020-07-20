@@ -1,6 +1,6 @@
 Amethyst::App.controllers :post do
   get :index do
- #   @origin = get_origin!
+    @origin = get_origin!
     @page = (params[:page] || 1).to_i
     if @page <= 0
       redirect url_for(:post, :index, page: 1)
@@ -40,7 +40,17 @@ Amethyst::App.controllers :post do
 
   get :show, '/post/:id' do
     @origin = get_origin!
-    @back_title = (@origin =~ /search/) ? 'to Search' : 'to Posts'
+#    @origin = request.fullpath
+    @back_title = case request.fullpath
+                  when /search/
+                    'to Search'
+                  when /feed/
+                    'to Feed show'
+                  when /post/
+                    'to Posts'
+                  else
+                    'Unknown'
+                  end
 
     @post = Post.with_pk! params[:id]
     @post.click!
@@ -52,7 +62,7 @@ Amethyst::App.controllers :post do
 
 #  put :hide, '/post/:id/hide' do
   get :hide, '/post/:id/hide' do
-    origin = get_origin!
+    @origin = get_origin!
     post = Post.with_pk! params[:id]
     post.hide!
     post.save(changed: true)
@@ -63,7 +73,7 @@ Amethyst::App.controllers :post do
   
 #  put :down, '/post/:id/down' do
   get :down, '/post/:id/down' do
-    origin = get_origin!
+    @origin = get_origin!
     post = Post.with_pk! params[:id]
     post.down_vote!
     post.save
@@ -74,11 +84,11 @@ Amethyst::App.controllers :post do
   
 #  put :unclick, '/post/:id/unclick' do
   get :unclick, '/post/:id/unclick' do
-    origin = get_origin!
+    @origin = get_origin!
     post = Post.with_pk! params[:id]
     post.unclick!
     post.save
 
-    redirect origin
+    redirect @origin
   end
 end
