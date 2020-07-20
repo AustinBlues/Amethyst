@@ -69,7 +69,9 @@ module Refresh
     if args.nil?
       refresh_slice
     elsif args.is_a?(Integer)
-      refresh_feed(Feed.with_pk(args), Time.now)
+      time = Time.now
+      refresh_feed(Feed.with_pk(args), time)
+      Refresh.log "First fetch: #{f.name} at #{time}."
     else
       log "Invalid argument: #{args.inspect}.", :error
     end
