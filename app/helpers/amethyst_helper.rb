@@ -18,7 +18,7 @@ module Amethyst
                    params.delete(:origin)
                  end
         puts "ORIGIN: #{origin}."
-        puts "REFERER: #{request.referer}."
+
         origin
       end
 
