@@ -32,7 +32,7 @@ describe "/feed" do
       assert_equal('to Posts', links[0].attr('title'))
       assert_match(@origin, links[0].attr('href'))
       # unclick, hide, down links
-        (1..3).each do |i|
+      (1..3).each do |i|
         assert_match(/origin=#{CGI.escape(@origin)}/, links[i].attr('href'))
       end
     end
