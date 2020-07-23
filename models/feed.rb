@@ -38,7 +38,7 @@ class Feed < Sequel::Model
 #    adjust = (self[:ema_volume] == 0.0) ? 1.0 : amt * (0.5 + [0.25/self[:ema_volume], 3.0].min)
 #    adjust = (self[:ema_volume] == 0.0) ? 1.0 : amt * (0.6 + [0.25/self[:ema_volume], 2.0].min)
     adjust = (self[:ema_volume] == 0.0) ? 1.0 : amt * (0.3 + [0.25/self[:ema_volume], 2.0].min)
-    STDERR.puts "SCORE: #{adjust}."
+    puts("SCORE: #{adjust}.") if Padrino.env != :test
     self[:score] += adjust
   end
 
