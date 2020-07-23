@@ -23,8 +23,12 @@ PAGINATED = PAGINATION != 0
 DOWN_ARROW = SafeBuffer.new('&darr;')
 EDIT_PENCIL = "\u270E"
 ELLIPSIS = "\u2026"
+LAQUO = SafeBuffer.new('&laquo;')
+LSAQUO = SafeBuffer.new('&lsaquo;')
 LEFT_ARROW = SafeBuffer.new('&larr;')
 PLUS = SafeBuffer.new('&plus;')
+RSAQUO = SafeBuffer.new('&rsaquo;')
+RAQUO = SafeBuffer.new('&raquo;')
 SEARCH = "\u{1F50E}"
 TIMES = SafeBuffer.new('&times;')
 UNDO = "\u21A9"		# leftward hook arrow
