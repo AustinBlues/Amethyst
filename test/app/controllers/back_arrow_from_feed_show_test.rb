@@ -10,7 +10,7 @@ describe "/feed" do
       Post.create(title: "Post #{i+1}", feed_id: @feed[:id], ident: i, url: "http://127.0.0.1/#{i}",
                   description: "Post #{i+1} content.", published_at: now+i)
     end
-    @origin = "/feed/#{@feed[:id]}?page=2"
+    @origin = "/feed/#{@feed[:id]}"
   end
 
   after do
