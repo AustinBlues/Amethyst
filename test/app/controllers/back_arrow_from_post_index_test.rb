@@ -1,7 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../test_config.rb')
 require 'nokogiri'
 
-describe "/feed" do
+describe "/post" do
   before do
     # Create Feed and Posts in database
     now = Time.now - PAGE_SIZE
@@ -19,7 +19,7 @@ describe "/feed" do
   end
 
   describe 'when showing Post index' do
-    it "should return Feed show, 2nd page" do
+    it "should return Post index, 2nd page" do
       get @origin
       assert_match(/#{@posts[0][:title]}/, last_response.body)
     end
