@@ -30,9 +30,10 @@
 	  </span>
         </a>
 
-	<% form_tag '/post/search', method: 'get', class: 'form-inline d-flex', style: 'float: right' do %>
+	<% form_tag '/post/search', method: :get, class: 'form-inline d-flex', style: 'float: right' do %>
           <%= SEARCH %>&nbsp;
           <%= search_field_tag :search, placeholder: 'Search this website...' %>
+	  <%= hidden_field_tag(:origin, value: @origin) %>
         <% end %>
       </div>
     </div>

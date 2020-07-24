@@ -17,6 +17,8 @@ Amethyst::App.controllers :post do
         @options = {page: @page}
 
         @datetime_only = false
+        @back_title = 'to Feeds'
+        @back_url = '/feed'
 
         render 'index'
       end
@@ -31,8 +33,20 @@ Amethyst::App.controllers :post do
     @action = :search
     @context = "Search: '#{params[:search]}'"
     @options = {page: @page, search: params[:search]}
-    @posts = Post.dataset.full_text_search([:title, :description], params[:search])
-    @posts = @posts.paginate(@page, PAGE_SIZE) if PAGINATED
+    @back_title = case @origin
+                  when /^\/post/
+                    'to Posts'
+                  when /^\/feed/
+                    'to Feeds'
+                  else
+                    flash[:error] = 'Unknown origin'
+                    STDERR.puts "UNKNOWN ORIGIN: #{params[:origin]}."
+                    'UNKNOWN'
+                  end
+    @back_url = @origin
+    @datetime_only = false
+    ds = Post.dataset.full_text_search([:title, :description], params[:search])
+    @posts = ds.paginate(@page, PAGE_SIZE)
 
     render 'index'
   end
@@ -41,6 +55,7 @@ Amethyst::App.controllers :post do
   get :show, '/post/:id' do
     @origin = get_origin!
 #    @origin = request.fullpath
+    @context = 'Post'    
     @back_title = case request.fullpath
                   when /search/
                     'to Search'

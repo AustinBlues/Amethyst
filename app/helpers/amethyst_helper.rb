@@ -12,12 +12,12 @@ module Amethyst
       
 
       def get_origin!
-        origin = if [:index, :search].include?(request.action)
+        origin = if [:index].include?(request.action)
                    request.fullpath
                  else
                    params.delete(:origin)
                  end
-        puts "ORIGIN: #{origin}."
+        puts("ORIGIN: #{origin}.") if Padrino.env != :test
 
         origin
       end

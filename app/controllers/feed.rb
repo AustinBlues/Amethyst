@@ -27,11 +27,11 @@ Amethyst::App.controllers :feed do
     @feed = Feed.with_pk! params[:id]
     page = (params[:page] || 1).to_i
     if page <= 0
-      redirect url_for(:feed, :show, id: @feed.id, page: 1)
+      redirect url_for(:feed, :show, id: @feed[:id], page: 1)
     else
-      @posts = Post.unread.where(feed_id: @feed.id).order(Sequel.desc(:published_at)).paginate(page, PAGE_SIZE)
+      @posts = Post.unread.where(feed_id: @feed[:id]).order(Sequel.desc(:published_at)).paginate(page, PAGE_SIZE)
       if page > @posts.page_count
-        redirect url_for(:feed, :show, id: @feed.id, page: @posts.page_count)
+        redirect url_for(:feed, :show, id: @feed[:id], page: @posts.page_count)
       else
         @context = @feed.name	# allow URL for new Feeds that haven't refreshed or have no title tag
 
@@ -82,7 +82,7 @@ Amethyst::App.controllers :feed do
 
   get :edit, with: :id do
     @feed = Feed.with_pk! params[:id]
-    url = url_for(:feed, :update, id: @feed.id)
+    url = url_for(:feed, :update, id: @feed[:id])
     partial('feed/form', object: @feed, locals: {url: url, button: button_to('Update', url, method: :put, class: :form)})
   end
 
