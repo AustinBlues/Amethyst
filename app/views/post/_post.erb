@@ -1,6 +1,5 @@
-<% hide_url = url_for(:post, :hide, id: post.id, origin: @origin) %>
+<%# hide_url = SafeBuffer.new() %>
 <% down_url = url_for(:post, :down, id: post.id, origin: @origin) %>
-
 
 <tr id="post<%= post.id %>">
   <td>
@@ -9,7 +8,7 @@
   </td>
   <td style="width: 3em">
     <div>
-      <%= link_to(TIMES, hide_url, method: :put, class: 'btn btn-link action', style: 'padding: 0') %>
+      <%= link_to(TIMES, url_for(:post, :hide, id: post.id, origin: @origin), method: :put, class: 'btn btn-link action', style: 'padding: 0') %>
       <%= link_to(DOWN_ARROW, down_url, method: :put, class: 'btn btn-link action', style: 'padding: 0') %>
     </div>
   </td>
