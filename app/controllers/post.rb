@@ -27,12 +27,13 @@ Amethyst::App.controllers :post do
 
 
   get :search do
-    @origin = get_origin!
+    @origin = params[:origin]
     @page = (params[:page] || 1).to_i
     @controller = :post
     @action = :search
     @context = "Search: '#{params[:search]}'"
-    @options = {page: @page, search: params[:search]}
+    @options = {page: @page, search: params[:search], origin: @origin}
+    puts "OPTIONS: #{@options}."
     @back_title = case @origin
                   when /^\/post/
                     'to Posts'
@@ -78,6 +79,9 @@ Amethyst::App.controllers :post do
 #  put :hide, '/post/:id/hide' do
   get :hide, '/post/:id/hide' do
     @origin = get_origin!
+    puts "ORIGIN: #{@origin}."
+    puts "PARAMS: #{params.inspect}"
+    puts "REFERER: #{request.referer}."
     post = Post.with_pk! params[:id]
     post.hide!
     post.save(changed: true)
