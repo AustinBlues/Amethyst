@@ -27,32 +27,46 @@ describe "/feed" do
     end
 
     it 'should return earliest unread Post and all back links point to origin' do
-      get "/post/1?origin=#{CGI.escape(@origin)}"
+      get @origin
+#      puts last_response.body
       p = Nokogiri::HTML.parse(last_response.body)
+      header = p.at_css('div.card-header a.btn')
+#      puts "HEADER: #{header.inspect}."
+      assert_equal('to Feeds', header.attr('title'))
+      assert_equal('/feed?page=1', header.attr('href'))
+
+      # hide, down links
+      actions = p.css('a.action')
+      hide = actions[0].attr('href')
+      assert_equal("/post/#{@posts[-(PAGE_SIZE+1)][:id]}/hide?origin=#{CGI.escape(@origin)}", hide)
+      down = actions[1].attr('href')
+      assert_equal("/post/#{@posts[-(PAGE_SIZE+1)][:id]}/down?origin=#{CGI.escape(@origin)}", down)
+
+      # check HIDE and DOWN have expected redirect
+      get hide
+      assert_equal("http://example.org#{@origin}", last_response.location.encode('utf-8'))
+      get down
+      assert_equal("http://example.org#{@origin}", last_response.location.encode('utf-8'))
+
+      # check Post show for correct action links
+      get "/post/#{@posts[0][:id]}?origin=#{CGI.escape(@origin)}"
+      p = Nokogiri::HTML.parse(last_response.body)
+      
+      # check Post show has expected description
       assert_equal(@posts[0][:description], p.at_css('p').content.strip)
-      links = p.css('div.card a.btn')
+      
+      links = p.css('a.btn')
+      # back arrow (LEFT_ARROW)
       assert_equal('to Feed show', links[0].attr('title'))
       assert_match(@origin, links[0].attr('href'))
-      # unclick, hide, down links
-      if false
-        (1..3).each do |i|
-          puts "HREF: #{links[i].attr('href')}."
-          assert_match(/origin=#{CGI.escape(@origin)}/, links[i].attr('href'))
-        end
-      else
-        @unclick = links[1].attr('href')
-        assert_equal("/post/1/unclick?origin=#{CGI.escape(@origin)}", @unclick)
-        @hide = links[2].attr('href')
-        assert_equal("/post/1/hide?origin=#{CGI.escape(@origin)}", @hide)
-        @down = links[3].attr('href')
-        assert_equal("/post/1/down?origin=#{CGI.escape(@origin)}", @down)
+
+      # UNCLICK, HIDE, and DOWN links
+      (1..3).each do |i|
+        assert_match(/origin=#{CGI.escape(@origin)}/, links[i].attr('href'))
       end
 
-      get @unclick
-      assert_equal("http://example.org#{@origin}", last_response.location.encode('utf-8'))
-      get @hide
-      assert_equal("http://example.org#{@origin}", last_response.location.encode('utf-8'))
-      get @down
+      # UNCLICK has expected redirect (HIDE and DOWN check above)
+      get links[1].attr('href')
       assert_equal("http://example.org#{@origin}", last_response.location.encode('utf-8'))
     end
   end
