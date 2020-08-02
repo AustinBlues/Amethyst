@@ -79,9 +79,6 @@ Amethyst::App.controllers :post do
 #  put :hide, '/post/:id/hide' do
   get :hide, '/post/:id/hide' do
     @origin = get_origin!
-    puts "ORIGIN: #{@origin}."
-    puts "PARAMS: #{params.inspect}"
-    puts "REFERER: #{request.referer}."
     post = Post.with_pk! params[:id]
     post.hide!
     post.save(changed: true)
