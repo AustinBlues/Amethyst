@@ -11,8 +11,9 @@ class Feed < Sequel::Model
   
   def before_create
     self[:score] ||= (Feed.count == 0) ? 0.0 : (Feed.avg(:score) + Feed.order(:score).first.score)/2.0
-    # prevent refresh by scheduled Resque
-    self[:next_refresh] = Time.now + Refresh::CYCLE_TIME
+    # KLUDGE: can't ensure, can only make unlikely.  Not really a problem if it is.  No new Post.
+#    # ensure won't be refreshed by periodic Refresh.perform calling Refresh.refresh_slice
+#    self[:next_refresh] = Time.now + Refresh::INTERVAL_TIME
     super
   end
 
