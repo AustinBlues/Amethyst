@@ -24,7 +24,6 @@ Amethyst::App.controllers :feed do
 
   get :show, '/feed/:id' do
     @origin = request.fullpath
-    puts "ORIGIN: #{@origin}."
     @feed = Feed.with_pk! params[:id]
     page = (params[:page] || 1).to_i
     if page <= 0

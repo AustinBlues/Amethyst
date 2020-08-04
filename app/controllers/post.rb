@@ -33,7 +33,6 @@ Amethyst::App.controllers :post do
     @action = :search
     @context = "Search: '#{params[:search]}'"
     @options = {page: @page, search: params[:search], origin: @origin}
-    puts "OPTIONS: #{@options}."
     @back_title = case @origin
                   when /^\/post/
                     'to Posts'
