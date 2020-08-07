@@ -28,8 +28,6 @@ Amethyst::App.controllers :post do
         @datetime_only = false
         @back_title = 'to Feeds'
         @back_url = '/feed'
-        @action_url = @origin
-        @action_url << "&page=#{params[:page]}" if params[:page]
 
         render 'index'
       end
@@ -39,8 +37,6 @@ Amethyst::App.controllers :post do
 
   get :search do
     @back_url = @origin
-    @action_dest = "/post/search?search=#{CGI.escape(params[:search])}"
-    @action_dest << "&page=#{params[:page]}" if params[:page]
     @page = (params[:page] || 1).to_i
     @controller = :post
     @action = :search
@@ -89,7 +85,6 @@ Amethyst::App.controllers :post do
 
 #  put :hide, '/post/:id/hide' do
   get :hide, '/post/:id/hide' do
-puts "HIDE: #{params.inspect}."
     post = Post.with_pk! params[:id]
     post.hide!
     post.save(changed: true)
@@ -100,7 +95,6 @@ puts "HIDE: #{params.inspect}."
   
 #  put :down, '/post/:id/down' do
   get :down, '/post/:id/down' do
-puts "DOWN: #{params.inspect}."
     post = Post.with_pk! params[:id]
     post.down_vote!
     post.save(changed: true)

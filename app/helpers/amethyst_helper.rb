@@ -9,18 +9,6 @@ module Amethyst
       def log(msg, level = :default)
         logger << msg.colorize(LVL2CLR[level] || :default)
       end
-      
-
-      def get_origin!
-        origin = if [:index].include?(request.action)
-                   request.fullpath
-                 else
-                   params.delete(:origin)
-                 end
-        puts("ORIGIN: #{origin}.") if Padrino.env != :test
-
-        origin
-      end
 
 
       def page_number(count)
