@@ -1,6 +1,14 @@
 Amethyst::App.controllers :feed do
+  before do
+    @origin = if [:index, :show].include?(request.action)
+                request.fullpath
+              else
+                params.delete(:origin)
+              end
+    puts("ORIGIN: #{@origin}.") if Padrino.env != :test
+  end
+
   get :index do
-    @origin = get_origin!
     @page = (params[:page] || 1).to_i
     if @page <= 0
       redirect url_for(:feed, :index, page: 1)
@@ -23,7 +31,6 @@ Amethyst::App.controllers :feed do
 
 
   get :show, '/feed/:id' do
-    @origin = request.fullpath
     @feed = Feed.with_pk! params[:id]
     page = (params[:page] || 1).to_i
     if page <= 0

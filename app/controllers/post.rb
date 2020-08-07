@@ -1,4 +1,14 @@
 Amethyst::App.controllers :post do
+  before do
+    @origin = if [:index].include?(request.action)
+                request.fullpath
+              else
+                params.delete(:origin)
+              end
+    puts("ORIGIN: #{@origin}.") if Padrino.env != :test
+  end
+
+  
   get :index do
     @page = (params[:page] || 1).to_i
     if @page <= 0
@@ -9,7 +19,6 @@ Amethyst::App.controllers :post do
         redirect url_for(:post, :index, page: @posts.page_count)
       else
         @context = 'Posts'
-        @origin = get_origin!
 
         @controller = :post
         @action = :index
@@ -29,7 +38,7 @@ Amethyst::App.controllers :post do
 
 
   get :search do
-    @back_url = @origin = get_origin!
+    @back_url = @origin
     @action_dest = "/post/search?search=#{CGI.escape(params[:search])}"
     @action_dest << "&page=#{params[:page]}" if params[:page]
     @page = (params[:page] || 1).to_i
@@ -58,7 +67,6 @@ Amethyst::App.controllers :post do
 
 
   get :show, '/post/:id' do
-    @origin = get_origin!
     @context = 'Post'    
     @back_title = case @origin
                   when /search/
@@ -82,7 +90,6 @@ Amethyst::App.controllers :post do
 #  put :hide, '/post/:id/hide' do
   get :hide, '/post/:id/hide' do
 puts "HIDE: #{params.inspect}."
-    @origin = get_origin!
     post = Post.with_pk! params[:id]
     post.hide!
     post.save(changed: true)
@@ -94,8 +101,6 @@ puts "HIDE: #{params.inspect}."
 #  put :down, '/post/:id/down' do
   get :down, '/post/:id/down' do
 puts "DOWN: #{params.inspect}."
-@origin = get_origin!
-puts "ORIGIN: #{@origin}."
     post = Post.with_pk! params[:id]
     post.down_vote!
     post.save(changed: true)
@@ -106,7 +111,6 @@ puts "ORIGIN: #{@origin}."
   
 #  put :unclick, '/post/:id/unclick' do
   get :unclick, '/post/:id/unclick' do
-    @origin = get_origin!
     post = Post.with_pk! params[:id]
     post.unclick!
     post.save
