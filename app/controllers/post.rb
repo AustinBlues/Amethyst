@@ -1,6 +1,5 @@
 Amethyst::App.controllers :post do
   get :index do
-    @origin = get_origin!
     @page = (params[:page] || 1).to_i
     if @page <= 0
       redirect url_for(:post, :index, page: 1)
@@ -10,6 +9,7 @@ Amethyst::App.controllers :post do
         redirect url_for(:post, :index, page: @posts.page_count)
       else
         @context = 'Posts'
+        @origin = get_origin!
 
         @controller = :post
         @action = :index
@@ -19,6 +19,8 @@ Amethyst::App.controllers :post do
         @datetime_only = false
         @back_title = 'to Feeds'
         @back_url = '/feed'
+        @action_url = @origin
+        @action_url << "&page=#{params[:page]}" if params[:page]
 
         render 'index'
       end
@@ -27,13 +29,17 @@ Amethyst::App.controllers :post do
 
 
   get :search do
-    @origin = params[:origin]
+    @back_url = @origin = get_origin!
+    @action_dest = "/post/search?search=#{CGI.escape(params[:search])}"
+    @action_dest << "&page=#{params[:page]}" if params[:page]
     @page = (params[:page] || 1).to_i
     @controller = :post
     @action = :search
     @context = "Search: '#{params[:search]}'"
     @options = {page: @page, search: params[:search], origin: @origin}
     @back_title = case @origin
+                  when /^\/post\/search/
+                    'to Search'
                   when /^\/post/
                     'to Posts'
                   when /^\/feed/
@@ -43,7 +49,6 @@ Amethyst::App.controllers :post do
                     STDERR.puts "UNKNOWN ORIGIN: #{params[:origin]}."
                     'UNKNOWN'
                   end
-    @back_url = @origin
     @datetime_only = false
     ds = Post.dataset.full_text_search([:title, :description], params[:search])
     @posts = ds.paginate(@page, PAGE_SIZE)
@@ -54,9 +59,8 @@ Amethyst::App.controllers :post do
 
   get :show, '/post/:id' do
     @origin = get_origin!
-#    @origin = request.fullpath
     @context = 'Post'    
-    @back_title = case request.fullpath
+    @back_title = case @origin
                   when /search/
                     'to Search'
                   when /feed/
@@ -77,6 +81,7 @@ Amethyst::App.controllers :post do
 
 #  put :hide, '/post/:id/hide' do
   get :hide, '/post/:id/hide' do
+puts "HIDE: #{params.inspect}."
     @origin = get_origin!
     post = Post.with_pk! params[:id]
     post.hide!
@@ -88,10 +93,12 @@ Amethyst::App.controllers :post do
   
 #  put :down, '/post/:id/down' do
   get :down, '/post/:id/down' do
-    @origin = get_origin!
+puts "DOWN: #{params.inspect}."
+@origin = get_origin!
+puts "ORIGIN: #{@origin}."
     post = Post.with_pk! params[:id]
     post.down_vote!
-    post.save
+    post.save(changed: true)
 
     redirect @origin
   end

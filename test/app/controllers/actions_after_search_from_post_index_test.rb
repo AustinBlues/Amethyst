@@ -38,19 +38,6 @@ describe '/post/search' do
       assert_equal('to Posts', l.attr('title'))
       assert_match(@origin, l.attr('href'))
 
-      # hide, down links
-      actions = p.css('a.action')
-      hide = actions[0].attr('href')
-      assert_equal("/post/#{@posts[0][:id]}/hide?origin=#{CGI.escape(@origin)}", hide)
-      down = actions[1].attr('href')
-      assert_equal("/post/#{@posts[0][:id]}/down?origin=#{CGI.escape(@origin)}", down)
-
-      # check HIDE and DOWN have expected redirect
-      get hide
-      assert_equal("http://example.org#{@origin}", last_response.location.encode('utf-8'))
-      get down
-      assert_equal("http://example.org#{@origin}", last_response.location.encode('utf-8'))
-
       # check Post show for correct action links
       get "/post/#{@posts[0][:id]}?origin=#{CGI.escape(@origin)}"
       p = Nokogiri::HTML.parse(last_response.body)
@@ -68,8 +55,27 @@ describe '/post/search' do
         assert_match(/origin=#{CGI.escape(@origin)}/, links[i].attr('href'))
       end
 
-      # UNCLICK has expected redirect (HIDE and DOWN check above)
+      # HIDE, DOWN links on SHOW page
+      if true
+        hide = links[2].attr('href')
+        assert_equal("/post/#{@posts[0][:id]}/hide?origin=#{CGI.escape(@origin)}", hide)
+        down = links[3].attr('href')
+        assert_equal("/post/#{@posts[0][:id]}/down?origin=#{CGI.escape(@origin)}", down)
+      else
+        actions = p.css('a.action')
+        hide = actions[1].attr('href')
+        assert_equal("/post/#{@posts[0][:id]}/hide?origin=#{CGI.escape(@origin)}", hide)
+        down = actions[2].attr('href')
+        assert_equal("/post/#{@posts[0][:id]}/down?origin=#{CGI.escape(@origin)}", down)
+      end
+      # UNCLICK has expected redirect (HIDE and DOWN check below)
       get links[1].attr('href')
+      assert_equal("http://example.org#{@origin}", last_response.location.encode('utf-8'))
+
+      # check HIDE and DOWN have expected redirect
+      get hide
+      assert_equal("http://example.org#{@origin}", last_response.location.encode('utf-8'))
+      get down
       assert_equal("http://example.org#{@origin}", last_response.location.encode('utf-8'))
     end
   end
