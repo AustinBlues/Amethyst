@@ -55,7 +55,7 @@ Amethyst::App.controllers :post do
                     'UNKNOWN'
                   end
     @datetime_only = false
-    ds = Post.dataset.full_text_search([:title, :description], params[:search])
+    ds = Post.dataset.full_text_search([:title, :description], params[:search]).order(:state)
     @posts = ds.paginate(@page, PAGE_SIZE)
 
     render 'index'
