@@ -105,13 +105,22 @@ module Refresh
         n = Post.where(feed_id: f[:id], state: Post::UNREAD).where{published_at < cutoff}.update(state: Post::HIDDEN)
         log("Hiding #{n} older post(s).", :debug) if n > 0
       end
-
+      
       if refreshed_at
         Refresh.log "Refreshed #{Refresh.time_ago_in_words(refreshed_at, true)} ago: #{f.name}."
       else
         Refresh.log "Refreshed (no previous refresh): #{f.name}."
       end
     end
+
+    sludge = nil
+    if sludge = ENV['SLUDGE']
+      # run Sludge filter is AGAINST string supplied as export
+    elsif ARGV.find{|f| f =~ /^SLUDGE=(.*)/}
+      # run Sludge filter is AGAINST string supplied on command line
+      sludge = $~[1]
+    end
+    Sludge.filter(feeds.map{|f| f[:id]}, sludge, 0) if sludge
 
     # Report progress.  The second case is when Amethyst catching up after not running (e.g. hibernation).
     tmp = (feeds.size == max_refresh) ? max_refresh : "#{feeds.size}:#{max_refresh}"
