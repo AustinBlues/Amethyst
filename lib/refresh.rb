@@ -18,6 +18,14 @@ module Refresh
   extend Amethyst::App::AmethystHelper
 
   @@redis = Redis.new
+  SLUDGE = ENV['SLUDGE'] || (ARGV.find{|f| f =~ /^SLUDGE=(.*)/} ? $~[1] : nil)
+#  SLUDGE = if ENV['SLUDGE']
+#             ENV['SLUDGE']
+#           elsif 
+#             $~[1]
+#           else
+#             nil
+#           end
 
 
   def self.raw2time(raw)
@@ -113,14 +121,7 @@ module Refresh
       end
     end
 
-    sludge = nil
-    if sludge = ENV['SLUDGE']
-      # run Sludge filter is AGAINST string supplied as export
-    elsif ARGV.find{|f| f =~ /^SLUDGE=(.*)/}
-      # run Sludge filter is AGAINST string supplied on command line
-      sludge = $~[1]
-    end
-    Sludge.filter(feeds.map{|f| f[:id]}, sludge, 0) if sludge
+    Sludge.filter(feeds.map{|f| f[:id]}, SLUDGE, 0) if SLUDGE
 
     # Report progress.  The second case is when Amethyst catching up after not running (e.g. hibernation).
     tmp = (feeds.size == max_refresh) ? max_refresh : "#{feeds.size}:#{max_refresh}"
