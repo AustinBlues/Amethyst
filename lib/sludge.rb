@@ -19,20 +19,23 @@ module Sludge
         query = query.where(feed_id: feed.id)
       when Integer
         query = query.where(feed_id: feed)
+      when Array
+        query = query.where(feed_id: feed)
       end
-      query = query.full_text_search([:title, :description], search || DEFAULT)
+      boolean = search =~ /[-+<>(~*"]+/
+      query = query.full_text_search([:title, :description], search || DEFAULT, boolean: boolean)
       logger << query.sql.colorize(:blue) if verbosity >= 2
       hides = 0
       query.each do |p|
         if p[:score] >= 0.5
-          logger << "(#{'%0.2f' % p[:score]}) #{!p[:title].empty? ? p[:title] : p[:description]}".colorize(:red) if verbosity > 0
+          logger << "(#{'%0.2f' % p[:score]}) #{!p[:title].empty? ? p[:title] : p[:description]}".colorize(:red) if verbosity >= 0
           p.update(state: Post::HIDDEN)
           hides += 1
         elsif p[:score] >= 0.25
           logger << "(#{'%0.2f' % p[:score]}) #{!p[:title].empty? ? p[:title] : p[:description]}".colorize(:yellow) if verbosity > 0
         end
       end
-     logger << "HIDES: #{hides}.".colorize(:default) if verbosity >= 0
+     logger << "HIDES: #{hides}.".colorize(:default) if verbosity > 0
     end
   end
 end
