@@ -5,7 +5,7 @@ Amethyst::App.controllers :post do
               else
                 params.delete(:origin)
               end
-    puts("ORIGIN: #{@origin}.") if Padrino.env != :test
+#    puts("ORIGIN: #{@origin}.") if Padrino.env != :test
   end
 
   
