@@ -106,6 +106,8 @@ module Refresh
       refreshed_at = f.previous_refresh
       refresh_feed(f, now)
 
+      Sludge.filter(f[:id], SLUDGE, 2) if SLUDGE
+
       # Hide unread Posts older than UNREAD_LIMIT
       cutoff = Post.where(feed_id: f[:id], state: Post::UNREAD).order(Sequel.desc(:published_at)).
                  offset(UNREAD_LIMIT-1).get(:published_at)
@@ -120,8 +122,6 @@ module Refresh
         Refresh.log "Refreshed (no previous refresh): #{f.name}."
       end
     end
-
-    Sludge.filter(feeds.map{|f| f[:id]}, SLUDGE, 0) if SLUDGE
 
     # Report progress.  The second case is when Amethyst catching up after not running (e.g. hibernation).
     tmp = (feeds.size == max_refresh) ? max_refresh : "#{feeds.size}:#{max_refresh}"
