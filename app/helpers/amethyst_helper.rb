@@ -1,16 +1,6 @@
-#require 'logger'
-
-
 module Amethyst
   class App
     module AmethystHelper
-      LVL2CLR = {error: :red, warning: :yellow, highlight: :green, info: :default, debug: :cyan, devel: :magenta}
-      
-      def log(msg, level = :default)
-        logger << msg.colorize(LVL2CLR[level] || :default)
-      end
-
-
       def page_number(count)
         (count-1)/PAGE_SIZE + 1
       end

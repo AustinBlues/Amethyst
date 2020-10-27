@@ -11,11 +11,14 @@ module Refresh
   CYCLE_TIME = 60 * 60	# time to refresh all Feeds: 1 hour
   INTERVAL_TIME = 5 * 60	# how often to refresh a slice: 5 minutes
   INTERVALS = CYCLE_TIME/INTERVAL_TIME
+  VERBOSITY = 2		# default sludge_filter() verbosity
+  SLUDGE_HORIZON = 2*3600	# 2 hours
   REDIS_KEY = 'residue'
   extend Padrino::Helpers::FormatHelpers
 #  extend RubyRSS
   extend NokogiriRSS
-  extend Amethyst::App::AmethystHelper
+  
+  LVL2CLR = {error: :red, warning: :yellow, highlight: :green, info: :default, debug: :cyan, devel: :magenta}
 
   @@redis = Redis.new
   SLUDGE = ENV['SLUDGE'] || (ARGV.find{|f| f =~ /^SLUDGE=(.*)/} ? $~[1] : nil)
@@ -26,6 +29,11 @@ module Refresh
 #           else
 #             nil
 #           end
+
+
+  def self.log(msg, level = :default)
+    logger << msg.colorize(LVL2CLR[level] || :default)
+  end
 
 
   def self.raw2time(raw)
@@ -89,6 +97,49 @@ module Refresh
       log("REFRESH: #{$!.inspect}.")
     end
   end
+
+
+  def self.sludge_filter(feed, search, verbosity = VERBOSITY)
+    raise ArgumentError if search.nil?
+
+    sql = Post.where(true).full_text_search([:title, :description], search).sql
+    m = /\((MATCH .*\))\)\)/.match(sql)
+    if !m
+      log('OOPS: MATCH expression not found'.colorize(:red))
+    else
+      exp = m[1]
+      exp <<= ' AS score'
+      query = Post.select(:id, :title, :description, Sequel.lit(exp)).where(state: Post::UNREAD).
+                where{published_at >= Time.now - (SLUDGE_HORIZON+Refresh::INTERVAL_TIME)}
+      case feed
+      when Feed
+        query = query.where(feed_id: feed.id)
+      when Integer
+        query = query.where(feed_id: feed)
+      when Array
+        query = query.where(feed_id: feed)
+      end
+      boolean = search =~ /[-+<>(~*"]+/
+      query = query.full_text_search([:title, :description], search, boolean: boolean)
+      log(query.sql.colorize(:blue)) if verbosity >= 3
+      query.each do |q|
+        if q[:score] >= 0.5
+          log("(#{'%0.2f' % q[:score]}) #{!q[:title].empty? ? q[:title] : q[:description]}".colorize(:red)) if verbosity >= 0
+          if false
+            q.update(state: Post::HIDDEN)
+          else
+            post = Post[q[:id]]
+            post.down_vote!
+            post.save(changed: true)
+          end
+        elsif q[:score] >= 0.25
+          log("(#{'%0.2f' % q[:score]}) #{!q[:title].empty? ? q[:title] : q[:description]}".colorize(:yellow)) if verbosity >= 1
+        elsif true
+          log("(#{'%0.2f' % q[:score]}) #{!q[:title].empty? ? q[:title] : q[:description]}".colorize(:magenta)) if verbosity >= 2
+        end
+      end
+    end
+  end
   
 
   def self.refresh_slice
@@ -110,7 +161,7 @@ module Refresh
       refreshed_at = f.previous_refresh
       refresh_feed(f, now)
 
-      Sludge.filter(f, SLUDGE) if SLUDGE
+      sludge_filter(f, SLUDGE) if SLUDGE
       
       # Hide unread Posts older than UNREAD_LIMIT
       cutoff = Post.where(feed_id: f[:id], state: Post::UNREAD).order(Sequel.desc(:published_at)).
