@@ -105,7 +105,7 @@ module Refresh
     sql = Post.where(true).full_text_search([:title, :description], search).sql
     m = /\((MATCH .*\))\)\)/.match(sql)
     if !m
-      log('OOPS: MATCH expression not found'.colorize(:red))
+      log('OOPS: MATCH expression not found', :error)
     else
       exp = m[1]
       exp <<= ' AS score'
