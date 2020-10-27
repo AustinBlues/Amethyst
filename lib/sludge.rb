@@ -1,18 +1,23 @@
-require 'logger'
+require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/amethyst_helper.rb')
 
 module Sludge
-  VERBOSITY = 0
+  extend Amethyst::App::AmethystHelper
+
+  VERBOSITY = 2
+  SLUDGE_HORIZON = 2*3600	# 2 hours
 
   def self.filter(feed, search, verbosity = VERBOSITY)
     raise ArgumentError if search.nil?
+
     sql = Post.where(true).full_text_search([:title, :description], search).sql
     m = /\((MATCH .*\))\)\)/.match(sql)
     if !m
-      logger << 'OOPS: MATCH expression not found'.colorize(:red)
+      log('OOPS: MATCH expression not found'.colorize(:red))
     else
       exp = m[1]
       exp <<= ' AS score'
-      query = Post.select(:id, :title, :description, Sequel.lit(exp)).where(state: Post::UNREAD)
+      query = Post.select(:id, :title, :description, Sequel.lit(exp)).where(state: Post::UNREAD).
+                where{published_at >= Time.now - (SLUDGE_HORIZON+Refresh::INTERVAL_TIME)}
       case feed
       when Feed
         query = query.where(feed_id: feed.id)
@@ -23,20 +28,23 @@ module Sludge
       end
       boolean = search =~ /[-+<>(~*"]+/
       query = query.full_text_search([:title, :description], search, boolean: boolean)
-      logger << query.sql.colorize(:blue) if verbosity >= 3
-      hides = 0
-      query.each do |p|
-        if p[:score] >= 0.5
-          logger << "(#{'%0.2f' % p[:score]}) #{!p[:title].empty? ? p[:title] : p[:description]}".colorize(:red) if verbosity >= 0
-          p.update(state: Post::HIDDEN)
-          hides += 1
-        elsif p[:score] >= 0.25
-          logger << "(#{'%0.2f' % p[:score]}) #{!p[:title].empty? ? p[:title] : p[:description]}".colorize(:yellow) if verbosity > 0
+      log(query.sql.colorize(:blue)) if verbosity >= 3
+      query.each do |q|
+        if q[:score] >= 0.5
+          log("(#{'%0.2f' % q[:score]}) #{!q[:title].empty? ? q[:title] : q[:description]}".colorize(:red)) if verbosity >= 0
+          if false
+            q.update(state: Post::HIDDEN)
+          else
+            post = Post[q[:id]]
+            post.down_vote!
+            post.save(changed: true)
+          end
+        elsif q[:score] >= 0.25
+          log("(#{'%0.2f' % q[:score]}) #{!q[:title].empty? ? q[:title] : q[:description]}".colorize(:yellow)) if verbosity >= 1
         elsif true
-          logger << "(#{'%0.2f' % p[:score]}) #{!p[:title].empty? ? p[:title] : p[:description]}".colorize(:magenta) if verbosity > 1
+          log("(#{'%0.2f' % q[:score]}) #{!q[:title].empty? ? q[:title] : q[:description]}".colorize(:magenta)) if verbosity >= 2
         end
       end
-#     logger << "HIDES: #{hides}.".colorize(:default) if verbosity == 0
     end
   end
 end

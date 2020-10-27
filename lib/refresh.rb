@@ -5,7 +5,7 @@ require 'nokogiri_rss'
 require 'time'
 #require 'ruby_rss'
 require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/amethyst_helper.rb')
-require 'logger'
+#require 'logger'
 
 module Refresh
   CYCLE_TIME = 60 * 60	# time to refresh all Feeds: 1 hour
@@ -74,15 +74,19 @@ module Refresh
 
 
   def self.perform(args = nil)
-    if args.nil?
-      refresh_slice
-    elsif args.is_a?(Integer)
-      time = Time.now
-      f = Feed.with_pk(args)
-      refresh_feed(f, time)
-      Refresh.log "First fetch: #{f.name} at #{short_datetime(time)}."
-    else
-      log "Invalid argument: #{args.inspect}.", :error
+    begin
+      if args.nil?
+        refresh_slice
+      elsif args.is_a?(Integer)
+        time = Time.now
+        f = Feed.with_pk(args)
+        refresh_feed(f, time)
+        log << "First fetch: #{f.name} at #{short_datetime(time)}."
+      else
+        log("Invalid argument: #{args.inspect}.", :error)
+      end
+    rescue
+      log("REFRESH: #{$!.inspect}.")
     end
   end
   
@@ -106,20 +110,21 @@ module Refresh
       refreshed_at = f.previous_refresh
       refresh_feed(f, now)
 
-      Sludge.filter(f[:id], SLUDGE, 2) if SLUDGE
-
+      Sludge.filter(f, SLUDGE) if SLUDGE
+      
       # Hide unread Posts older than UNREAD_LIMIT
       cutoff = Post.where(feed_id: f[:id], state: Post::UNREAD).order(Sequel.desc(:published_at)).
                  offset(UNREAD_LIMIT-1).get(:published_at)
       if cutoff
         n = Post.where(feed_id: f[:id], state: Post::UNREAD).where{published_at < cutoff}.update(state: Post::HIDDEN)
+#        log << "Hiding #{n} older post(s).", :debug) if n > 0
         log("Hiding #{n} older post(s).", :debug) if n > 0
       end
       
       if refreshed_at
-        Refresh.log "Refreshed #{Refresh.time_ago_in_words(refreshed_at, true)} ago: #{f.name}."
+        log "Refreshed #{Refresh.time_ago_in_words(refreshed_at, true)} ago: #{f.name}."
       else
-        Refresh.log "Refreshed (no previous refresh): #{f.name}."
+        log "Refreshed (no previous refresh): #{f.name}."
       end
     end
 
