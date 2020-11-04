@@ -1,3 +1,5 @@
+require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/amethyst_helper.rb')
+
 # Just enough to make Resque work
 module Refresh
   @queue = :Refresh
@@ -39,7 +41,6 @@ class Feed < Sequel::Model
 #    adjust = (self[:ema_volume] == 0.0) ? 1.0 : amt * (0.5 + [0.25/self[:ema_volume], 3.0].min)
 #    adjust = (self[:ema_volume] == 0.0) ? 1.0 : amt * (0.6 + [0.25/self[:ema_volume], 2.0].min)
     adjust = (self[:ema_volume] == 0.0) ? 1.0 : amt * (0.3 + [0.25/self[:ema_volume], 2.0].min)
-    puts("SCORE: #{adjust}.") if Padrino.env != :test
     self[:score] += adjust
   end
 
