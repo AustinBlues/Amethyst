@@ -1,7 +1,7 @@
 PAGE_SIZE = 8
 
 # How many days to keep zombies (Posts that have been dropped from their Feed)
-DAYS_OF_THE_DEAD = 30
+DAYS_OF_THE_DEAD = 34
 
 # How many Unread post to keep visible
 UNREAD_LIMIT = 50
