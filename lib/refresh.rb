@@ -4,8 +4,8 @@ require 'redis'
 require 'nokogiri_rss'
 require 'time'
 #require 'ruby_rss'
-require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/amethyst_helper.rb')
-#require 'logger'
+require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/post_helper.rb')
+require 'logger'
 
 module Refresh
   CYCLE_TIME = 60 * 60	# time to refresh all Feeds: 1 hour
@@ -17,6 +17,7 @@ module Refresh
   extend Padrino::Helpers::FormatHelpers
 #  extend RubyRSS
   extend NokogiriRSS
+  extend Amethyst::App::PostHelper
   
   LVL2CLR = {error: :red, warning: :yellow, highlight: :green, info: :default, debug: :cyan, devel: :magenta}
 
@@ -89,12 +90,13 @@ module Refresh
         time = Time.now
         f = Feed.with_pk(args)
         refresh_feed(f, time)
-        log << "First fetch: #{f.name} at #{short_datetime(time)}."
+        log("First fetch: #{f.name} at #{short_datetime(time)}.")
       else
         log("Invalid argument: #{args.inspect}.", :error)
       end
     rescue
-      log("REFRESH: #{$!.inspect}.")
+      log("REFRESH: #{$!.inspect}.", :error)
+      puts $!.backtrace
     end
   end
 
@@ -121,7 +123,7 @@ module Refresh
       end
       boolean = search =~ /[-+<>(~*"]+/
       query = query.full_text_search([:title, :description], search, boolean: boolean)
-      log(query.sql.colorize(:blue)) if verbosity >= 3
+      log(query.sql, :debug) if verbosity >= 3
       query.each do |q|
         if q[:score] >= 0.5
           log("(#{'%0.2f' % q[:score]}) #{!q[:title].empty? ? q[:title] : q[:description]}".colorize(:red)) if verbosity >= 0
@@ -133,6 +135,7 @@ module Refresh
             post.save(changed: true)
           end
         elsif q[:score] >= 0.25
+          q.update(state: Post::HIDDEN)
           log("(#{'%0.2f' % q[:score]}) #{!q[:title].empty? ? q[:title] : q[:description]}".colorize(:yellow)) if verbosity >= 1
         elsif true
           log("(#{'%0.2f' % q[:score]}) #{!q[:title].empty? ? q[:title] : q[:description]}".colorize(:magenta)) if verbosity >= 2
