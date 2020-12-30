@@ -1,9 +1,24 @@
 # coding: utf-8
 require 'nokogiri'
 require 'time'
+require 'htmlentities'
 
 
 module NokogiriRSS
+  def html2words(text)
+    tmp = HTMLEntities.new.decode(text)
+#    text.gsub!(%r{\s*<(\!--.*--)|(/?([-a-zA-Z:]+(\s+[-a-zA-Z:]+=("[^"]*?"|'[^']*?'|\w+|\d+))*?\s*/?)>\s*}, ' ')
+    tmp.gsub!(%r{\s*<((\!--.*?--)|(/?[-a-zA-Z0-9:]+(\s*[-a-zA-Z:]+=("[^"]*?"|'[^']*?'|\w+|\d+))*\s*/?))>\s*}m, ' ')
+    if false
+      # BUG: includes quote marks in words
+      tmp.split(/\s+/)
+    else
+      # BUG: Splits contractions
+      tmp.split(/[^[[:word:]]]+/)
+    end
+  end
+
+
   def refresh_feed(feed, now)
     feed.status = nil
     begin
@@ -42,7 +57,7 @@ module NokogiriRSS
 
           item = f.css('item')
         elsif f.namespaces['xmlns'] =~ /atom/i
-        # ATOM
+          # ATOM
           standard = 'ATOM'
           feed.title = f.at_css('title').content
           item = f.css('entry')
@@ -93,7 +108,11 @@ module NokogiriRSS
                   feed.ema_volume += Aging::ALPHA 
 
 #                  Refresh.log "TIME: '#{attrs[:time]}' => '#{attrs[:published_at]}' (#{attrs[:published_at].zone}).", :devel
+                  Refresh.log html2words(attrs[:description]).join(' ')
                   p.set(attrs)
+                elsif false
+                  Refresh.log "TITLE: #{attrs[:title] || attrs[:ident]}."
+                  Refresh.log html2words(attrs[:description]).join(' ')
                 end
                 p.previous_refresh = now
               end
