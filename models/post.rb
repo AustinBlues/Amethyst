@@ -94,7 +94,7 @@ class Post < Sequel::Model
     previous_refresh.nil? || previous_refresh < feed.previous_refresh
   end
 
-  
+
   def self.unread
     where(state: UNREAD)
   end
