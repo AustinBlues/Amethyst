@@ -5,20 +5,6 @@ require 'htmlentities'
 
 
 module NokogiriRSS
-  def html2words(text)
-    tmp = HTMLEntities.new.decode(text)
-#    text.gsub!(%r{\s*<(\!--.*--)|(/?([-a-zA-Z:]+(\s+[-a-zA-Z:]+=("[^"]*?"|'[^']*?'|\w+|\d+))*?\s*/?)>\s*}, ' ')
-    tmp.gsub!(%r{\s*<((\!--.*?--)|(/?[-a-zA-Z0-9:]+(\s*[-a-zA-Z:]+=("[^"]*?"|'[^']*?'|\w+|\d+))*\s*/?))>\s*}m, ' ')
-    if false
-      # BUG: includes quote marks in words
-      tmp.split(/\s+/)
-    else
-      # BUG: Splits contractions
-      tmp.split(/[^[[:word:]]]+/)
-    end
-  end
-
-
   def refresh_feed(feed, now)
     feed.status = nil
     begin
@@ -104,15 +90,9 @@ module NokogiriRSS
             begin
               Post.update_or_create(feed_id: feed.id, ident: attrs[:ident]) do |p|
                 if p.new?
-                  Refresh.log "NEW: #{attrs[:title] || attrs[:ident]}.", :highlight
                   feed.ema_volume += Aging::ALPHA 
-
-#                  Refresh.log "TIME: '#{attrs[:time]}' => '#{attrs[:published_at]}' (#{attrs[:published_at].zone}).", :devel
-                  Refresh.log html2words(attrs[:description]).join(' ')
                   p.set(attrs)
-                elsif false
-                  Refresh.log "TITLE: #{attrs[:title] || attrs[:ident]}."
-                  Refresh.log html2words(attrs[:description]).join(' ')
+                  Refresh.log "NEW: #{p.name}.", :highlight
                 end
                 p.previous_refresh = now
               end
@@ -140,7 +120,9 @@ module NokogiriRSS
           end
         end
       end
-      
+
+    rescue Nokogiri::XML::XPath::SyntaxError
+      # Benign as far as I can tell
     rescue Exception => e
       STDERR.puts e.backtrace.join('\n')
       feed.status = e.class
@@ -159,7 +141,12 @@ module NokogiriRSS
     attrs = {}
 
     attrs[:title] = post.at_css('title').content
-    attrs[:description] = (tmp = post.at_css('description')).nil? ? nil : tmp.content
+    attrs[:description] = if (tmp = post.at_css('description'))
+                            tmp.content.strip
+                          else
+                            Refresh.log "MISSING DESCRIPTION: '#{attrs[:title]}.", :warning
+                            'No description'
+                          end
     
     # NOTE: ident uses .to_s instead of .content for compatibility with RubyRSS module
     attrs[:ident] = if (tmp = post.at_css('guid'))
@@ -168,7 +155,7 @@ module NokogiriRSS
                       strip_tags(tmp.content)
                     else
                       attrs[:status] = 'missing ident'
-                      Refresh.log "NO IDENT: "#{attrs[:title]}'.", :warning
+                      Refresh.log "NO IDENT: '#{attrs[:title]}'.", :warning
                       attrs[:title]
                     end
     attrs[:time] = if (tmp = post.at_css('pubDate'))
@@ -176,10 +163,11 @@ module NokogiriRSS
                    elsif (tmp = post.at_css('date'))
                      tmp.content
                    elsif (tmp = post.at_css('dc|date'))
+                     Refresh.log "INFO: dc:date used", :warning
                      tmp.content
                    else
                      attrs[:status] = 'missing date'
-                     Refresh.log "NO DATE: "#{title}'.", :warning
+                     Refresh.log "NO DATE: '#{title}'.", :warning
                      now.to_s
                    end
 #    attrs[:published_at] = Time.parse(attrs[:time])
