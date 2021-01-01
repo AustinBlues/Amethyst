@@ -6,7 +6,60 @@ class Post < Sequel::Model
 
 
   def before_create
-    Refresh.log "CREATE: |#{Post.html2words(self[:description]).inspect}|."
+    Refresh.log "CREATE: #{Post.html2words(self[:description]).inspect}"
+    back2 = back1 = nil
+    Post.html2words(self[:description]).each do |word|
+      if !word.empty?
+        w = Word.update_or_create(name: word) do |w|
+          if w.new?
+            w[:score] = 1.0
+          else
+            w[:score] += 1.0
+          end
+        end
+        puts "W: #{w.inspect}."
+        o = Occurrence.where(post_id: self[:id], word_id: w[:id]).first || Occurrence.new(post_id: self[:id], word_id: w[:id])
+        if o[:score].nil?
+          o[:score] = 1.0
+        else
+          o[:score] += 1.0
+        end
+        puts "O: #{o.inspect}."
+
+        if back1
+          # update_or_create does not work for join tables
+          puts "BACK2: #{back2.inspect}."
+          puts "BACK1: #{back1.inspect}."
+          puts "W: #{w.inspect}."
+          c = Context.where(prev_id: back2, next_id: w[:id]).first || Context.new(prev_id: back2, next_id: w[:id])
+          puts "PRE: #{c.inspect}."
+          if c[:score].nil?
+            c[:score] = 1.0
+            puts "C: #{c.inspect}."
+            c.save
+          else
+            c[:score] += 1.0
+            puts "C: #{c.inspect}."
+            c.save_changes
+          end
+        end
+        back2 = back1
+        back1 = w[:id]
+      end
+    end
+    
+    if back1
+      # update_or_create does not work for join tables
+      c = Context.where(prev_id: back2, next_id: nil).first || Context.new(prev_id: back2, next_id: nil)
+      if c[:score].nil?
+        c[:score] = 1.0
+      else
+        c[:score] += 1.0
+      end
+      puts "C: #{c.inspect}."
+      c.save
+    end
+      
     super
   end
 
