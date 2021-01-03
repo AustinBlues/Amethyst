@@ -5,11 +5,11 @@ class Post < Sequel::Model
   many_to_many :word
 
 
-  def before_create
+  def after_create
     Refresh.log "CREATE: #{Post.html2words(self[:description]).inspect}"
     back2 = back1 = nil
     Post.html2words(self[:description]).each do |word|
-      if !word.empty?
+      if word !~ /^\s*$/
         w = Word.update_or_create(name: word) do |w|
           if w.new?
             w[:score] = 1.0
@@ -17,31 +17,28 @@ class Post < Sequel::Model
             w[:score] += 1.0
           end
         end
+        w.save_changes
         puts "W: #{w.inspect}."
-        o = Occurrence.where(post_id: self[:id], word_id: w[:id]).first || Occurrence.new(post_id: self[:id], word_id: w[:id])
-        if o[:score].nil?
-          o[:score] = 1.0
+
+        if !(o = Occurrence.where(post_id: self[:id], word_id: w[:id]).first)
+          o = Occurrence.create(post_id: self[:id], word_id: w[:id], score: 1.0)
         else
-          o[:score] += 1.0
+          Occurrence.where(word_id: 99, post_id: 29183).update(Sequel.lit('score = score + 1.0'))
+          o = Occurrence.where(post_id: self[:id], word_id: w[:id]).first	# for debugging only
         end
         puts "O: #{o.inspect}."
-
+        
         if back1
           # update_or_create does not work for join tables
-          puts "BACK2: #{back2.inspect}."
-          puts "BACK1: #{back1.inspect}."
-          puts "W: #{w.inspect}."
-          c = Context.where(prev_id: back2, next_id: w[:id]).first || Context.new(prev_id: back2, next_id: w[:id])
-          puts "PRE: #{c.inspect}."
-          if c[:score].nil?
-            c[:score] = 1.0
-            puts "C: #{c.inspect}."
-            c.save
+          if !(c = Context.where(prev_id: back2, next_id: w[:id]).first)
+            c =  Context.create(prev_id: back2, next_id: w[:id], score: 1.0)
           else
-            c[:score] += 1.0
-            puts "C: #{c.inspect}."
-            c.save_changes
+            Context.where(word_id: 99, post_id: 29183).update(Sequel.lit('score = score + 1.0'))
+#            sql = "UPDATE contexts SET score=score+1.0 WHERE (prev_id = #{back2}) AND (next_id = #{w[:id]})"
+#            Sequel::Model.db.run(Sequel.lit(sql))
+            c = Context.where(prev_id: back2, next_id: w[:id]).first	# for debugging only
           end
+          puts "C: #{c.inspect}."
         end
         back2 = back1
         back1 = w[:id]
@@ -50,18 +47,19 @@ class Post < Sequel::Model
     
     if back1
       # update_or_create does not work for join tables
-      c = Context.where(prev_id: back2, next_id: nil).first || Context.new(prev_id: back2, next_id: nil)
-      if c[:score].nil?
-        c[:score] = 1.0
+      if !(c = Context.where(prev_id: back2, next_id: nil).first)
+        c =  Context.create(prev_id: back2, next_id: nil, score: 1.0)
       else
-        c[:score] += 1.0
+        sql = "UPDATE contexts SET score=score+1.0 WHERE (post_id = #{back2}) AND (word_id = #{w[:id]})"
+        Sequel::Model.db.run(Sequel.lit(sql))
+        c = Context.where(prev_id: back2, next_id: nil).first
       end
       puts "C: #{c.inspect}."
-      c.save
     end
-      
+    
     super
-  end
+  end if Padrino.env == :test
+
 
 #  def before_update
 #    # for migration of existing Posts only
