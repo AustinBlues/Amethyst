@@ -6,7 +6,11 @@ class Post < Sequel::Model
 
 
   def after_create
-    Refresh.log "CREATE: #{Post.html2words(self[:description]).inspect}"
+    if Padrino.env != :test
+      Refresh.log "CREATE: #{Post.html2words(self[:description]).inspect}"
+    else
+      puts "CREATE: #{Post.html2words(self[:description]).inspect}"
+    end
     back2 = back1 = nil
     Post.html2words(self[:description]).each do |word|
       if word !~ /^\s*$/
