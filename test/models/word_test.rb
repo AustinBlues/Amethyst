@@ -10,11 +10,11 @@ describe "Word Model" do
   end
 
   after do
-#    Occurrence.truncate
-#    Context.truncate
-#    Word.all{|w| w.delete}
-#    Post.all{|p| p.delete}
-#    Feed.all{|f| f.delete}
+    Occurrence.truncate
+    Context.truncate
+    Word.all{|w| w.delete}
+    Post.all{|p| p.delete}
+    Feed.all{|f| f.delete}
   end
   
   it 'can create a simplest word cloud' do
@@ -28,5 +28,12 @@ describe "Word Model" do
     f = Feed.create(title: 'Dummy Feed')
     p = Post.create(feed_id: f[:id], title: 'Dummy Post', url: 'http://example.com',
                     description: 'The quick brown fox tripped and tripped.')
+  end
+
+  it 'can create a word cloud with leading whitespace' do
+    puts 'Word cloud with leading whitespace.'
+    f = Feed.create(title: 'Dummy Feed')
+    p = Post.create(feed_id: f[:id], title: 'Dummy Post', url: 'http://example.com',
+                    description: ' &apos; The quick brown fox tripped and tripped.')
   end
 end
