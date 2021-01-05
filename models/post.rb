@@ -37,9 +37,7 @@ class Post < Sequel::Model
           if !(c = Context.where(prev_id: back2, next_id: w[:id]).first)
             c =  Context.create(prev_id: back2, next_id: w[:id], score: 1.0)
           else
-            Context.where(word_id: 99, post_id: 29183).update(Sequel.lit('score = score + 1.0'))
-#            sql = "UPDATE contexts SET score=score+1.0 WHERE (prev_id = #{back2}) AND (next_id = #{w[:id]})"
-#            Sequel::Model.db.run(Sequel.lit(sql))
+            Context.where(prev_id: back2, next_id: w[:id]).update(Sequel.lit('score = score + 1.0'))
             c = Context.where(prev_id: back2, next_id: w[:id]).first	# for debugging only
           end
           puts "C: #{c.inspect}."
@@ -54,8 +52,7 @@ class Post < Sequel::Model
       if !(c = Context.where(prev_id: back2, next_id: nil).first)
         c =  Context.create(prev_id: back2, next_id: nil, score: 1.0)
       else
-        sql = "UPDATE contexts SET score=score+1.0 WHERE (post_id = #{back2}) AND (word_id = #{w[:id]})"
-        Sequel::Model.db.run(Sequel.lit(sql))
+        Context.where(prev_id: back2, next_id: nil).update(Sequel.lit('score = score + 1.0'))
         c = Context.where(prev_id: back2, next_id: nil).first
       end
       puts "C: #{c.inspect}."
