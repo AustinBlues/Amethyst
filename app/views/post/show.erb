@@ -26,11 +26,11 @@
             <%== @post.description || @post.synopsis || '<b><em>Missing description or invalid UTF-8</em></b>' %>
           </p>
 	</td>
-	<td>
+	<td style="vertical-align: top">
 	  <table>
-	    <% @post.word_cloud.sort{|a, b| b[:count] <=> a[:count]}.first(10).each do |w| %>
+	    <% @post.word_cloud.sort{|a, b| b[:count] <=> a[:count]}.first(15).each do |w| %>
 	      <tr><td>
-	        <%= w[:name] %>&nbsp;(<%= w[:count] || w[:frequency] %>)
+	        <%= w[:name] %>&nbsp;(<%= w[:count] %>:<%= w[:frequency].to_int %>)
 	      </td></tr>
 	    <% end %>
 	  </table>
