@@ -2,71 +2,20 @@ require File.expand_path(File.dirname(__FILE__) + '/../lib/nokogiri_rss.rb')
 
 class Post < Sequel::Model
   many_to_one :feed
-  many_to_many :word
+  many_to_many :word, join_table: :occurrences
 
 
   def after_create
-    if Padrino.env != :test
-      Refresh.log "CREATE: #{Post.html2words(self[:description]).inspect}"
-    else
-      puts "CREATE: #{Post.html2words(self[:description]).inspect}"
-    end
-    back2 = back1 = nil
-    Post.html2words(self[:description]).each do |word|
-      if word !~ /^\s*$/
-        w = Word.update_or_create(name: word) do |w|
-          if w.new?
-            w[:score] = 1.0
-          else
-            w[:score] += 1.0
-          end
-        end
-        w.save_changes
-        puts "W: #{w.inspect}."
-
-        if !(o = Occurrence.where(post_id: self[:id], word_id: w[:id]).first)
-          o = Occurrence.create(post_id: self[:id], word_id: w[:id], score: 1.0)
-        else
-          Occurrence.where(word_id: 99, post_id: 29183).update(Sequel.lit('score = score + 1.0'))
-          o = Occurrence.where(post_id: self[:id], word_id: w[:id]).first	# for debugging only
-        end
-        puts "O: #{o.inspect}."
-        
-        if back1
-          # update_or_create does not work for join tables
-          if !(c = Context.where(prev_id: back2, next_id: w[:id]).first)
-            c =  Context.create(prev_id: back2, next_id: w[:id], score: 1.0)
-          else
-            Context.where(prev_id: back2, next_id: w[:id]).update(Sequel.lit('score = score + 1.0'))
-            c = Context.where(prev_id: back2, next_id: w[:id]).first	# for debugging only
-          end
-          puts "C: #{c.inspect}."
-        end
-        back2 = back1
-        back1 = w[:id]
-      end
-    end
-    
-    if back1
-      # update_or_create does not work for join tables
-      if !(c = Context.where(prev_id: back2, next_id: nil).first)
-        c =  Context.create(prev_id: back2, next_id: nil, score: 1.0)
-      else
-        Context.where(prev_id: back2, next_id: nil).update(Sequel.lit('score = score + 1.0'))
-        c = Context.where(prev_id: back2, next_id: nil).first
-      end
-      puts "C: #{c.inspect}."
-    end
-    
+    create_word_cloud
     super
-  end if Padrino.env == :test
+  end
 
 
-#  def before_update
-#    # for migration of existing Posts only
-#    Refresh.log "UPDATE: #{Post.html2words(self[:description]).join(' ')}."
-#    super
-#  end
+  def after_update
+    # for migration of existing Posts only
+    create_word_cloud if word.empty?
+    super
+  end
 
 
   ONE_DAY = 24 * 60 * 60
@@ -77,6 +26,69 @@ class Post < Sequel::Model
   HIDDEN = 2
   DOWN_VOTED = 3
 
+
+  def create_word_cloud
+    words = Post.html2words(self[:description])
+    if Padrino.env != :test
+#      Refresh.log("CREATE: #{words.inspect}")
+    else
+      puts "CREATE: #{words.inspect}"
+    end
+    
+    back2 = back1 = nil
+    words.each do |word|
+      if word !~ /^\s*$/
+        w = Word.update_or_create(name: word) do |w|
+          if w.new?
+            w[:frequency] = 1.0
+          else
+            w[:frequency] += 1.0
+          end
+        end
+        w.save_changes
+        puts "W: #{w.inspect}." if Padrino.env == :test
+
+        if !(o = Occurrence.where(post_id: self[:id], word_id: w[:id]).first)
+          o = Occurrence.create(post_id: self[:id], word_id: w[:id], count: 1)
+        else
+          Occurrence.where(post_id: self[:id], word_id: w[:id]).update(Sequel.lit('count = count + 1'))
+          o = Occurrence.where(post_id: self[:id], word_id: w[:id]).first	# for debugging printouts only
+        end
+        puts "O: #{o.inspect}." if Padrino.env == :test
+
+        if back1
+          # update_or_create does not work for join tables
+          if !(c = Context.where(prev_id: back2, next_id: w[:id]).first)
+            c =  Context.create(prev_id: back2, next_id: w[:id], count: 1)
+          else
+            Context.where(prev_id: back2, next_id: w[:id]).update(Sequel.lit('count = count + 1'))
+            c = Context.where(prev_id: back2, next_id: w[:id]).first	# for debugging only
+          end
+          puts "C: #{c.inspect}." if Padrino.env == :test
+        end
+        back2 = back1
+        back1 = w[:id]
+      end
+    end
+    
+    if back1
+      # update_or_create does not work for join tables
+      if !(c = Context.where(prev_id: back2, next_id: nil).first)
+        c =  Context.create(prev_id: back2, next_id: nil, count: 1)
+      else
+        Context.where(prev_id: back2, next_id: nil).update(Sequel.lit('count = count + 1'))
+        c = Context.where(prev_id: back2, next_id: nil).first	# for debugging printouts only
+      end
+      puts "C: #{c.inspect}." if Padrino.env == :test
+    end
+  end
+
+  
+  def word_cloud
+    Word.join(:occurrences, post_id: self[:id], word_id: :id).where(flags: 0).all
+  end
+
+  
   def name
     (!title.nil? && !title.empty?) ? title : SafeBuffer.new("<b><em>Post #{id}</em></b>")
   end

@@ -19,8 +19,23 @@
   </div>
 
   <div class="card-body">
-    <p class="card-text">
-      <%== @post.description || @post.synopsis || '<b><em>Missing description or invalid UTF-8</em></b>' %>
-    </p>
+    <table>
+      <tr>
+        <td style="vertical-align: top">
+          <p class="card-text">
+            <%== @post.description || @post.synopsis || '<b><em>Missing description or invalid UTF-8</em></b>' %>
+          </p>
+	</td>
+	<td>
+	  <table>
+	    <% @post.word_cloud.sort{|a, b| b[:count] <=> a[:count]}.first(10).each do |w| %>
+	      <tr><td>
+	        <%= w[:name] %>&nbsp;(<%= w[:count] || w[:frequency] %>)
+	      </td></tr>
+	    <% end %>
+	  </table>
+	</td>
+      </tr>
+    </table>
   </div>
 </div>
