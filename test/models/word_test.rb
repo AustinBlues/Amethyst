@@ -20,20 +20,20 @@ describe "Word Model" do
   it 'can create a simplest word cloud' do
     puts 'Simplest Word cloud.'
     f = Feed.create(title: 'Dummy Feed')
-    p = Post.create(feed_id: f[:id], title: 'Dummy Post', url: 'http://example.com', description: 'The quick brown fox.')
+    Post.create(feed_id: f[:id], title: 'Dummy Post', url: 'http://example.com', description: 'The quick brown fox.')
   end
 
   it 'can create a simple word cloud' do
     puts 'Simple Word cloud.'
     f = Feed.create(title: 'Dummy Feed')
-    p = Post.create(feed_id: f[:id], title: 'Dummy Post', url: 'http://example.com',
-                    description: 'The quick brown fox tripped and tripped.')
+    Post.create(feed_id: f[:id], title: 'Dummy Post', url: 'http://example.com',
+                description: 'The quick brown fox tripped and tripped.')
   end
 
   it 'can create a word cloud with leading whitespace' do
     puts 'Word cloud with leading whitespace.'
     f = Feed.create(title: 'Dummy Feed')
-    p = Post.create(feed_id: f[:id], title: 'Dummy Post', url: 'http://example.com',
-                    description: ' &apos; The quick brown fox tripped and tripped.')
+    Post.create(feed_id: f[:id], title: 'Dummy Post', url: 'http://example.com',
+                description: ' &apos; The quick brown fox tripped and tripped.')
   end
 end
