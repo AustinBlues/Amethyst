@@ -176,7 +176,11 @@ class Post < Sequel::Model
       tmp.split(/[^[[:word:]]]+/)
     end
   end
-  
+
+
+  def destroy
+    remove_all_word
+  end
 
   def self.zombie_killer
     now = Time.now
@@ -185,7 +189,7 @@ class Post < Sequel::Model
     zombie_cnt = zombie.count
     unread_cnt = zombie.where(state: UNREAD).count
     puts "Deleting all #{DAYS_OF_THE_DEAD}+ day zombies: #{zombie_cnt}, #{unread_cnt} unread."
-    zombie.delete
+    zombie.all {|z| z.destroy}
 
     (DAYS_OF_THE_DEAD-1).downto(1).each do |i|
       from = now - (i+1)*ONE_DAY
@@ -197,6 +201,7 @@ class Post < Sequel::Model
         puts "'#{p.name}' on #{p.feed.name}."
       end
       puts "#{i} day zombies: #{zombie.count}, #{unread_cnt} unread."
+
     end
   end
 end
