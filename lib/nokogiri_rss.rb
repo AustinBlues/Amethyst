@@ -90,7 +90,11 @@ module NokogiriRSS
             begin
               Post.update_or_create(feed_id: feed.id, ident: attrs[:ident]) do |p|
                 if p.new?
-                  feed.ema_volume += Aging::ALPHA 
+                  feed.ema_volume += Aging::ALPHA
+                  if attrs[:description].nil?
+                    attrs[:description] = 'No description'
+                    Refresh.log "MISSING DESCRIPTION: '#{attrs[:title]}.", :warning
+                  end
                   p.set(attrs)
                   Refresh.log "NEW: #{p.name}.", :highlight
                 end
@@ -143,9 +147,6 @@ module NokogiriRSS
     attrs[:title] = post.at_css('title').content
     attrs[:description] = if (tmp = post.at_css('description'))
                             tmp.content.strip
-                          else
-                            Refresh.log "MISSING DESCRIPTION: '#{attrs[:title]}.", :warning
-                            'No description'
                           end
     
     # NOTE: ident uses .to_s instead of .content for compatibility with RubyRSS module
