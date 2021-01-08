@@ -28,7 +28,7 @@
 	</td>
 	<td style="vertical-align: top">
 	  <table>
-	    <% @post.word_cloud.sort{|a, b| b[:count] <=> a[:count]}.first(15).each do |w| %>
+	    <% @words.first(20).each do |w| %>
 	      <tr><td>
 	        <%= w[:name] %>&nbsp;(<%= w[:count] %>:<%= w[:frequency].to_int %>)
 	      </td></tr>

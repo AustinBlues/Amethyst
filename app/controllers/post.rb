@@ -78,6 +78,7 @@ Amethyst::App.controllers :post do
     @post = Post.with_pk! params[:id]
     @post.click!
     @post.save(changed: true)
+    @words = @post.word_cloud.sort{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}
 
     render 'show'
   end
