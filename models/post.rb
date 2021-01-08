@@ -178,8 +178,9 @@ class Post < Sequel::Model
   end
 
 
-  def destroy
+  def before_destroy
     remove_all_word
+    super
   end
 
   def self.zombie_killer
