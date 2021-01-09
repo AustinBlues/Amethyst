@@ -30,7 +30,7 @@
 	  <table>
 	    <% @words.first(20).each do |w| %>
 	      <tr><td>
-	        <%= w[:name] %>&nbsp;(<%= w[:count] %>:<%= w[:frequency].to_int %>)
+	        <%= w[:name] %>&nbsp;(<%= w[:count] %>:<%= w[:frequency].round %>)
 	      </td></tr>
 	    <% end %>
 	  </table>
