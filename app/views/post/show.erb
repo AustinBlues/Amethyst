@@ -23,7 +23,7 @@
       <tr>
         <td style="vertical-align: top">
           <p class="card-text">
-            <%== @post.description || @post.synopsis || '<b><em>Missing description or invalid UTF-8</em></b>' %>
+            <%== @post[:description] || @post.synopsis || '<b><em>Missing description or invalid UTF-8</em></b>' %>
           </p>
 	</td>
 	<td style="vertical-align: top">
@@ -38,13 +38,19 @@
       </tr>
       <tr>
         <td colspan="2">
-	  <div><b>Related posts:</b> <%= @related.map{|r| %Q|"#{r[:title]}"|}.join(', ') %></div>
+	  <div>
+	    <b>Related posts:</b>
+	    <%== @related.map{|r| link_to(r.name, url_for(:post, :show, id: r[:id], origin: @origin), class: post_classes(r),
+	          title: @datetime_only ? short_datetime(r.published_at) : "#{r.feed.name} #{short_datetime(r.published_at)}")}.
+                  join(', ')
+            %>
+	 </div>
 	</td>
       </tr>
       <% @related.each do |r| %>
         <tr>
 	  <td>
-	    <h2><%= r.name %></h2>
+	    <h3><%= r.name %></h3>
 
 	    <p class="card-text">
 	      <%= r.description %>
