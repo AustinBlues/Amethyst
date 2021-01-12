@@ -159,6 +159,12 @@ class Post < Sequel::Model
   end
 
 
+  def description
+    tmp = HTMLEntities.new.decode(self[:description])
+    tmp.gsub(%r{\s*<((\!--.*?--)|(/?[-a-zA-Z0-9:]+(\s*[-a-zA-Z:]+=("[^"]*?"|'[^']*?'|\w+|\d+))*\s*/?))>\s*}m, ' ')
+  end
+
+  
   def self.unread
     where(state: UNREAD)
   end

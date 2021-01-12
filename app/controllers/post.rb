@@ -79,6 +79,7 @@ Amethyst::App.controllers :post do
     @post.click!
     @post.save(changed: true)
     @words = @post.word_cloud.sort{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}
+    @related = Post.where(id: @post.word.map(&:id)).all
 
     render 'show'
   end
