@@ -40,17 +40,14 @@
         <td colspan="2">
 	  <div>
 	    <b>Related posts:</b>
-	    <%== @related.map{|r| link_to(r.name, url_for(:post, :show, id: r[:id], origin: @origin), class: post_classes(r),
-	          title: @datetime_only ? short_datetime(r.published_at) : "#{r.feed.name} #{short_datetime(r.published_at)}")}.
-                  join(', ')
-            %>
+	    <%== @related.map{|r| link_to_post_show(r, @origin, @datetime_only)}.join(', ') %>
 	 </div>
 	</td>
       </tr>
       <% @related.each do |r| %>
         <tr>
 	  <td>
-	    <h3><%= r.name %></h3>
+	    <h4><%= link_to_post_show(r, @origin, @datetime_only) %></h4>
 
 	    <p class="card-text">
 	      <%= r.description %>

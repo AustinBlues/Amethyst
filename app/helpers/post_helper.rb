@@ -26,6 +26,16 @@ module Amethyst
               end
         time.strftime(fmt)
       end
+
+      
+      def link_to_post_show(post, origin, datetime_only)
+        title = if datetime_only
+                  short_datetime(post[:published_at])
+                else
+                  "#{post.feed.name} #{short_datetime(post[:published_at])}"
+                end
+        link_to(post.name, url_for(:post, :show, id: post[:id], origin: origin), class: post_classes(post), title: title) 
+      end
     end
 
     helpers PostHelper
