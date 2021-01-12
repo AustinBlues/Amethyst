@@ -90,7 +90,7 @@ class Post < Sequel::Model
 
   
   def name
-    (!title.nil? && !title.empty?) ? title : SafeBuffer.new("<b><em>Post #{id}</em></b>")
+    (!self[:title].nil? && !self[:title].empty?) ? self[:title] : SafeBuffer.new("<b><em>Post #{id}</em></b>")
   end
 
   def clicked?
