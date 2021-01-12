@@ -25,16 +25,6 @@
           <p class="card-text">
             <%== @post.description || @post.synopsis || '<b><em>Missing description or invalid UTF-8</em></b>' %>
           </p>
-
-	  <div><b>Related posts:</b> <%= @related.map{|r| %Q|"#{r[:title]}"|}.join(', ') %></div>
-
-	  <% @related.each do |r| %>
-	    <h2><%= r[:title] %></h2>
-
-	    <p class="card-text">
-	      <%= r.description %>
-	    </p>
-	  <% end %>
 	</td>
 	<td style="vertical-align: top">
 	  <table>
@@ -46,6 +36,22 @@
 	  </table>
 	</td>
       </tr>
+      <tr>
+        <td colspan="2">
+	  <div><b>Related posts:</b> <%= @related.map{|r| %Q|"#{r[:title]}"|}.join(', ') %></div>
+	</td>
+      </tr>
+      <% @related.each do |r| %>
+        <tr>
+	  <td>
+	    <h2><%= r.name %></h2>
+
+	    <p class="card-text">
+	      <%= r.description %>
+	    </p>
+	  </td>
+	</tr>
+      <% end %>
     </table>
   </div>
 </div>
