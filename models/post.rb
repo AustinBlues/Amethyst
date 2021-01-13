@@ -32,7 +32,7 @@ class Post < Sequel::Model
     if Padrino.env != :test
 #      Refresh.log("CREATE: #{words.inspect}")
     else
-      puts "CREATE: #{words.inspect}"
+#      puts "CREATE: #{words.inspect}"
     end
     
     back2 = back1 = nil
@@ -46,7 +46,7 @@ class Post < Sequel::Model
           end
         end
         w.save_changes
-        puts "W: #{w.inspect}." if Padrino.env == :test
+ #       puts "W: #{w.inspect}." if Padrino.env == :test
 
         if !(o = Occurrence.where(post_id: self[:id], word_id: w[:id]).first)
           o = Occurrence.create(post_id: self[:id], word_id: w[:id], count: 1)
@@ -54,7 +54,7 @@ class Post < Sequel::Model
           Occurrence.where(post_id: self[:id], word_id: w[:id]).update(Sequel.lit('count = count + 1'))
           o = Occurrence.where(post_id: self[:id], word_id: w[:id]).first	# for debugging printouts only
         end
-        puts "O: #{o.inspect}." if Padrino.env == :test
+ #       puts "O: #{o.inspect}." if Padrino.env == :test
 
         if back1
           # update_or_create does not work for join tables
@@ -64,7 +64,7 @@ class Post < Sequel::Model
             Context.where(prev_id: back2, next_id: w[:id]).update(Sequel.lit('count = count + 1'))
             c = Context.where(prev_id: back2, next_id: w[:id]).first	# for debugging only
           end
-          puts "C: #{c.inspect}." if Padrino.env == :test
+ #         puts "C: #{c.inspect}." if Padrino.env == :test
         end
         back2 = back1
         back1 = w[:id]
@@ -79,7 +79,7 @@ class Post < Sequel::Model
         Context.where(prev_id: back2, next_id: nil).update(Sequel.lit('count = count + 1'))
         c = Context.where(prev_id: back2, next_id: nil).first	# for debugging printouts only
       end
-      puts "C: #{c.inspect}." if Padrino.env == :test
+ #     puts "C: #{c.inspect}." if Padrino.env == :test
     end
   end
 
