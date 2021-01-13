@@ -13,7 +13,7 @@ Sequel.migration do
       drop_column :state
     end
     alter_table :feeds do
-      drop_column :down_votes, :smallint, default: 0
+      drop_column :down_votes
     end
   end
 end

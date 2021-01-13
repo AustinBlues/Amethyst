@@ -7,7 +7,6 @@ Sequel.migration do
     alter_table :posts do
       drop_column :undo_queue
       drop_column :readability
-      drop_column :down_votes
       drop_column :status
     end
   end
@@ -20,7 +19,6 @@ Sequel.migration do
     alter_table :posts do
       add_column :undo_queue, Integer
       add_column :readability, TrueClass, default: false, null: false
-      add_column :down_votes, Integer
       add_column :status, String
     end
   end
