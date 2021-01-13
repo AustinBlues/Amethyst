@@ -39,7 +39,6 @@ describe "/feed" do
     it 'should return oldest Post and all back links point to origin' do
       get "/post/search?page=2&search=Post&origin=#{CGI.escape(@origin)}"
       p = Nokogiri::HTML.parse(last_response.body)
-#      puts last_response.body
       assert_equal(@posts[PAGE_SIZE][:title], p.at_css('td a').content.strip)
       l = p.at_css('div.card-header a.btn')
       assert_equal('to Feeds', l.attr('title'))
