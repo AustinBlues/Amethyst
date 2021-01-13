@@ -5,7 +5,9 @@ require 'nokogiri_rss'
 require 'time'
 #require 'ruby_rss'
 require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/post_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/amethyst_helper.rb')
 require 'logger'
+
 
 module Refresh
   CYCLE_TIME = 60 * 60	# time to refresh all Feeds: 1 hour
@@ -17,6 +19,7 @@ module Refresh
   extend Padrino::Helpers::FormatHelpers
 #  extend RubyRSS
   extend NokogiriRSS
+  extend Amethyst::App::AmethystHelper
   extend Amethyst::App::PostHelper
   
   LVL2CLR = {error: :red, warning: :yellow, highlight: :green, info: :default, debug: :cyan, devel: :magenta}

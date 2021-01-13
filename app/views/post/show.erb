@@ -50,7 +50,7 @@
 	    <h4><%= link_to_post_show(r, @origin, @datetime_only) %></h4>
 
 	    <p class="card-text">
-	      <%= r.description %>
+	      <%= truncate(r.description, VARCHAR_MAX, separator: /\s/) %>
 	    </p>
 	  </td>
 	</tr>
