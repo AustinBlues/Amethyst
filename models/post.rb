@@ -84,8 +84,8 @@ class Post < Sequel::Model
   end
 
   
-  def word_cloud
-    Word.join(:occurrences, post_id: self[:id], word_id: :id).where(flags: 0).all
+  def word_cloud(limit = 1.0)
+    Word.join(:occurrences, post_id: self[:id], word_id: :id).where(flags: 0).where{frequency > limit}.all
   end
 
   
