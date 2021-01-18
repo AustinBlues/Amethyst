@@ -6,7 +6,7 @@ Sequel.migration do
       column :flags, :tinyint, default: 0
       column :name, String, collate: :utf8mb4_nopad_bin, index: true, null: false
     end
-    stop_words = %w{a about an are as at be by com de en for from how i in is it la
+    stop_words = %w{a about an and are as at be by com de en for from how i in is it la
     of on or that the this to was what when where who will with und the www}
     stop_words.each do |sw|
       from(:words).insert(name: sw, frequency: 0.0, flags: 1)
