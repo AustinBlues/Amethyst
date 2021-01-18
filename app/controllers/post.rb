@@ -79,10 +79,22 @@ Amethyst::App.controllers :post do
     @post.click!
     @post.save(changed: true)
     @words = @post.word_cloud(0.5).sort{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}
-    tmp = @post.word.select{|w| w[:frequency] > 1.0}.map(&:id)
+    tmp = @post.word.select{|w| w[:frequency] > 1.0 && w[:flags] == 0}.map(&:id)
     puts "RELATED: #{Post.join(:occurrences, word_id: tmp, post_id: :id).where(state: Post::UNREAD).group(:id).count}."
-    @related = Post.join(:occurrences, word_id: tmp, post_id: :id).where(state: Post::UNREAD).group(:id).first(4)
-
+    word = Occurrence.where(word_id: tmp).join(:words, id: :word_id).all
+    tmp2 = {}
+    word.each do |w|
+      if tmp2[w[:post_id]].nil?
+        tmp2[w[:post_id]] = w[:frequency]/w[:count]
+      else
+        tmp2[w[:post_id]] += w[:frequency]/w[:count]
+      end
+    end
+    strength = tmp2.map{|key, value| {post_id: key, strength: value}}
+    strength.sort!{|a, b| a[:strength] <=> b[:strength]}
+    puts "STRENGTH: #{strength.first(5).inspect}."
+    @related = Post.where(id: strength.last(3).map{|p| p[:post_id]}).all
+    
     render 'show'
   end
   

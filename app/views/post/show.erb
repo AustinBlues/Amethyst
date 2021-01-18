@@ -47,11 +47,13 @@
       <% @related.each do |r| %>
         <tr>
 	  <td>
-	    <h4><%= link_to_post_show(r, @origin, @datetime_only) %></h4>
+	    <h4><%= link_to_post_show(r, @origin, @datetime_only) %>&nbsp;(<%= '??' %>)</h4>
 
 	    <p class="card-text">
 	      <%= truncate(r.description, VARCHAR_MAX, separator: /\s/) %>
 	    </p>
+	  </td>
+	  <td>
 	  </td>
 	</tr>
       <% end %>
