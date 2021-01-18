@@ -46,14 +46,18 @@
       </tr>
       <% @related.each do |r| %>
         <tr>
-	  <td>
-	    <h4><%= link_to_post_show(r, @origin, @datetime_only) %>&nbsp;(<%= '??' %>)</h4>
+	  <td style="vertical-align: top">
+	    <br>
+	    <h4><%= link_to_post_show(r, @origin, @datetime_only) %>&nbsp;(<%= '%0.2f' % r[:strength] %>)</h4>
 
 	    <p class="card-text">
 	      <%= truncate(r.description, VARCHAR_MAX, separator: /\s/) %>
 	    </p>
 	  </td>
-	  <td>
+	  <td style="vertical-align: top">
+	    <% r.word_cloud.sort{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}.first(20).each do |w| %>
+	      <br><%= w[:name] %>&nbsp;(<%= w[:count] %>:<%= w[:frequency].round %>)
+	    <% end %>
 	  </td>
 	</tr>
       <% end %>
