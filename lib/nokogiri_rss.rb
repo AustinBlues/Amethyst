@@ -197,17 +197,22 @@ module NokogiriRSS
                       Refresh.log "NO IDENT: "#{title}'.", :warning
                       attrs[:title]
                     end
-    attrs[:time] = if (tmp = post.at_css('published'))
-                     tmp.content
-                   elsif (tmp = post.at_css('date'))
-                     tmp.content
-                   elsif (tmp = post.at_css('dc|date'))
-                     tmp.content
-                   else
-                     attrs[:status] = 'missing date'
-                     Refresh.log "NO DATE: "#{title}'.", :warning
-                     now.to_s
-                   end
+
+    begin
+      attrs[:time] = if (tmp = post.at_css('published'))
+                       tmp.content
+                     elsif (tmp = post.at_css('date'))
+                       tmp.content
+                     elsif (tmp = post.at_css('dc|date'))
+                       tmp.content
+                     else
+                       attrs[:status] = 'missing date'
+                       Refresh.log "NO DATE: "#{title}'.", :warning
+                       now.to_s
+                     end
+    rescue Nokogiri::XML::XPath::SyntaxError
+      attrs[:time] = now.to_s
+    end
 #    attrs[:published_at] = Time.parse(attrs[:time])
     attrs[:published_at] = Refresh.raw2time(attrs[:time])
     attrs[:url] = if !(link = post.at_css('link')).nil?
