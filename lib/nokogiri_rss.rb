@@ -169,7 +169,7 @@ module NokogiriRSS
                    else
                      attrs[:status] = 'missing date'
                      Refresh.log "NO DATE: '#{title}'.", :warning
-                     now.to_s
+                     Time.now.to_s
                    end
 #    attrs[:published_at] = Time.parse(attrs[:time])
     attrs[:published_at] = Refresh.raw2time(attrs[:time])
@@ -216,10 +216,10 @@ module NokogiriRSS
                      else
                        attrs[:status] = 'missing date'
                        Refresh.log "NO DATE: "#{title}'.", :warning
-                       now.to_s
+                       Time.now.to_s
                      end
     rescue Nokogiri::XML::XPath::SyntaxError
-      attrs[:time] = now.to_s
+      attrs[:time] = Time.now.to_s
     end
 #    attrs[:published_at] = Time.parse(attrs[:time])
     attrs[:published_at] = Refresh.raw2time(attrs[:time])
