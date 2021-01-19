@@ -186,7 +186,7 @@ module Refresh
     end
 
     # Report progress.  The second case is when Amethyst catching up after not running (e.g. hibernation).
-    tmp = (feeds.size == max_refresh) ? max_refresh : "#{feeds.size}:#{max_refresh}"
+    tmp = (feeds.count == max_refresh) ? max_refresh : "#{feeds.count}:#{max_refresh}"
     log "Fetched #{tmp}/#{feed_count} channels at #{Time.now.strftime('%l:%M%P').strip}."
   end
 end
