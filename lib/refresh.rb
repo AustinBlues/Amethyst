@@ -162,7 +162,7 @@ module Refresh
     @@redis.set(REDIS_KEY, residue)
 
     # Update all Feeds in the slice
-    feeds = Feed.slice(slice_size).all
+    feeds = Feed.slice(slice_size)
     feeds.each do |f|
       refreshed_at = f.previous_refresh
       refresh_feed(f, now)

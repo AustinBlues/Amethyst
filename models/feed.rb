@@ -58,7 +58,7 @@ class Feed < Sequel::Model
   
   # Sequel dataset (query) for a slice of the oldest Feeds
   def self.slice(size)
-    limit(size).order(:next_refresh)
+    (size == 0) ? [] : limit(size).order(:next_refresh)
   end
 
 
