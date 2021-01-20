@@ -55,7 +55,7 @@
 	    </p>
 	  </td>
 	  <td style="vertical-align: top">
-	    <% r.word_cloud.sort{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}.first(20).each do |w| %>
+	    <% r[:wic].each do |w| %>
 	      <br><%= w[:name] %>&nbsp;(<%= w[:count] %>:<%= w[:frequency].round %>)
 	    <% end %>
 	  </td>

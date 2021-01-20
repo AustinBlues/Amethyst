@@ -90,11 +90,15 @@ Amethyst::App.controllers :post do
     strength = tmp2.map{|key, value| {post_id: key, strength: value}}
     strength.sort!{|a, b| b[:strength] <=> a[:strength]}
 #    puts "STRENGTH: #{strength.first(5).inspect}."
-    tmp = Post.where(id: strength.map{|p| p[:post_id]}, state: Post::UNREAD).all
-    tmp.each_with_index do |t, i|
+    tmp3 = Post.where(id: strength.map{|p| p[:post_id]}, state: Post::UNREAD).all.each_with_index do |t, i|
       t[:strength] = strength[i][:strength]
+      t[:wic] = []
+      t.word_cloud.sort{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}.first(20).each do |w|
+        t[:wic] << {name: w[:name], count: w[:count], frequency: w[:frequency]}
+      end
     end
-    @related = tmp.first(3)
+    puts "TMP3: #{tmp3[0].inspect}."
+    @related = tmp3.first(3)
     
     render 'show'
   end
