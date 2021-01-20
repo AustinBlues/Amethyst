@@ -1,0 +1,3 @@
+Install redis-namespace
+
+  gem install redis-namespace
