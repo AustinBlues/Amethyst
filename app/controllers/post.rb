@@ -83,18 +83,13 @@ Amethyst::App.controllers :post do
     tmp = @post.word.select{|w| w[:frequency] > 1.0 && w[:flags] == 0}.map(&:id)
     puts "RELATED: #{Post.join(:occurrences, word_id: tmp, post_id: :id).where(state: Post::UNREAD).group(:id).count}."
     word = Occurrence.where(word_id: tmp).join(:words, id: :word_id).all
-    tmp2 = {}
+    tmp2 = Hash.new(0)
     word.each do |w|
-      puts "W: #{w.inspect}."
-      if tmp2[w[:post_id]].nil?
-        tmp2[w[:post_id]] = w[:count]/w[:frequency]
-      else
-        tmp2[w[:post_id]] += w[:count]/w[:frequency]
-      end
+      tmp2[w[:post_id]] += w[:count]/w[:frequency]
     end
     strength = tmp2.map{|key, value| {post_id: key, strength: value}}
     strength.sort!{|a, b| b[:strength] <=> a[:strength]}
-    puts "STRENGTH: #{strength.first(5).inspect}."
+#    puts "STRENGTH: #{strength.first(5).inspect}."
     tmp = Post.where(id: strength.map{|p| p[:post_id]}, state: Post::UNREAD).all
     tmp.each_with_index do |t, i|
       t[:strength] = strength[i][:strength]
