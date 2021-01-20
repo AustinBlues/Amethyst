@@ -1,6 +1,7 @@
 # All periodic refresh of Feeds policy is in this module.
 #
 require 'redis'
+require 'redis-namespace'
 require 'nokogiri_rss'
 require 'time'
 #require 'ruby_rss'
@@ -24,7 +25,8 @@ module Refresh
   
   LVL2CLR = {error: :red, warning: :yellow, highlight: :green, info: :default, debug: :cyan, devel: :magenta}
 
-  @@redis = Redis.new
+  @@redis = Redis::Namespace.new(ROOT, redis: Redis.new)
+
   SLUDGE = ENV['SLUDGE'] || (ARGV.find{|f| f =~ /^SLUDGE=(.*)/} ? $~[1] : nil)
 #  SLUDGE = if ENV['SLUDGE']
 #             ENV['SLUDGE']
