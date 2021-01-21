@@ -64,7 +64,7 @@ Amethyst::App.controllers :post do
 
   get :show, '/post/:id' do
     @context = 'Post'    
-    @datetime_only = true
+    @datetime_only = false
     @back_title = case @origin
                   when /search/
                     'to Search'
