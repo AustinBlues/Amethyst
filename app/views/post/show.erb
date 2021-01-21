@@ -48,7 +48,7 @@
         <tr>
 	  <td style="vertical-align: top">
 	    <br>
-	    <h4><%= link_to_post_show(r, @origin, @datetime_only) %>&nbsp;(<%= '%0.2f' % r[:strength] %>)</h4>
+	    <h4><%= link_to_post_show(r, @origin, @datetime_only) %>&nbsp;(<%= r[:strength].round %>)</h4>
 
 	    <p class="card-text">
 	      <%= truncate(r.description, VARCHAR_MAX, separator: /\s/) %>

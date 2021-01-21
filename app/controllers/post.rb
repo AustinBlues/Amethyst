@@ -80,24 +80,28 @@ Amethyst::App.controllers :post do
     @post.click!
     @post.save(changed: true)
     @words = @post.word_cloud(0.5).sort{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}
-    tmp = @post.word.select{|w| w[:frequency] > 1.0 && w[:flags] == 0}.map(&:id)
-    puts "RELATED: #{Post.join(:occurrences, word_id: tmp, post_id: :id).where(state: Post::UNREAD).group(:id).count}."
-    word = Occurrence.where(word_id: tmp).join(:words, id: :word_id).all
+    word_id = @post.word.select{|w| w[:frequency] > 1.0 && w[:flags] == 0}.map(&:id)
+#    puts "RELATED: #{Post.join(:occurrences, word_id: word_id, post_id: :id).where(state: Post::UNREAD).group(:id).count}."
+    occurrence = Occurrence.where(word_id: word_id).join(:words, id: :word_id).all
     tmp2 = Hash.new(0)
-    word.each do |w|
+    occurrence.each do |w|
       tmp2[w[:post_id]] += w[:count]/w[:frequency]
     end
     strength = tmp2.map{|key, value| {post_id: key, strength: value}}
     strength.sort!{|a, b| b[:strength] <=> a[:strength]}
 #    puts "STRENGTH: #{strength.first(5).inspect}."
     tmp3 = Post.where(id: strength.map{|p| p[:post_id]}, state: Post::UNREAD).all.each_with_index do |t, i|
-      t[:strength] = strength[i][:strength]
-      t[:wic] = t.word_cloud.sort{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}.first(20).map do |w|
+      t[:strength] = 1000 * strength[i][:strength]	# 1000 to move into human range
+      wic = t.word_cloud.delete_if{|w| !word_id.include?(w[:id])}
+#      puts("WIC: #{wic.inspect}.") if i == 0
+      t[:wic] = wic.sort{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}.first(20).map do |w|
         {name: w[:name], count: w[:count], frequency: w[:frequency]}
       end
     end
-    puts "TMP3: #{tmp3[0].inspect}."
-    @related = tmp3.first(3)
+    tmp3.delete_if{|t| t[:wic].size < 3}	# must have at least 3 words in common
+    tmp3.sort!{|a, b| b[:strength] <=> a[:strength]}
+#    puts "TMP3: #{tmp3[0].inspect}."
+    @related = tmp3.last(5)
     
     render 'show'
   end
