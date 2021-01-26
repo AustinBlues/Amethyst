@@ -89,26 +89,26 @@ Amethyst::App.controllers :post do
 #      # The statement below is slower!  Surprised!
 #      word_id = Word.where{frequency > 1.0}.where(flags: 0).map(:id)
 #      puts "RELATED: #{Post.join(:occurrences, word_id: word_id, post_id: :id).where(state: Post::UNREAD).group(:id).count}."
-      tmp2 = Hash.new(0)
+      relatedness = Hash.new(0)
       Occurrence.where(word_id: word_id).join(:words, id: :word_id).each do |w|
-        tmp2[w[:post_id]] += w[:count]/w[:frequency]
-#        puts("STRENGTH: #{tmp2[w[:post_id]]}, #{w[:count]}/#{w[:frequency]}.") if w[:post_id] == 29583
+        relatedness[w[:post_id]] += w[:count]/w[:frequency]
+#        puts("STRENGTH: #{relatedness[w[:post_id]]}, #{w[:count]}/#{w[:frequency]}.") if w[:post_id] == 29583
       end
-      tmp3 = Post.where(id: tmp2.keys, state: Post::UNREAD).all
-      tmp3.each do |t|
-        t[:strength] = (100 * tmp2[t[:id]]).to_i	# 100 to move into human range
+      related_posts = Post.where(id: relatedness.keys, state: Post::UNREAD).all
+      related_posts.each do |t|
+        t[:strength] = (100 * relatedness[t[:id]]).to_i	# 100 to move into human range
         # Words In Common, intersection of Post's words and Posts with those same words
         t[:wic] = t.word_cloud.delete_if{|w| !word_id.include?(w[:id])}
         t[:wic].sort!{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}.map do |w|
           {name: w[:name], count: w[:count], frequency: w[:frequency]}
         end
       end
-#      puts "TMP3: #{tmp3.inspect}."
-      tmp3.delete_if{|t| t[:wic].size < WIC_MIN}	# must have at least WIC_MIN Words In Common
-      tmp3.sort!{|a, b| b[:strength] <=> a[:strength]}
-#      puts "STRENGTH: #{tmp2.inspect}."
-#      puts "TMP3: #{tmp3.first(RELATED_POSTS_MAX).map{|t| t[:strength]}}."
-      @related = tmp3.first(RELATED_POSTS_MAX)
+#      puts "RELATED_POSTS: #{related_posts.inspect}."
+      related_posts.delete_if{|t| t[:wic].size < WIC_MIN}	# must have at least WIC_MIN Words In Common
+      related_posts.sort!{|a, b| b[:strength] <=> a[:strength]}
+#      puts "STRENGTH: #{relatedness.inspect}."
+#      puts "RELATED_POSTS: #{related_posts.first(RELATED_POSTS_MAX).map{|t| t[:strength]}}."
+      @related = related_posts.first(RELATED_POSTS_MAX)
     end
 #    puts "RELATED_POSTS_MAX(#{@related.size}): #{RELATED_POSTS_MAX}; DISPLAY_WORDS: #{DISPLAY_WORDS}."
 
