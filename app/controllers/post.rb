@@ -92,25 +92,25 @@ Amethyst::App.controllers :post do
       tmp2 = Hash.new(0)
       Occurrence.where(word_id: word_id).join(:words, id: :word_id).each do |w|
         tmp2[w[:post_id]] += w[:count]/w[:frequency]
-#        puts("STRENGTH: #{tmp2[w[:post_id]]}, #{w[:count]}/#{w[:frequency]}.") if w[:post_id] == 10375
+#        puts("STRENGTH: #{tmp2[w[:post_id]]}, #{w[:count]}/#{w[:frequency]}.") if w[:post_id] == 29583
       end
-      strength = tmp2.map{|key, value| {post_id: key, strength: value}}
-      strength.sort!{|a, b| b[:strength] <=> a[:strength]}
-      tmp3 = Post.where(id: strength.map{|p| p[:post_id]}, state: Post::UNREAD).all.each_with_index do |t, i|
-        t[:strength] = (100 * strength[i][:strength]).to_i	# 100 to move into human range
-        wic = t.word_cloud.delete_if{|w| !word_id.include?(w[:id])}
-#        puts("WIC: #{wic.inspect}.") if i == 0
-        t[:wic] = wic.sort{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}.map do |w|
+      tmp3 = Post.where(id: tmp2.keys, state: Post::UNREAD).all
+      tmp3.each do |t|
+        t[:strength] = (100 * tmp2[t[:id]]).to_i	# 100 to move into human range
+        # Words In Common, intersection of Post's words and Posts with those same words
+        t[:wic] = t.word_cloud.delete_if{|w| !word_id.include?(w[:id])}
+        t[:wic].sort!{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}.map do |w|
           {name: w[:name], count: w[:count], frequency: w[:frequency]}
         end
       end
+#      puts "TMP3: #{tmp3.inspect}."
       tmp3.delete_if{|t| t[:wic].size < WIC_MIN}	# must have at least WIC_MIN Words In Common
       tmp3.sort!{|a, b| b[:strength] <=> a[:strength]}
-      puts "STRENGTH: #{strength.first(10).inspect}."
+#      puts "STRENGTH: #{tmp2.inspect}."
 #      puts "TMP3: #{tmp3.first(RELATED_POSTS_MAX).map{|t| t[:strength]}}."
       @related = tmp3.first(RELATED_POSTS_MAX)
     end
-    puts "RELATED_POSTS_MAX(#{@related.size}): #{RELATED_POSTS_MAX}; DISPLAY_WORDS: #{DISPLAY_WORDS}."
+#    puts "RELATED_POSTS_MAX(#{@related.size}): #{RELATED_POSTS_MAX}; DISPLAY_WORDS: #{DISPLAY_WORDS}."
 
     render 'show'
   end
