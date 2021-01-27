@@ -15,7 +15,7 @@ WIC_MIN = ENV['WIC_MIN'] ? ENV['WIC_MIN'].to_i : 4
 RELATED_POSTS_MAX = ENV['RELATED_POSTS_MAX'] ? ENV['RELATED_POSTS_MAX'].to_i : 5
 
 # How many Word frequency and count (Post specfic) to display beside the description (zero to not display them)
-DISPLAY_WORDS = ENV['DISPLAY_WORDS'] ? ENV['DISPLAY_WORDS'].to_i : 20
+DISPLAY_WORDS = ENV['DISPLAY_WORDS'] ? ENV['DISPLAY_WORDS'].to_i : 12
 
 PAGINATION = ENV['AMETHYST_PAGINATION'] ? ENV['AMETHYST_PAGINATION'].to_i(2) : TOP_PAGINATION
 PAGINATED = PAGINATION != 0
