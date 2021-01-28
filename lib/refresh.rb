@@ -160,35 +160,38 @@ module Refresh
     residue = (@@redis.get(REDIS_KEY) || 0).to_i
     feed_count = Feed.count
     slice_size = (feed_count + residue) / INTERVALS
-    residue = (feed_count + residue) % INTERVALS
-    @@redis.set(REDIS_KEY, residue)
+    if slice_size == 0
+      log "Nothing to fetch at #{Time.now.strftime('%l:%M%P').strip}."
+    else
+      residue = (feed_count + residue) % INTERVALS
+      @@redis.set(REDIS_KEY, residue)
 
-    # Update all Feeds in the slice
-    feeds = Feed.slice(slice_size)
-    feeds.each do |f|
-      refreshed_at = f.previous_refresh
-      refresh_feed(f, now)
+      # Update all Feeds in the slice
+      feeds = Feed.slice(slice_size)
+      feeds.each do |f|
+        refreshed_at = f.previous_refresh
+        refresh_feed(f, now)
 
-      sludge_filter(f, SLUDGE) if SLUDGE
+        sludge_filter(f, SLUDGE) if SLUDGE
       
-      # Hide unread Posts older than UNREAD_LIMIT
-      cutoff = Post.where(feed_id: f[:id], state: Post::UNREAD).order(Sequel.desc(:published_at)).
-                 offset(UNREAD_LIMIT-1).get(:published_at)
-      if cutoff
-        n = Post.where(feed_id: f[:id], state: Post::UNREAD).where{published_at < cutoff}.update(state: Post::HIDDEN)
-#        log << "Hiding #{n} older post(s).", :debug) if n > 0
-        log("Hiding #{n} older post(s).", :debug) if n > 0
+        # Hide unread Posts older than UNREAD_LIMIT
+        cutoff = Post.where(feed_id: f[:id], state: Post::UNREAD).order(Sequel.desc(:published_at)).
+                   offset(UNREAD_LIMIT-1).get(:published_at)
+        if cutoff
+          n = Post.where(feed_id: f[:id], state: Post::UNREAD).where{published_at < cutoff}.update(state: Post::HIDDEN)
+          log("Hiding #{n} older post(s).", :debug) if n > 0
+        end
+
+        if refreshed_at
+          log "Refreshed #{Refresh.time_ago_in_words(refreshed_at, true)} ago: #{f.name}."
+        else
+          log "Refreshed (no previous refresh): #{f.name}."
+        end
       end
-      
-      if refreshed_at
-        log "Refreshed #{Refresh.time_ago_in_words(refreshed_at, true)} ago: #{f.name}."
-      else
-        log "Refreshed (no previous refresh): #{f.name}."
-      end
+
+      # Report progress.  The second case is when Amethyst catching up after not running (e.g. hibernation).
+      tmp = (feeds.count == max_refresh) ? max_refresh : "#{feeds.count}:#{max_refresh}"
+      log "Fetched #{tmp}/#{feed_count} channels at #{Time.now.strftime('%l:%M%P').strip}."
     end
-
-    # Report progress.  The second case is when Amethyst catching up after not running (e.g. hibernation).
-    tmp = (feeds.count == max_refresh) ? max_refresh : "#{feeds.count}:#{max_refresh}"
-    log "Fetched #{tmp}/#{feed_count} channels at #{Time.now.strftime('%l:%M%P').strip}."
   end
 end
