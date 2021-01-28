@@ -39,7 +39,7 @@ class Post < Sequel::Model
     words.each do |word|
       if word !~ /^\s*$/
         w = Word.update_or_create(name: word) do |w|
-          if w.new?
+          if w.new? || w[:frequency].nil?
             w[:frequency] = 1.0
           else
             w[:frequency] += 1.0
