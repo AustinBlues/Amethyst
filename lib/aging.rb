@@ -8,6 +8,5 @@ module Aging
   def self.perform
     Feed.age
     Post.zombie_killer
-    Word.age
   end
 end
