@@ -160,12 +160,12 @@ module Refresh
     residue = (@@redis.get(REDIS_KEY) || 0).to_i
     feed_count = Feed.count
     slice_size = (feed_count + residue) / INTERVALS
+    residue = (feed_count + residue) % INTERVALS
+    @@redis.set(REDIS_KEY, residue)
+    
     if slice_size == 0
       log "Nothing to fetch at #{Time.now.strftime('%l:%M%P').strip}."
     else
-      residue = (feed_count + residue) % INTERVALS
-      @@redis.set(REDIS_KEY, residue)
-
       # Update all Feeds in the slice
       feeds = Feed.slice(slice_size)
       feeds.each do |f|
