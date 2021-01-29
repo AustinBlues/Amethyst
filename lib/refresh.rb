@@ -1,6 +1,7 @@
 # All periodic refresh of Feeds policy is in this module.
 #
 require 'redis'
+require 'redis-namespace'
 require 'nokogiri_rss'
 require 'time'
 #require 'ruby_rss'
@@ -21,7 +22,8 @@ module Refresh
   
   LVL2CLR = {error: :red, warning: :yellow, highlight: :green, info: :default, debug: :cyan, devel: :magenta}
 
-  @@redis = Redis.new
+  @@redis = Redis::Namespace.new(ROOT, redis: Redis.new)
+
   SLUDGE = ENV['SLUDGE'] || (ARGV.find{|f| f =~ /^SLUDGE=(.*)/} ? $~[1] : nil)
 #  SLUDGE = if ENV['SLUDGE']
 #             ENV['SLUDGE']
@@ -155,12 +157,11 @@ module Refresh
     residue = (@@redis.get(REDIS_KEY) || 0).to_i
     feed_count = Feed.count
     slice_size = (feed_count + residue) / INTERVALS
+    residue = (feed_count + residue) % INTERVALS
+    @@redis.set(REDIS_KEY, residue)
     if slice_size == 0
       log "Nothing to fetch at #{Time.now.strftime('%l:%M%P').strip}."
     else
-      residue = (feed_count + residue) % INTERVALS
-      @@redis.set(REDIS_KEY, residue)
-
       # Update all Feeds in the slice
       feeds = Feed.slice(slice_size).all
       feeds.each do |f|
