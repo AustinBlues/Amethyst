@@ -98,7 +98,8 @@ Amethyst::App.controllers :post do
       related_posts.each do |t|
         t[:strength] = (100 * relatedness[t[:id]]).to_i	# 100 to move into human range
         # Words In Common, intersection of Post's words and Posts with those same words
-        t[:wic] = t.word_cloud.delete_if{|w| !word_id.include?(w[:id])}
+        wic = t.word_cloud.delete_if{|w| !word_id.include?(w[:id])}
+        t[:wic] = wic.first(DISPLAY_WORDS)
         t[:wic].sort!{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}.map do |w|
           {name: w[:name], count: w[:count], frequency: w[:frequency]}
         end
