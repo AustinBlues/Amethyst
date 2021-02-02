@@ -44,9 +44,8 @@ class Post < Sequel::Model
           else
             w[:frequency] += 1.0
           end
+#          puts "W: #{w.inspect}."
         end
-        w.save_changes
- #       puts "W: #{w.inspect}." if Padrino.env == :test
 
         if !(o = Occurrence.where(post_id: self[:id], word_id: w[:id]).first)
           o = Occurrence.create(post_id: self[:id], word_id: w[:id], count: 1)
@@ -155,7 +154,7 @@ class Post < Sequel::Model
   end
 
   def zombie?
-    previous_refresh.nil? || previous_refresh < feed.previous_refresh
+    (previous_refresh && feed.previous_refresh) || previous_refresh < feed.previous_refresh
   end
 
 
@@ -185,6 +184,17 @@ class Post < Sequel::Model
 
 
   def before_destroy
+    word.each do |w|
+      sum = Occurrence.where(word_id: w[:id], post_id: self[:id]).sum(:count)
+      get = Occurrence.where(word_id: w[:id], post_id: self[:id]).get(:count)
+      puts("WORD: sum = #{sum.inspect}, get == #{get.inspect}") if sum != get
+      w[:frequency] -= Occurrence.where(word_id: w[:id], post_id: self[:id]).sum(:count) || 0.0
+      if w[:frequency] < 0
+        STDERR.puts "OOPS: '#{w[:name]}' frequency is #{w[:frequency]}, resetting to 0.0."
+        w[:frequency] = 0.0
+      end
+      w.save(changed: true)
+    end
     remove_all_word
     super
   end
@@ -196,7 +206,7 @@ class Post < Sequel::Model
     zombie = where(Sequel.lit('previous_refresh <= ?', now - DAYS_OF_THE_DEAD*ONE_DAY))
     zombie_cnt = zombie.count
     unread_cnt = zombie.where(state: UNREAD).count
-    puts "Deleting all #{DAYS_OF_THE_DEAD}+ day zombies: #{zombie_cnt}, #{unread_cnt} unread."
+    STDERR.puts "Deleting all #{DAYS_OF_THE_DEAD}+ day zombies: #{zombie_cnt}, #{unread_cnt} unread."
     zombie.all {|z| z.destroy}
 
     (DAYS_OF_THE_DEAD-1).downto(DAYS_OF_THE_DEAD-5).each do |i|
@@ -206,9 +216,9 @@ class Post < Sequel::Model
       unread = zombie.where(state: UNREAD)
       unread_cnt = unread.count
       unread.each do |p|
-        puts "'#{p.name}' on #{p.feed.name}."
+        STDERR.puts "'#{p.name}' on #{p.feed.name}."
       end
-      puts "#{i} day zombies: #{zombie.count}, #{unread_cnt} unread."
+      STDERR.puts "#{i} day zombies: #{zombie.count}, #{unread_cnt} unread."
 
     end
   end
