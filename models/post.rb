@@ -185,10 +185,7 @@ class Post < Sequel::Model
 
   def before_destroy
     word.each do |w|
-      sum = Occurrence.where(word_id: w[:id], post_id: self[:id]).sum(:count)
-      get = Occurrence.where(word_id: w[:id], post_id: self[:id]).get(:count)
-      puts("WORD: sum = #{sum.inspect}, get == #{get.inspect}") if sum != get
-      w[:frequency] -= Occurrence.where(word_id: w[:id], post_id: self[:id]).sum(:count) || 0.0
+      w[:frequency] -= Occurrence.where(word_id: w[:id], post_id: self[:id]).get(:count) || 0.0
       if w[:frequency] < 0
         STDERR.puts "OOPS: '#{w[:name]}' frequency is #{w[:frequency]}, resetting to 0.0."
         w[:frequency] = 0.0
@@ -196,6 +193,7 @@ class Post < Sequel::Model
       w.save(changed: true)
     end
     remove_all_word
+
     super
   end
 
@@ -219,7 +217,6 @@ class Post < Sequel::Model
         STDERR.puts "'#{p.name}' on #{p.feed.name}."
       end
       STDERR.puts "#{i} day zombies: #{zombie.count}, #{unread_cnt} unread."
-
     end
   end
 end

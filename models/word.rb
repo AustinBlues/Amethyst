@@ -2,21 +2,16 @@ class Word < Sequel::Model
   many_to_many :word, join_table: :contexts, left_key: :prev_id, right_key: :next_id
   many_to_many :post, join_table: :occurrences
 
-  @word_id = nil
 
   def before_destroy
-    @word_id = self[:id] if @word_id.nil?
     if true
       remove_all_post
     else
-      total = Occurrence.where(word_id: self[:id]).sum(:count)
-      n = Occurrence.where(word_id: self[:id]).delete
-      puts("Word(#{@word_id}): deleting #{n} occurrences totaling #{total}.") if @word_id == self[:id]
+      Occurrence.where(word_id: self[:id]).delete
     end
-    n = Context.where(prev_id: self[:id]).delete
-    puts("Word(#{@word_id}): deleting #{n} contexts.") if @word_id == self[:id]
-    n = Context.where(next_id: self[:id]).delete
-    puts("Word(#{@word_id}): deleting #{n} contexts.") if @word_id == self[:id]
+    Context.where(prev_id: self[:id]).delete
+    Context.where(next_id: self[:id]).delete
+
     super
   end
 
