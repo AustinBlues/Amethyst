@@ -153,8 +153,9 @@ class Post < Sequel::Model
     feed.save(changed: true)
   end
 
+
   def zombie?
-    (previous_refresh && feed.previous_refresh) || previous_refresh < feed.previous_refresh
+    self[:previous_refresh] && feed[:previous_refresh] && (self[:previous_refresh] < feed[:previous_refresh])
   end
 
 
