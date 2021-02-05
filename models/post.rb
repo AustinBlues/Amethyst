@@ -61,6 +61,7 @@ class Post < Sequel::Model
     end
   end
 
+
   def down_vote!
     if self[:state] == READ
       feed.add_score(-1.0)
@@ -76,7 +77,7 @@ class Post < Sequel::Model
 
   
   def zombie?
-    previous_refresh.nil? || previous_refresh < feed.previous_refresh
+    self[:previous_refresh] && feed[:previous_refresh] && (self[:previous_refresh] < feed[:previous_refresh])
   end
 
   
