@@ -1,7 +1,3 @@
-Note: If you want to play with Amethyst, be sure and use the main branch.  The
-master branch was unintentionally pushed to Github.  When I figure out how, I
-will delete the master branc.
-
 Amethyst is an RSS/ATOM feed reader Web server inspired by Amphetadisk
 (https://www.disobey.com/amphetadesk/).  It is in the process of a public
 release, but not yet ready.  This file needs to be fleshed out.  The INSTALL
