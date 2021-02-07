@@ -17,7 +17,7 @@ class Word < Sequel::Model
 
 
   def self.age
-    Word.all do |w|
+    Word.each do |w|
       total = Occurrence.where(word_id: w[:id]).sum(:count) || 0
       if w[:frequency] != total
         if total == 0 && w[:flags] == 0
