@@ -22,7 +22,7 @@ Sequel.migration do
       Integer	:undo_queue
       String	:title
       String	:url,         text: true, null: false
-      String	:description, text: true, limit: 16777215
+      add_column :description, type: :mediumtext
       String	:synopsis,    text: true
       Datetime	:dropped_at
       String	:ident,       text: true
