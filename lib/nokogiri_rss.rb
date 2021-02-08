@@ -90,7 +90,7 @@ module NokogiriRSS
               Post.update_or_create(feed_id: feed.id, ident: attrs[:ident]) do |p|
                 if p.new?
                   Refresh.log "NEW: #{attrs[:title] || attrs[:ident]}.", :highlight
-                  feed.ema_volume += Aging::ALPHA 
+                  feed.ema_volume += Daily::ALPHA 
 
 #                  Refresh.log "TIME: '#{attrs[:time]}' => '#{attrs[:published_at]}' (#{attrs[:published_at].zone}).", :devel
                   p.set(attrs)

@@ -75,7 +75,7 @@ module RubyRSS
             Post.update_or_create(feed_id: feed.id, ident: ident) do |p|
               if p.new?
                 Refresh.log "NEW: #{title.inspect}.", :highlight
-                feed.ema_volume += Aging::ALPHA 
+                feed.ema_volume += Daily::ALPHA 
                 p.title = title.empty? ? nil : title
                 p.description = description
                 p.published_at = published_at	# TimeDate object

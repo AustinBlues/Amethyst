@@ -1,9 +1,9 @@
 require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/amethyst_helper.rb')
 
-# Just enough to make Resque work
-module Refresh
-  @queue = :Refresh
-end
+## Just enough to make Resque work
+#module Refresh
+#  @queue = :Refresh
+#end
 
 
 class Feed < Sequel::Model
@@ -19,9 +19,11 @@ class Feed < Sequel::Model
     super
   end
 
+
   def after_create
     super
-    Resque.enqueue(Refresh, self[:id]) if Padrino.env != :test
+    # Initial queue is the highest priority
+    Resque.enqueue_to('Initial', Refresh, self[:id]) if Padrino.env != :test
   end
 
   
@@ -51,14 +53,14 @@ class Feed < Sequel::Model
   
   
   def before_destroy
-    Post.where(feed_id: self[:id]).delete
+    Post.where(feed_id: self[:id]).destroy
     super
   end
   
   
   # Sequel dataset (query) for a slice of the oldest Feeds
   def self.slice(size)
-    limit(size).order(:next_refresh)
+    (size == 0) ? [] : limit(size).order(:next_refresh)
   end
 
 
@@ -68,7 +70,7 @@ class Feed < Sequel::Model
   end
 
   def self.age
-    dataset.update(score: Sequel[:score]*(1.0 - Aging::ALPHA))
-    dataset.update(ema_volume: Sequel[:ema_volume]*(1.0 - Aging::ALPHA))
+    dataset.update(score: Sequel[:score]*(1.0 - Daily::ALPHA))
+    dataset.update(ema_volume: Sequel[:ema_volume]*(1.0 - Daily::ALPHA))
   end
 end

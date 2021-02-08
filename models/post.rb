@@ -18,12 +18,14 @@ class Post < Sequel::Model
     self[:state] == READ
   end
 
+
   def click!
     self[:state] = READ
     feed.add_score(1.0)
     feed.clicks += 1
     feed.save(changed: true)
   end
+
 
   def unclick!
     if self[:state] == READ
@@ -39,6 +41,7 @@ class Post < Sequel::Model
     self[:state] == HIDDEN
   end
 
+
   def hide!
     if self[:state] == READ	# click?  Undo
       feed.add_score(-1.0)	# back out click
@@ -52,6 +55,7 @@ class Post < Sequel::Model
     
     feed.save(changed: true)
   end
+
 
   def unhide!
     if self[:state] == HIDDEN
@@ -84,16 +88,14 @@ class Post < Sequel::Model
   def self.unread
     where(state: UNREAD)
   end
-  
 
-  def self.zombie_killer
+
+  def self.zombie_listing
     now = Time.now
     
-    zombie = where(Sequel.lit('previous_refresh <= ?', now - DAYS_OF_THE_DEAD*ONE_DAY))
-    zombie_cnt = zombie.count
-    unread_cnt = zombie.where(state: UNREAD).count
-    puts "Deleting all #{DAYS_OF_THE_DEAD}+ day zombies: #{zombie_cnt}, #{unread_cnt} unread."
-    zombie.delete
+#    zombie = where(Sequel.lit('previous_refresh <= ?', now - DAYS_OF_THE_DEAD*ONE_DAY))
+#    zombie_cnt = zombie.count
+#    unread_cnt = zombie.where(state: UNREAD).count
 
     (DAYS_OF_THE_DEAD-1).downto(1).each do |i|
       from = now - (i+1)*ONE_DAY
@@ -106,5 +108,14 @@ class Post < Sequel::Model
       end
       puts "#{i} day zombies: #{zombie.count}, #{unread_cnt} unread."
     end
+  end
+
+
+  def self.zombie_killer
+    zombie = where(Sequel.lit('previous_refresh <= ?', Time.now - DAYS_OF_THE_DEAD*ONE_DAY))
+    zombie_cnt = zombie.count
+    unread_cnt = zombie.where(state: UNREAD).count
+    puts "Deleting all #{DAYS_OF_THE_DEAD}+ day zombies: #{zombie_cnt}, #{unread_cnt} unread."
+    zombie.delete
   end
 end
