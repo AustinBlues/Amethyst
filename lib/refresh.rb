@@ -93,9 +93,15 @@ module Refresh
         refresh_slice
       elsif args.is_a?(Integer)
         time = Time.now
-        f = Feed.with_pk(args)
-        refresh_feed(f, time)
-        log("First fetch: #{f.name} at #{short_datetime(time)}.")
+        if args < 0
+          f = Feed.with_pk(-args)
+          log("Deleting: #{f.name} at #{short_datetime(time)}.")
+          f.destroy
+        else          
+          f = Feed.with_pk(args)
+          refresh_feed(f, time)
+          log("First fetch: #{f.name} at #{short_datetime(time)}.")
+        end
       else
         log("Invalid argument: #{args.inspect}.", :error)
       end

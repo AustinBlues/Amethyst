@@ -13,7 +13,8 @@ Amethyst::App.controllers :feed do
     if @page <= 0
       redirect url_for(:feed, :index, page: 1)
     else
-      @feeds = Feed.order(Sequel.desc(:score)).paginate(@page, PAGE_SIZE)
+      # (previous_refresh == next_refresh) is a signal that Feed is queued for deletion in background process
+      @feeds = Feed.exclude(previous_refresh: :next_refresh).order(Sequel.desc(:score)).paginate(@page, PAGE_SIZE)
       if !@feeds.page_range.cover?(@page)
         redirect url_for(:feed, :index, page: @feeds.page_count)
       else
@@ -116,10 +117,17 @@ Amethyst::App.controllers :feed do
   delete :destroy, with: :id do
     feed = Feed[params[:id]]
     if feed
-      if feed.destroy
-        flash[:success] = 'Delete successful'
+      if true
+        feed[:previous_refresh] = feed[:next_refresh] = Time.now + Post::ONE_DAY
+        feed.save(changed: true)
+        Resque.enqueue_to('Initial', Refresh, -feed[:id])
+        flash[:success] = 'Delete queued'
       else
-        flash[:error] = 'Delete failed'
+        if feed.destroy
+          flash[:success] = 'Delete successful'
+        else
+          flash[:error] = 'Delete failed'
+        end
       end
       redirect url(:feed, :index)
     else

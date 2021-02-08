@@ -200,13 +200,19 @@ class Post < Sequel::Model
 
 
   def self.zombie_killer
+    where(Sequel.lit('previous_refresh <= ?', Time.now - DAYS_OF_THE_DEAD*ONE_DAY)).each do |z|
+      z.destroy
+    end
+  end
+
+
+  def self.zombie_listing
     now = Time.now
     
     zombie = where(Sequel.lit('previous_refresh <= ?', now - DAYS_OF_THE_DEAD*ONE_DAY))
     zombie_cnt = zombie.count
     unread_cnt = zombie.where(state: UNREAD).count
     STDERR.puts "Deleting all #{DAYS_OF_THE_DEAD}+ day zombies: #{zombie_cnt}, #{unread_cnt} unread."
-    zombie.all {|z| z.destroy}
 
     (DAYS_OF_THE_DEAD-1).downto(DAYS_OF_THE_DEAD-5).each do |i|
       from = now - (i+1)*ONE_DAY

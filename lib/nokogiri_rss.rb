@@ -90,7 +90,7 @@ module NokogiriRSS
             begin
               Post.update_or_create(feed_id: feed.id, ident: attrs[:ident]) do |p|
                 if p.new?
-                  feed.ema_volume += Aging::ALPHA
+                  feed.ema_volume += Daily::ALPHA
                   if attrs[:description].nil?
                     attrs[:description] = 'No description'
                     Refresh.log "MISSING DESCRIPTION: '#{attrs[:title]}.", :warning
