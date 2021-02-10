@@ -1,10 +1,10 @@
 require 'benchmark'
 
 module Daily
+  extend Amethyst::App::PostHelper
+
   # Exponential Moving Average (i.e. Feed volume and score) parameters
-  DAYS = 90
-  ALPHA = 2.0/(DAYS + 1.0)
-  ALPHA2 = 2.0/(2*DAYS + 1.0)
+  ALPHA = 2.0/(EMA_DAYS + 1.0)
 
   @queue = :daily	# lower priority than upper case names
   

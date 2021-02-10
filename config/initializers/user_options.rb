@@ -17,9 +17,12 @@ RELATED_POSTS_MAX = ENV['RELATED_POSTS_MAX'] ? ENV['RELATED_POSTS_MAX'].to_i : 5
 # How many Word frequency and count (Post specfic) to display beside the description (zero to not display them)
 DISPLAY_WORDS = ENV['DISPLAY_WORDS'] ? ENV['DISPLAY_WORDS'].to_i : 12
 
+# Exponential Moving Average (EMA) period for Feed scores and volume
+# How long between posts of least frequent blogger posts is a good starting value
+EMA_DAYS = 30
+
 PAGINATION = ENV['AMETHYST_PAGINATION'] ? ENV['AMETHYST_PAGINATION'].to_i(2) : TOP_PAGINATION
 PAGINATED = PAGINATION != 0
 
 # Prefix used to make Redis and databases unique to a Amethyst server
 ROOT = ENV['ROOT'] || ENV['PWD'].split('/').last
-
