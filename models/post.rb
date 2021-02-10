@@ -35,7 +35,6 @@ class Post < Sequel::Model
 #      puts "CREATE: #{words.inspect}"
     end
     
-    back2 = back1 = nil
     words.each do |word|
       if word !~ /^\s*$/
         w = Word.update_or_create(name: word) do |w|
@@ -54,31 +53,7 @@ class Post < Sequel::Model
           o = Occurrence.where(post_id: self[:id], word_id: w[:id]).first	# for debugging printouts only
         end
  #       puts "O: #{o.inspect}." if Padrino.env == :test
-
-        if back1
-          # update_or_create does not work for join tables
-          if !(c = Context.where(prev_id: back2, next_id: w[:id]).first)
-            c =  Context.create(prev_id: back2, next_id: w[:id], count: 1)
-          else
-            Context.where(prev_id: back2, next_id: w[:id]).update(Sequel.lit('count = count + 1'))
-            c = Context.where(prev_id: back2, next_id: w[:id]).first	# for debugging only
-          end
- #         puts "C: #{c.inspect}." if Padrino.env == :test
-        end
-        back2 = back1
-        back1 = w[:id]
       end
-    end
-    
-    if back1
-      # update_or_create does not work for join tables
-      if !(c = Context.where(prev_id: back2, next_id: nil).first)
-        c =  Context.create(prev_id: back2, next_id: nil, count: 1)
-      else
-        Context.where(prev_id: back2, next_id: nil).update(Sequel.lit('count = count + 1'))
-        c = Context.where(prev_id: back2, next_id: nil).first	# for debugging printouts only
-      end
- #     puts "C: #{c.inspect}." if Padrino.env == :test
     end
   end
 
