@@ -59,7 +59,7 @@
 
   <!-- Edit modal -->
   <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h4 class="modal-title" id="editModalLabel">Edit: '<%= @context %>'</h4>
@@ -68,16 +68,16 @@
           </button>
         </div>
         <div class="modal-body">
-          <% form_tag url(:feed, :update, id: @feed[:id]), method: :put do %>
-	    <div class="form-group">
-	      <%= label_tag :title, class: 'control-label col-sm-2' %>
-	      <div class="col-sm-8">
+          <% form_tag url(:feed, :update, id: @feed[:id]), {id: 'feed_form', method: :put, class: 'form-horizontal'} do %>
+	    <div class="form-group col-sm-16">
+	      <%= label_tag :title, class: 'control-label col-sm-4' %>
+	      <div class="col-sm-12">
 	        <%= text_field_tag :title, {value: @feed[:title], class: 'form-control'} %>
 	      </div>
 	    </div>
-	    <div class="form-group">
-	      <%= label_tag 'RSS URL', class: 'control-label col-sm-2' %>
-	      <div class="col-sm-8">
+	    <div class="form-group col-sm-16">
+	      <label for="rss_url" class="control-label col-sm-4">RSS&nbsp;URL:</label>
+	      <div class="col-sm-12">
 	        <%= text_field_tag :rss_url, {value: @feed[:rss_url], class: 'form-control'} %>
 	      </div>
 	    </div>
