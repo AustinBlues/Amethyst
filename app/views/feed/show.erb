@@ -18,21 +18,42 @@
     <%= partial 'layouts/flash' %>
   </div>
 
-  <% if @posts.current_page_record_count == 0 %>
-    <h2 class="card-content" style="text-align: center">
-      No posts
-    </h2>
-  <% else %>
-    <%= partial('layouts/pagination', object: @posts) if (PAGINATION & POST_TOP) != 0 %>
+  <!-- Edit modal -->
+  <div class="modal fade" role="dialog" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <% form_tag url(:feed, :update, id: @feed[:id]), class: 'form-horizontal', method: :put do %>
+          <div class="modal-header">
+            <h4 class="modal-title" id="editModalLabel">Edit: '<%= @context %>'</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
 
-    <table id="post" class="table table-striped">
-      <tbody>
-        <%= partial 'post/post', collection: @posts %>
-      </tbody>
-    </table>
+          <div class="modal-body">
+	    <div class="form-group row">
+	      <%= label_tag :title, class: 'col-form-label col-sm-4' %>
+	      <div class="col-sm-10">
+	        <input type="text" id="title" name="title" value="<%= @feed[:title] %>" class="form-control">
+	        <%# text_field_tag :title, {value: @feed[:title], class: 'form-control'} %>
+	      </div>
+	    </div>
+	    <div class="form-group row">
+	      <label for="rss_url" class="col-form-label col-sm-4 col-form-label-sm">RSS&nbsp;URL:</label>
+	      <div class="col-sm-10">
+	        <%= url_field_tag :rss_url, value: @feed[:rss_url], class: 'form-control' %>
+	      </div>
+	    </div>
+          </div>
 
-    <%= partial('layouts/pagination', object: @posts) if (PAGINATION & POST_BOTTOM) != 0%>
-  <% end %>
+	  <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
+	    <%= submit_tag 'Update', class: 'btn btn-danger btn-small' %>
+	  </div>
+	<% end %>
+      </div>
+    </div>
+  </div>
 
   <!-- Delete Modal -->
   <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -57,35 +78,19 @@
     </div>
   </div>
 
-  <!-- Edit modal -->
-  <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title" id="editModalLabel">Edit: '<%= @context %>'</h4>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <% form_tag url(:feed, :update, id: @feed[:id]), {id: 'feed_form', method: :put, class: 'form-horizontal'} do %>
-	    <div class="form-group col-sm-16">
-	      <%= label_tag :title, class: 'control-label col-sm-4' %>
-	      <div class="col-sm-12">
-	        <%= text_field_tag :title, {value: @feed[:title], class: 'form-control'} %>
-	      </div>
-	    </div>
-	    <div class="form-group col-sm-16">
-	      <label for="rss_url" class="control-label col-sm-4">RSS&nbsp;URL:</label>
-	      <div class="col-sm-12">
-	        <%= text_field_tag :rss_url, {value: @feed[:rss_url], class: 'form-control'} %>
-	      </div>
-	    </div>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
-	    <%= submit_tag 'Update', class: 'btn btn-danger btn-small' %>
-	  <% end %>
-        </div>
-      </div>
-    </div>
-  </div>
+  <% if @posts.current_page_record_count == 0 %>
+    <h2 class="card-content" style="text-align: center">
+      No posts
+    </h2>
+  <% else %>
+    <%= partial('layouts/pagination', object: @posts) if (PAGINATION & POST_TOP) != 0 %>
+
+    <table id="post" class="table table-striped">
+      <tbody>
+        <%= partial 'post/post', collection: @posts %>
+      </tbody>
+    </table>
+
+    <%= partial('layouts/pagination', object: @posts) if (PAGINATION & POST_BOTTOM) != 0%>
+  <% end %>
 </div>
