@@ -14,7 +14,7 @@ Amethyst::App.controllers :feed do
       redirect url_for(:feed, :index, page: 1)
     else
       # (previous_refresh == next_refresh) is a signal that Feed is queued for deletion in background process
-      @feeds = Feed.exclude(previous_refresh: :next_refresh).order(Sequel.desc(:score)).paginate(@page, PAGE_SIZE)
+      @feeds = Feed.where(Sequel.lit('(previous_refresh <=> next_refresh) = 0')).order(Sequel.desc(:score)).paginate(@page, PAGE_SIZE)
       if !@feeds.page_range.cover?(@page)
         redirect url_for(:feed, :index, page: @feeds.page_count)
       else
@@ -61,6 +61,7 @@ Amethyst::App.controllers :feed do
     params.delete('authenticity_token')
 
     begin
+      params[:next_refresh] = Time.now	# to force display in redirect to index
       w = Feed.create(params)
     rescue Sequel::UniqueConstraintViolation => e
       if /unique_(\w+)s'/ !~ e.to_s
