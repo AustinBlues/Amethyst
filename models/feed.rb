@@ -1,21 +1,13 @@
 require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/amethyst_helper.rb')
 
-## Just enough to make Resque work
-#module Refresh
-#  @queue = :Refresh
-#end
-
-
 class Feed < Sequel::Model
   one_to_many :post
   extend Amethyst::App::AmethystHelper
 
   
   def before_create
+    # Set score so initially in the middle of the Feed.index
     self[:score] ||= (Feed.count == 0) ? 0.0 : (Feed.avg(:score) + Feed.order(:score).first.score)/2.0
-    # KLUDGE: can't ensure, can only make unlikely.  Not really a problem if it is.  No new Post.
-#    # ensure won't be refreshed by periodic Refresh.perform calling Refresh.refresh_slice
-#    self[:next_refresh] = Time.now + Refresh::INTERVAL_TIME
     super
   end
 
