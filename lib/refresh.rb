@@ -154,19 +154,18 @@ module Refresh
   
 
   def self.refresh_slice
-    # grab time now before lengthy downloads
-    now = Time.now
-
-    max_refresh = Feed.refreshable(now + INTERVAL_TIME/2).count
-
     # Refresh distribution of uneven slices
     residue = (@@redis.get(REDIS_KEY) || 0).to_i
     feed_count = Feed.count
     slice_size = (feed_count + residue) / INTERVALS
     residue = (feed_count + residue) % INTERVALS
     @@redis.set(REDIS_KEY, residue)
+
+    # grab time now before lengthy downloads
+    now = Time.now
+
     if slice_size == 0
-      log "Nothing to fetch at #{Time.now.strftime('%l:%M%P').strip}."
+      log "Nothing to fetch at #{now.strftime('%l:%M%P').strip}."
     else
       # Update all Feeds in the slice
       feeds = Feed.slice(slice_size).all
@@ -193,6 +192,7 @@ module Refresh
       end
 
       # Report progress.  The second case is when Amethyst catching up after not running (e.g. hibernation).
+      max_refresh = Feed.refreshable(now + INTERVAL_TIME/2).count
       tmp = (feeds.size == max_refresh) ? max_refresh : "#{feeds.size}:#{max_refresh}"
       log "Fetched #{tmp}/#{feed_count} channels at #{Time.now.strftime('%l:%M%P').strip}."
     end
