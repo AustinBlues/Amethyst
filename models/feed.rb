@@ -14,7 +14,7 @@ class Feed < Sequel::Model
 
   def after_create
     super
-    # Initial queue is the highest priority
+    # Initial queue is highest priority (higher than Refresh or daily).
     Resque.enqueue_to('Initial', Refresh, self[:id]) if Padrino.env != :test
   end
 
@@ -51,14 +51,14 @@ class Feed < Sequel::Model
   
   
   # Sequel dataset (query) for a slice of the oldest Feeds
-  def self.slice(size)
-    (size == 0) ? [] : limit(size).order(:next_refresh)
+  def self.slice(size, horizon)
+    (size == 0) ? [] : exclude(next_refresh: nil).where{next_refresh <= horizon}.limit(size).order(:next_refresh)
   end
 
 
   # Sequel dataset (query) for Feeds to be refreshed on or before limit
-  def self.refreshable(limit)
-    where(Sequel.lit('next_refresh <= ?', limit))
+  def self.refreshable(horizon)
+    exclude(next_refresh: nil).where(Sequel.lit('next_refresh <= ?', horizon))
   end
 
   def self.age

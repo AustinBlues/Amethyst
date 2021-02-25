@@ -8,13 +8,14 @@ Amethyst::App.controllers :feed do
 #    puts("ORIGIN: #{@origin}.") if Padrino.env != :test
   end
 
+
   get :index do
     @page = (params[:page] || 1).to_i
     if @page <= 0
       redirect url_for(:feed, :index, page: 1)
     else
       # (previous_refresh == next_refresh) is a signal that Feed is queued for deletion in background process
-      @feeds = Feed.where(Sequel.lit('(previous_refresh <=> next_refresh) = 0')).order(Sequel.desc(:score)).paginate(@page, PAGE_SIZE)
+      @feeds = Feed.exclude(next_refresh: nil).order(Sequel.desc(:score)).paginate(@page, PAGE_SIZE)
       if !@feeds.page_range.cover?(@page)
         redirect url_for(:feed, :index, page: @feeds.page_count)
       else
@@ -61,7 +62,7 @@ Amethyst::App.controllers :feed do
     params.delete('authenticity_token')
 
     begin
-      params[:next_refresh] = Time.now	# to force display in redirect to index
+      params[:next_refresh] = Time.now
       w = Feed.create(params)
     rescue Sequel::UniqueConstraintViolation => e
       if /unique_(\w+)s'/ !~ e.to_s
@@ -118,18 +119,12 @@ Amethyst::App.controllers :feed do
   delete :destroy, with: :id do
     feed = Feed[params[:id]]
     if feed
-      if true
-        feed[:previous_refresh] = feed[:next_refresh] = Time.now + Post::ONE_DAY
-        feed.save(changed: true)
-        Resque.enqueue_to('Initial', Refresh, -feed[:id])
-        flash[:success] = 'Delete queued'
-      else
-        if feed.destroy
-          flash[:success] = 'Delete successful'
-        else
-          flash[:error] = 'Delete failed'
-        end
-      end
+      feed[:next_refresh] = nil
+      feed.save(changed: true)
+      # Initial queue is higher priority than Refresh queue
+      Resque.enqueue_to('Initial', Refresh, -feed[:id])
+      flash[:success] = 'Delete queued.'
+
       redirect url(:feed, :index)
     else
       flash[:warning] = pat(:delete_warning, :model => 'feed', :id => "#{params[:id]}")

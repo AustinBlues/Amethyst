@@ -7,6 +7,7 @@ require 'time'
 #require 'ruby_rss'
 require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/post_helper.rb')
 require 'logger'
+require 'benchmark'
 
 module Refresh
   CYCLE_TIME = 60 * 60	# time to refresh all Feeds: 1 hour
@@ -92,12 +93,14 @@ module Refresh
         time = Time.now
          if args < 0
            f = Feed.with_pk(-args)
-           log("Deleting: #{f.name} at #{short_datetime(time)}.")
            f.destroy
+           log "Deleted: #{f.name} at #{short_datetime(time)}."
          else          
            f = Feed.with_pk(args)
-           refresh_feed(f, time)
-           log("First fetch: #{f.name} at #{short_datetime(time)}.")
+           tmp = Benchmark.measure do
+             refresh_feed(f, time)
+           end
+           log "First fetch: #{f.name} at #{short_datetime(time)} in #{tmp.total} seconds."
          end
       else
         log("Invalid argument: #{args.inspect}.", :error)
@@ -168,7 +171,7 @@ module Refresh
       log "Nothing to fetch at #{now.strftime('%l:%M%P').strip}."
     else
       # Update all Feeds in the slice
-      feeds = Feed.slice(slice_size).all
+      feeds = Feed.slice(slice_size, now + INTERVAL_TIME/2).all
       feeds.each do |f|
         refreshed_at = f.previous_refresh
         refresh_feed(f, now)
