@@ -9,13 +9,14 @@ require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/post_helper.r
 require 'logger'
 require 'benchmark'
 
+
 module Refresh
   CYCLE_TIME = 60 * 60	# time to refresh all Feeds: 1 hour
   INTERVAL_TIME = 5 * 60	# how often to refresh a slice: 5 minutes
   INTERVALS = CYCLE_TIME/INTERVAL_TIME
   VERBOSITY = 2		# default sludge_filter() verbosity
   SLUDGE_HORIZON = 2*3600	# 2 hours
-  REDIS_KEY = 'residue'
+  RESIDUE_KEY = 'residue'
   extend Padrino::Helpers::FormatHelpers
   #  extend RubyRSS
   extend NokogiriRSS
@@ -100,6 +101,7 @@ module Refresh
            tmp = Benchmark.measure do
              refresh_feed(f, time)
            end
+           @@redis.incr(RESIDUE_KEY)
            log "First fetch: #{f.name} at #{short_datetime(time)} in #{tmp.total} seconds."
          end
       else
@@ -158,11 +160,11 @@ module Refresh
 
   def self.refresh_slice
     # Refresh distribution of uneven slices
-    residue = (@@redis.get(REDIS_KEY) || 0).to_i
+    residue = (@@redis.get(RESIDUE_KEY) || 0).to_i
     feed_count = Feed.count
     slice_size = (feed_count + residue) / INTERVALS
     residue = (feed_count + residue) % INTERVALS
-    @@redis.set(REDIS_KEY, residue)
+    @@redis.set(RESIDUE_KEY, residue)
 
     # grab time now before lengthy downloads
     now = Time.now
@@ -170,8 +172,10 @@ module Refresh
     if slice_size == 0
       log "Nothing to fetch at #{now.strftime('%l:%M%P').strip}."
     else
+      max_refresh = Feed.refreshable(now + 3*INTERVAL_TIME/2).count
+
       # Update all Feeds in the slice
-      feeds = Feed.slice(slice_size, now + INTERVAL_TIME/2).all
+      feeds = Feed.slice(slice_size, now + 3*INTERVAL_TIME/2).all
       feeds.each do |f|
         refreshed_at = f.previous_refresh
         refresh_feed(f, now)
@@ -195,7 +199,6 @@ module Refresh
       end
 
       # Report progress.  The second case is when Amethyst catching up after not running (e.g. hibernation).
-      max_refresh = Feed.refreshable(now + INTERVAL_TIME/2).count
       tmp = (feeds.size == max_refresh) ? max_refresh : "#{feeds.size}:#{max_refresh}"
       log "Fetched #{tmp}/#{feed_count} channels at #{Time.now.strftime('%l:%M%P').strip}."
     end
