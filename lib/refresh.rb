@@ -88,9 +88,10 @@ module Refresh
 
   def self.perform(args = nil)
     begin
-      if args.nil?
+      case args
+      when nil
         refresh_slice
-      elsif args.is_a?(Integer)
+      when Integer
         time = Time.now
          if args < 0
            f = Feed.with_pk(-args)
@@ -172,10 +173,11 @@ module Refresh
     if slice_size == 0
       log "Nothing to fetch at #{now.strftime('%l:%M%P').strip}."
     else
-      max_refresh = Feed.refreshable(now + 3*INTERVAL_TIME/2).count
+      horizon = now + INTERVAL_TIME/2
+      max_refresh = Feed.refreshable(horizon).count
 
       # Update all Feeds in the slice
-      feeds = Feed.slice(slice_size, now + 3*INTERVAL_TIME/2).all
+      feeds = Feed.slice(slice_size, horizon).all
       feeds.each do |f|
         refreshed_at = f.previous_refresh
         refresh_feed(f, now)
@@ -187,7 +189,6 @@ module Refresh
                    offset(UNREAD_LIMIT-1).get(:published_at)
         if cutoff
           n = Post.where(feed_id: f[:id], state: Post::UNREAD).where{published_at < cutoff}.update(state: Post::HIDDEN)
-          #        log << "Hiding #{n} older post(s).", :debug) if n > 0
           log("Hiding #{n} older post(s).", :debug) if n > 0
         end
         
@@ -198,9 +199,14 @@ module Refresh
         end
       end
 
-      # Report progress.  The second case is when Amethyst catching up after not running (e.g. hibernation).
-      tmp = (feeds.size == max_refresh) ? max_refresh : "#{feeds.size}:#{max_refresh}"
-      log "Fetched #{tmp}/#{feed_count} channels at #{Time.now.strftime('%l:%M%P').strip}."
+      if feeds.size == 0
+        log "Too early to fetch at #{now.strftime('%l:%M%P').strip}."
+      else
+        # Report progress.  The second case is when Amethyst catching up after not running (e.g. hibernation).
+        lookahead = max_refresh - feeds.size
+        tmp = (lookahead == 0) ? max_refresh : "#{feeds.size}:#{lookahead}"
+        log "Fetched #{tmp}/#{feed_count} channels at #{Time.now.strftime('%l:%M%P').strip}."
+      end
     end
   end
 end
