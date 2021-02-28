@@ -173,11 +173,8 @@ module Refresh
     if slice_size == 0
       log "Nothing to fetch at #{now.strftime('%l:%M%P').strip}."
     else
-      horizon = now + INTERVAL_TIME/2
-      max_refresh = Feed.refreshable(horizon).count
-
       # Update all Feeds in the slice
-      feeds = Feed.slice(slice_size, horizon).all
+      feeds = Feed.slice(slice_size, now + INTERVAL_TIME/2).all
       feeds.each do |f|
         refreshed_at = f.previous_refresh
         refresh_feed(f, now)
@@ -202,10 +199,7 @@ module Refresh
       if feeds.size == 0
         log "Too early to fetch at #{now.strftime('%l:%M%P').strip}."
       else
-        # Report progress.  The second case is when Amethyst catching up after not running (e.g. hibernation).
-        lookahead = max_refresh - feeds.size
-        tmp = (lookahead == 0) ? max_refresh : "#{feeds.size}:#{lookahead}"
-        log "Fetched #{tmp}/#{feed_count} channels at #{Time.now.strftime('%l:%M%P').strip}."
+        log "Fetched #{feeds.size}/#{feed_count} channels at #{Time.now.strftime('%l:%M%P').strip}."
       end
     end
   end
