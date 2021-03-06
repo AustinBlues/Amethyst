@@ -1,0 +1,40 @@
+If the RSS feeds you subscribe too are fine, you can ignore this file.  If
+there are certain topics, people, countries you wish to ignore, read on.
+These topics are considered sludge and filtered out using the Maria/MySQL
+database's full text search extension using its boolean mode.  This tutorial
+assumes you are using the bash command line shell.  Other shells and GUI start
+up is left as an exercise for the reader.
+
+Examples:
+To stay viewpoint neutral, these examples use the Red Queen, Alice, Tweedledum,
+and Tweedledee from "Alice in Wonderland".  Define the SLUDGE environment
+variable before starting the background task with:
+  padrino rake -e production resque:work QUEUE=*  
+
+1) Hide every post that mentions Tweedledum ('+' indicate the following word
+is required).  Remember SLUDGE is negative:
+  export SLUDGE="+Tweedledum"
+  
+2) Hide every post that mentions Tweedledum AND Tweedledee:
+  export SLUDGE="+Tweedledum +Tweedledee"
+
+3) Hide every post that mentions Tweedledum OR Tweedledee ('<' indicates words
+with a lesser match):
+  export SLUDGE="<Tweedledum <Tweedledee"
+
+4) Hide every post that mentions the Red Queen (single quotes enclose multiple
+words to match):
+  export SLUDGE="+'Red Queen'"
+
+5) Show every post that mentions Alice (to pull Alice up out of the sludge):
+  export SLUDGE="-Alice"
+
+6) To hide all posts mentioning the Red Queen and to lesser extent,
+Tweedledum, and Tweedledee, but show all post mentioning Alice anyway:
+  export SLUDGE"+'Red Queen' <Tweedledum <Tweedledee -Alice"
+
+7) Like the previous one, but Alice does not entirely override Tweedledum and
+Tweedledee's presence:
+  export SLUDGE"+'Red Queen' <Tweedledum <Tweedledee ~Alice"
+
+For more detail, see: https://mariadb.com/kb/en/full-text-index-overview/
