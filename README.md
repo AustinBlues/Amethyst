@@ -9,9 +9,9 @@ was too much for one developer.  It was also written for multiple users for a
 market that I never found enough users for.  Eventually, sticking with the
 last release of Rails 2 broke and I started over.
 
-Amethyst 2 is written in Ruby for the Padrino Web framework (think Ruby on
-Rails 1 or Sinatra on steroids).  All development and testing has been done on
-Ruby 2.4.0.  See Gemfile for other dependencies.
+Amethyst 2 is written in Ruby for the Padrino Web (https://padrinorb.com)
+framework (think Ruby on Rails 1 or Sinatra on steroids).  All development and
+testing has been done on Ruby 2.4.0.  See Gemfile for other dependencies.
 
 # Installation
 See INSTALL for installation directions.
