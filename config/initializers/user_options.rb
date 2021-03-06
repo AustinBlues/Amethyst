@@ -1,6 +1,6 @@
 # These are parameters the user can set
 #
-PAGE_SIZE = 8
+PAGE_SIZE = ENV['PAGE_SIZE'] ? ENV['PAGE_SIZE'].to_i : 8
 
 # How many days to keep zombies (Posts that have been dropped from their Feed)
 DAYS_OF_THE_DEAD = 34
