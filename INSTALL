@@ -1,3 +1,8 @@
+Note: Little effort has been made to harden Amethyst against malicious users.
+It is strongly suggested that you do not expose it to the Internet or hostile
+users.  These directions are for running Amethyst on the loopback port (no
+access from other computers) as an ordinary user, not root.
+
 Download the code:
   git clone https://github.com/AustinBlues/Amethyst.git
 
@@ -35,7 +40,7 @@ Create the necessary cron jobs (see REFRESH below for explanation):
   crontab -e
 
   Add the following lines if using installed Ruby (use output of "which ruby")
-    */5 * * * * cd /home/user/Amethyst; /home/user/.rvm/wrappers/ruby-2.4.0/ruby enqueue_refresh.rb
+    */5 * * * * cd /home/user/Amethyst;  ruby enqueue_refresh.rb
     4 * * * * /home/user/Amethyst/cron-daily
     
   Add the following lines if using RVM Ruby 2.4.0 for user 'user' and directory "Amethyst":
