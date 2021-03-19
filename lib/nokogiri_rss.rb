@@ -95,7 +95,6 @@ module NokogiriRSS
                     attrs[:description] = 'No description'
                     Refresh.log "MISSING DESCRIPTION: '#{attrs[:title]}.", :warning
                   end
-                  puts "ATTRS: #{attrs.inspect}."
                   p.set(attrs)
                   Refresh.log "NEW: #{p.name}.", :highlight
                 end
@@ -168,21 +167,20 @@ module NokogiriRSS
                      Refresh.log "INFO: dc:date used", :warning
                      tmp.content
                    else
-                     feed.status = 'missing date'
                      Refresh.log "NO DATE: '#{attrs[:title]}'.", :warning
                      Time.now.to_s
                    end
 #    attrs[:published_at] = Time.parse(attrs[:time])
     attrs[:published_at] = Refresh.raw2time(attrs[:time])
     attrs[:url] = if !(link = post.at_css('link')).nil?
-                   link.content
-                 elsif !(link = post.at_css('enclosure')).nil?
-                   link['url']
-                 else
-                   p.feed.status = 'missing URL'
-                   Refresh.log "MISSING URL: '#{p.name}'.", :error
-                   post.feed.rss_url
-                 end
+                    link.content
+                  elsif !(link = post.at_css('enclosure')).nil?
+                    link['url']
+                  else
+                    p.feed.status = 'missing URL'
+                    Refresh.log "MISSING URL: '#{p.name}'.", :error
+                    post.feed.rss_url
+                  end
     attrs
   end
 
