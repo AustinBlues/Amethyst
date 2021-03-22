@@ -74,14 +74,20 @@ Amethyst::App.controllers :post do
                   else
                     'Unknown'
                   end
-
     @post = Post.with_pk! params[:id]
-    @post.click!
-    @post.save(changed: true)
 
     render 'show'
   end
-  
+
+
+  get :read, '/post/:id/read' do
+    post = Post.with_pk! params[:id]
+    post.click!
+    post.save(changed: true)
+
+    redirect post.url
+  end
+
 
 #  put :hide, '/post/:id/hide' do
   get :hide, '/post/:id/hide' do
