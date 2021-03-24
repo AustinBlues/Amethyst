@@ -76,10 +76,7 @@ Amethyst::App.controllers :post do
                   else
                     'Unknown'
                   end
-
     @post = Post.with_pk! params[:id]
-    @post.click!
-    @post.save(changed: true)
 
     if RELATED_POSTS_MAX <= 0
       @related = []
@@ -114,6 +111,15 @@ Amethyst::App.controllers :post do
 #    puts "RELATED_POSTS_MAX(#{@related.size}): #{RELATED_POSTS_MAX}; DISPLAY_WORDS: #{DISPLAY_WORDS}."
 
     render 'show'
+  end
+
+  
+  get :read, '/post/:id/read' do
+    post = Post.with_pk! params[:id]
+    post.click!
+    post.save(changed: true)
+
+    redirect post.url
   end
   
 
