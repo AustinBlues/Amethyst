@@ -13,9 +13,10 @@
       <%= link_to DOWN_ARROW, down_url, method: :put, title: 'down vote', class: 'btn btn-link action' %>
     </div>
     
-    <h2 class="card-title">
-      <%= link_to(@post.name, read_url, target: '_blank', title: "#{@post.feed.name} #{short_datetime(@post.published_at)}") %>
+    <h2 class="card-title"><%= link_to(@post.name, @post.url, target: '_blank',
+	  title: "#{@post.feed.name}  #{short_datetime(@post.published_at)}") %>
     </h2>
+
 
     <%= partial 'layouts/flash' %>
   </div>

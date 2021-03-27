@@ -77,6 +77,8 @@ Amethyst::App.controllers :post do
                     'Unknown'
                   end
     @post = Post.with_pk! params[:id]
+    @post.click!
+    @post.save(changed: true)
 
     if RELATED_POSTS_MAX <= 0
       @related = []
@@ -89,7 +91,6 @@ Amethyst::App.controllers :post do
       relatedness = Hash.new(0)
       Occurrence.where(word_id: word_id).join(:words, id: :word_id).each do |w|
         relatedness[w[:post_id]] += w[:count]/w[:frequency]
-#        puts("STRENGTH: #{relatedness[w[:post_id]]}, #{w[:count]}/#{w[:frequency]}.") if w[:post_id] == 29583
       end
       related_posts = Post.where(id: relatedness.keys, state: Post::UNREAD).all
       related_posts.each do |t|
@@ -101,14 +102,10 @@ Amethyst::App.controllers :post do
           {name: w[:name], count: w[:count], frequency: w[:frequency]}
         end
       end
-#      puts "RELATED_POSTS: #{related_posts.inspect}."
       related_posts.delete_if{|t| t[:wic].size < WIC_MIN}	# must have at least WIC_MIN Words In Common
       related_posts.sort!{|a, b| b[:strength] <=> a[:strength]}
-#      puts "STRENGTH: #{relatedness.inspect}."
-#      puts "RELATED_POSTS: #{related_posts.first(RELATED_POSTS_MAX).map{|t| t[:strength]}}."
       @related = related_posts.first(RELATED_POSTS_MAX)
     end
-#    puts "RELATED_POSTS_MAX(#{@related.size}): #{RELATED_POSTS_MAX}; DISPLAY_WORDS: #{DISPLAY_WORDS}."
 
     render 'show'
   end
@@ -116,8 +113,6 @@ Amethyst::App.controllers :post do
   
   get :read, '/post/:id/read' do
     post = Post.with_pk! params[:id]
-    post.click!
-    post.save(changed: true)
 
     redirect post.url
   end
