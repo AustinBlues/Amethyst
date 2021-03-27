@@ -1,9 +1,19 @@
+require 'benchmark'
 require File.expand_path(File.dirname(__FILE__) + '/../lib/nokogiri_rss.rb')
 
 class Post < Sequel::Model
   many_to_one :feed
   many_to_many :word, join_table: :occurrences
+  extend Amethyst::App::AmethystHelper
 
+  ONE_DAY = 24 * 60 * 60
+  WORDS_LIMIT = 300	# maximum words in word cloud
+
+  # state enumeration
+  UNREAD = 0
+  READ = 1
+  HIDDEN = 2
+  DOWN_VOTED = 3
 
   def after_create
     create_word_cloud
@@ -18,23 +28,35 @@ class Post < Sequel::Model
   end
 
 
-  ONE_DAY = 24 * 60 * 60
-
-  # state enumeration
-  UNREAD = 0
-  READ = 1
-  HIDDEN = 2
-  DOWN_VOTED = 3
-
-
   def create_word_cloud
-    words = Post.html2words(self[:description])
-    if Padrino.env != :test
-#      Refresh.log("CREATE: #{words.inspect}")
-    else
-#      puts "CREATE: #{words.inspect}"
+    words = []	# force scope
+    f = nil	# force scope
+    begin
+      open(self[:url]) do |f|
+        puts "F: #{f.class.inspect}."
+        f.unlink if f.is_a?(Tempfile)	# Tempfile recommended best practices
+        puts("URL: #{self[:url]}.") unless f.is_a?(Tempfile)
+        doc = Nokogiri::XML.parse(f)
+        if false
+          content = Post.truncate(doc.css('p').map{|i| i.content}.join(' '), 2000, omission: '')
+          words = content.split(/[^[[:word:]]]+/)
+        else
+          content = doc.css('p').map{|i| i.content}.join(' ')
+          words = content.split(/[^[[:word:]]]+/).take(WORDS_LIMIT)
+        end
+      end
+    rescue Errno::ENOENT
+      Refresh.log "URL '#{self[:url]}' not found.", :error
+    rescue OpenURI::HTTPError
+      Refresh.log "URL '#{self[:url]}' forbidden (403).", :error
+    rescue
+      Refresh.log "Unknown error(#{$!.class}): #{$!}.", :error
     end
-    
+
+    if words.empty?
+      words = Post.html2words(self[:description]).take(WORDS_LIMIT)
+    end
+
     words.each do |word|
       if word !~ /^\s*$/
         w = Word.update_or_create(name: word) do |w|
@@ -43,21 +65,19 @@ class Post < Sequel::Model
           else
             w[:frequency] += 1.0
           end
-#          puts "W: #{w.inspect}."
         end
 
         if !(o = Occurrence.where(post_id: self[:id], word_id: w[:id]).first)
           o = Occurrence.create(post_id: self[:id], word_id: w[:id], count: 1)
         else
           Occurrence.where(post_id: self[:id], word_id: w[:id]).update(Sequel.lit('count = count + 1'))
-          o = Occurrence.where(post_id: self[:id], word_id: w[:id]).first	# for debugging printouts only
+#          o = Occurrence.where(post_id: self[:id], word_id: w[:id]).first	# for debugging printouts only
         end
- #       puts "O: #{o.inspect}." if Padrino.env == :test
       end
     end
   end
 
-  
+
   def word_cloud(limit = 1.0)
     Word.join(:occurrences, post_id: self[:id], word_id: :id).where(flags: 0).where{frequency > limit}.all
   end
