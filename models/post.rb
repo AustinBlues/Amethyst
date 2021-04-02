@@ -1,4 +1,3 @@
-require 'benchmark'
 require File.expand_path(File.dirname(__FILE__) + '/../lib/nokogiri_rss.rb')
 
 class Post < Sequel::Model
@@ -21,21 +20,12 @@ class Post < Sequel::Model
   end
 
 
-  def after_update
-    # for migration of existing Posts only
-    create_word_cloud if word.empty?
-    super
-  end
-
-
   def create_word_cloud
     words = []	# force scope
-    f = nil	# force scope
     begin
       open(self[:url]) do |f|
-        puts "F: #{f.class.inspect}."
         f.unlink if f.is_a?(Tempfile)	# Tempfile recommended best practices
-        puts("URL: #{self[:url]}.") unless f.is_a?(Tempfile)
+        puts("URL(#{f.class.inspect}): #{self[:url]}.") unless f.is_a?(Tempfile) || f.is_a?(StringIO)	# debugging/exploration
         doc = Nokogiri::XML.parse(f)
         if false
           content = Post.truncate(doc.css('p').map{|i| i.content}.join(' '), 2000, omission: '')
@@ -67,11 +57,10 @@ class Post < Sequel::Model
           end
         end
 
-        if !(o = Occurrence.where(post_id: self[:id], word_id: w[:id]).first)
-          o = Occurrence.create(post_id: self[:id], word_id: w[:id], count: 1)
+        if !Occurrence.where(post_id: self[:id], word_id: w[:id]).exists
+          Occurrence.create(post_id: self[:id], word_id: w[:id], count: 1)
         else
           Occurrence.where(post_id: self[:id], word_id: w[:id]).update(Sequel.lit('count = count + 1'))
-#          o = Occurrence.where(post_id: self[:id], word_id: w[:id]).first	# for debugging printouts only
         end
       end
     end
