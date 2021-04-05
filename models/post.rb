@@ -44,6 +44,7 @@ class Post < Sequel::Model
     end
 
     if words.empty?
+      STDERR.puts "Using description for '#{self[:title]}'."
       words = Post.html2words(self[:description]).take(WORDS_LIMIT)
     end
 
@@ -92,8 +93,8 @@ class Post < Sequel::Model
       feed.add_score(-1.0)
       feed.clicks -= 1
       feed.save(changed: true)
-      self[:state] = UNREAD
     end
+    self[:state] = UNREAD
   end
 
   def hidden?
