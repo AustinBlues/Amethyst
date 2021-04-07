@@ -71,10 +71,10 @@ module RubyRSS
             end
 
             ident = title if ident.empty?
-            
+
+            new = nil	# force scope
             Post.update_or_create(feed_id: feed.id, ident: ident) do |p|
-              if p.new?
-                Refresh.log "NEW: #{title.inspect}.", :highlight
+              if (new = p.new?)
                 feed.ema_volume += Daily::ALPHA 
                 p.title = title.empty? ? nil : title
                 p.description = description
@@ -82,6 +82,7 @@ module RubyRSS
                 p.time = published_at	# actual String
                 p.url = post.link
               end
+              Refresh.log("NEW: #{title}", :highlight) if new
               p.previous_refresh = now
 #              Refresh.log "  #{p.inspect}", :debug
             end

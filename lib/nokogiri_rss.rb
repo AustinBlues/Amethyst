@@ -88,18 +88,19 @@ module NokogiriRSS
 
             retries = 0
             begin
-              Post.update_or_create(feed_id: feed.id, ident: attrs[:ident]) do |p|
-                if p.new?
+              new = nil	# force scope
+              post = Post.update_or_create(feed_id: feed.id, ident: attrs[:ident]) do |p|
+                if (new = p.new?)
                   feed.ema_volume += Daily::ALPHA
                   if attrs[:description].nil?
                     attrs[:description] = 'No description'
                     Refresh.log "MISSING DESCRIPTION: '#{attrs[:title]}.", :warning
                   end
                   p.set(attrs)
-                  Refresh.log "NEW: #{p.name}.", :highlight
                 end
                 p.previous_refresh = now
               end
+              Refresh.log("NEW: #{post.name}", :highlight) if new
             rescue Sequel::DatabaseError
               retries += 1
               if retries > 3
