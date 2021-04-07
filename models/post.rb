@@ -14,6 +14,16 @@ class Post < Sequel::Model
   HIDDEN = 2
   DOWN_VOTED = 3
 
+
+  def before_create
+    super
+    if self[:url] =~ / /
+      self[:url].gsub!(/ /, '%20')	# fix for Six Questions for mistake
+      STDERR.puts "Fixing spaces in URL for '#{self[:title]}' of '#{feed.name}'."
+    end
+  end
+
+
   def after_create
     create_word_cloud
     super
@@ -21,19 +31,14 @@ class Post < Sequel::Model
 
 
   def create_word_cloud
-    words = []	# force scope
+    cwords = []	# force scope
     begin
       open(self[:url]) do |f|
         f.unlink if f.is_a?(Tempfile)	# Tempfile recommended best practices
         puts("URL(#{f.class.inspect}): #{self[:url]}.") unless f.is_a?(Tempfile) || f.is_a?(StringIO)	# debugging/exploration
-        doc = Nokogiri::XML.parse(f)
-        if false
-          content = Post.truncate(doc.css('p').map{|i| i.content}.join(' '), 2000, omission: '')
-          words = content.split(/[^[[:word:]]]+/)
-        else
-          content = doc.css('p').map{|i| i.content}.join(' ')
-          words = content.split(/[^[[:word:]]]+/).take(WORDS_LIMIT)
-        end
+        doc = Nokogiri::HTML.parse(f)
+        content = doc.css('p').map{|i| i.content}.join(' ')
+        cwords = content.split(/[^[[:word:]]]+/).take(WORDS_LIMIT)
       end
     rescue Errno::ENOENT
       Refresh.log "URL '#{self[:url]}' not found.", :error
@@ -43,10 +48,9 @@ class Post < Sequel::Model
       Refresh.log "Unknown error(#{$!.class}): #{$!}.", :error
     end
 
-    if words.empty?
-      STDERR.puts "Using description for '#{self[:title]}'."
-      words = Post.html2words(self[:description]).take(WORDS_LIMIT)
-    end
+    dwords = Post.html2words(self[:description]).take(WORDS_LIMIT)
+
+    words = (cwords.size > dwords.size) ? cwords : dwords
 
     words.each do |word|
       if word !~ /^\s*$/
@@ -58,7 +62,7 @@ class Post < Sequel::Model
           end
         end
 
-        if !Occurrence.where(post_id: self[:id], word_id: w[:id]).exists
+        if !Occurrence.where(post_id: self[:id], word_id: w[:id]).get(1)
           Occurrence.create(post_id: self[:id], word_id: w[:id], count: 1)
         else
           Occurrence.where(post_id: self[:id], word_id: w[:id]).update(Sequel.lit('count = count + 1'))
@@ -74,7 +78,7 @@ class Post < Sequel::Model
 
   
   def name
-    (!self[:title].nil? && !self[:title].empty?) ? self[:title] : SafeBuffer.new("<b><em>Post #{id}</em></b>")
+    (!self[:title].nil? && !self[:title].empty?) ? self[:title] : SafeBuffer.new("<b><em>Post #{self[:id].inspect}</em></b>")
   end
 
   def clicked?
