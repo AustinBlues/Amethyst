@@ -1,5 +1,3 @@
-require 'benchmark'
-
 Amethyst::App.controllers :post do
   before do
     @origin = if [:index].include?(request.action)
@@ -84,26 +82,53 @@ Amethyst::App.controllers :post do
       @related = []
     else
       @words = @post.word_cloud(0.5).sort{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}
-      word_id = @post.word.select{|w| w[:frequency] > 1.0 && w[:flags] == 0}.map(&:id)
-#      # The statement below is slower!  Surprised!
-#      word_id = Word.where{frequency > 1.0}.where(flags: 0).map(:id)
-#      puts "RELATED: #{Post.join(:occurrences, word_id: word_id, post_id: :id).where(state: Post::UNREAD).group(:id).count}."
+      word_id = @post.word.map(&:id)
+
       relatedness = Hash.new(0)
       Occurrence.where(word_id: word_id).join(:words, id: :word_id).each do |w|
         relatedness[w[:post_id]] += w[:count]/w[:frequency]
       end
-      related_posts = Post.where(id: relatedness.keys, state: Post::UNREAD).all
-      related_posts.each do |t|
-        t[:strength] = (100 * relatedness[t[:id]]).to_i	# 100 to move into human range
-        # Words In Common, intersection of Post's words and Posts with those same words
-        wic = t.word_cloud.delete_if{|w| !word_id.include?(w[:id])}
-        t[:wic] = wic.first(DISPLAY_WORDS)
-        t[:wic].sort!{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}.map do |w|
-          {name: w[:name], count: w[:count], frequency: w[:frequency]}
+      if true
+        related_posts = Post.where(id: relatedness.keys, state: Post::UNREAD).order(:id).all
+        ids = related_posts.map{|p| p[:id]}
+        tmp = Word.join(:occurrences, post_id: ids, word_id: :id).where(flags: 0).where{frequency > 1.0}.order(:post_id).all
+        related_posts.each do |rp|
+          rp[:strength] = (100 * relatedness[rp[:id]]).to_i	# 100 to move into human range
+          rp[:wic] = []
+        end
+        rp = 0
+        tmp.each do |t|
+          while related_posts[rp][:id] != t[:post_id] do
+            rp += 1
+          end
+          # Words In Common, intersection of Post's words and Posts with those same words
+          if word_id.include?(t[:id])
+            related_posts[rp][:wic] << t
+          end
+        end
+        related_posts.each do |rp|
+          rp[:wic].sort!{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}
+          rp[:wic].take(DISPLAY_WORDS)
+        end
+      else
+        related_posts = Post.where(id: relatedness.keys, state: Post::UNREAD).all
+        related_posts.each do |t|
+          t[:strength] = (100 * relatedness[t[:id]]).to_i	# 100 to move into human range
+          # Words In Common, intersection of Post's words and Posts with those same words
+          wic = t.word_cloud.delete_if{|w| !word_id.include?(w[:id])}
+          t[:wic] = wic.first(DISPLAY_WORDS)
+          if true
+            t[:wic].sort!{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}
+          else
+            t[:wic].sort!{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}.map do |w|
+              {name: w[:name], count: w[:count], frequency: w[:frequency]}
+            end
+          end
         end
       end
       related_posts.delete_if{|t| t[:wic].size < WIC_MIN}	# must have at least WIC_MIN Words In Common
       related_posts.sort!{|a, b| b[:strength] <=> a[:strength]}
+
       @related = related_posts.first(RELATED_POSTS_MAX)
     end
 
@@ -142,7 +167,7 @@ Amethyst::App.controllers :post do
   get :unclick, '/post/:id/unclick' do
     post = Post.with_pk! params[:id]
     post.unclick!
-    post.save
+    post.save(changed: true)
 
     redirect @origin
   end
