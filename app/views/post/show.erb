@@ -31,7 +31,7 @@
 	</td>
 	<td style="vertical-align: top">
 	  <table>
-	    <% @words.first(20).each do |w| %>
+	    <% @words.take(DISPLAY_WORDS).each do |w| %>
 	      <tr><td>
 	        <%= w[:name] %>&nbsp;(<%= w[:count] %>:<%= w[:frequency].round %>)
 	      </td></tr>
@@ -57,7 +57,7 @@
 	    </p>
 	  </td>
 	  <td style="vertical-align: top">
-	    <% r[:wic].each do |w| %>
+	    <% r[:wic].take(DISPLAY_WORDS).each do |w| %>
 	      <br><%= w[:name] %>&nbsp;(<%= w[:count] %>:<%= w[:frequency].round %>)
 	    <% end %>
 	  </td>

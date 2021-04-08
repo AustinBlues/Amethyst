@@ -108,7 +108,6 @@ Amethyst::App.controllers :post do
         end
         related_posts.each do |rp|
           rp[:wic].sort!{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}
-          rp[:wic].take(DISPLAY_WORDS)
         end
       else
         related_posts = Post.where(id: relatedness.keys, state: Post::UNREAD).all
