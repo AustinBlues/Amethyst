@@ -82,13 +82,6 @@ Amethyst::App.controllers :post do
   end
 
 
-  get :read, '/post/:id/read' do
-    post = Post.with_pk! params[:id]
-
-    redirect post.url
-  end
-
-
 #  put :hide, '/post/:id/hide' do
   get :hide, '/post/:id/hide' do
     post = Post.with_pk! params[:id]
