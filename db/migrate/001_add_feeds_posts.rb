@@ -33,7 +33,7 @@ Sequel.migration do
   end
 
   down do
-    drop_table :feeds
     drop_table :posts
+    drop_table :feeds
   end
 end

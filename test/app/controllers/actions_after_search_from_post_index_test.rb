@@ -6,7 +6,7 @@ describe '/post/search' do
   before do
     # Create Feed and Posts in database
     now = Time.now - PAGE_SIZE
-    @feed = Feed.create(title: 'Feed 1', rss_url: 'http://127.0.0.1', previous_refresh: now)
+    @feed = Feed.create(title: 'Feed 1', rss_url: 'http://127.0.0.1', previous_refresh: now, next_refresh: now)
     @posts = (PAGE_SIZE+5).times.map do |i|
       Post.create(title: "Post #{i+1}", feed_id: @feed[:id], ident: i, url: "http://127.0.0.1/#{i}",
                   description: "Post #{i+1} content.", published_at: now+i)
@@ -16,8 +16,8 @@ describe '/post/search' do
   end
 
   after do
-    Feed.truncate
-    Post.truncate
+#    Post.truncate
+    Feed.all{|f| f.destroy}	# should destroy all Posts too
   end
 
 

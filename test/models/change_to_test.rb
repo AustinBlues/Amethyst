@@ -20,8 +20,8 @@ describe "Post Model" do
         @post[:state] = pre_state
         old_way = @post.dup
         new_way = @post.dup
-        puts "FEED: #{Feed[@feed[:id]].inspect}."
-        puts "POST: #{@post.inspect}."
+#        puts "FEED: #{Feed[@feed[:id]].inspect}."
+#        puts "POST: #{@post.inspect}."
         case post_state
         when Post::UNREAD
           old_way.unclick!
@@ -32,11 +32,11 @@ describe "Post Model" do
         when Post::DOWN_VOTED
           old_way.down_vote!
         end
-        puts "FEED: #{Feed[@feed[:id]].inspect}."
+#        puts "FEED: #{Feed[@feed[:id]].inspect}."
         new_way.state_to(post_state)
-        puts "FEED: #{Feed[@feed[:id]].inspect}."
-        puts "OLD: #{old_way.inspect}."
-        puts "NEW: #{new_way.inspect}."
+#        puts "FEED: #{Feed[@feed[:id]].inspect}."
+#        puts "OLD: #{old_way.inspect}."
+#        puts "NEW: #{new_way.inspect}."
         assert_equal old_way, new_way, "TEST: #{Post::STATES[pre_state]} => #{Post::STATES[post_state]}"
       end
     end

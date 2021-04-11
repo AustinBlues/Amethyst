@@ -5,7 +5,7 @@ describe "/feed" do
   before do
     # Create Feed and Posts in database
     now = Time.now - PAGE_SIZE
-    @feed = Feed.create(title: 'Feed 1', rss_url: 'http://127.0.0.1', previous_refresh: now)
+    @feed = Feed.create(title: 'Feed 1', rss_url: 'http://127.0.0.1', previous_refresh: now, next_refresh: now)
     @posts = (PAGE_SIZE+5).times.map do |i|
       Post.create(title: "Post #{i+1}", feed_id: @feed[:id], ident: i, url: "http://127.0.0.1/#{i}",
                   description: "Post #{i+1} content.", published_at: now+i)
@@ -14,8 +14,8 @@ describe "/feed" do
   end
 
   after do
-    Feed.truncate
-    Post.truncate
+    Feed.all{|f| f.destroy}
+#    Post.truncate
   end
 
   describe 'when showing a Feed' do
@@ -26,7 +26,7 @@ describe "/feed" do
     end
 
     it 'should return earliest unread Post and all back links point to origin' do
-      get "/post/1?origin=#{CGI.escape(@origin)}"
+      get "/post/#{@posts[0][:id]}?origin=#{CGI.escape(@origin)}"
       p = Nokogiri::HTML.parse(last_response.body)
       assert_equal(@posts[0][:description], p.at_css('p').content.strip)
       links = p.css('div.card a.btn')
