@@ -3,10 +3,14 @@ class Post < Sequel::Model
   ONE_DAY = 24 * 60 * 60
 
   # state enumeration
+  STATES = %w{UNREAD READ HIDDEN DOWN_VOTED}
   UNREAD = 0
   READ = 1
   HIDDEN = 2
   DOWN_VOTED = 3
+
+  SCORE = {READ => 1.0, DOWN_VOTED => -1.0}
+  SCORE.default = 0
 
   
   def name
@@ -28,12 +32,15 @@ class Post < Sequel::Model
 
 
   def unclick!
-    if self[:state] == READ
+    case self[:state]
+    when READ
       feed.add_score(-1.0)
       feed.clicks -= 1
-      feed.save(changed: true)
-      self[:state] = UNREAD
+    when HIDDEN
+      feed.hides -= 1
     end
+    feed.save(changed: true)
+    self[:state] = UNREAD
   end
   
 
@@ -79,6 +86,35 @@ class Post < Sequel::Model
     feed.save(changed: true)
   end
 
+  
+  def state_to(new_state)
+    if self[:state] != new_state
+      # back out old state scoring
+      feed.add_score(-SCORE[self[:state]])
+      case self[:state]
+      when READ
+        feed.clicks -= 1
+      when HIDDEN
+        feed.hides -= 1
+      when DOWN_VOTED
+        feed.down_votes -= 1
+      end
+
+      case new_state
+      when READ
+        feed.clicks += 1
+      when HIDDEN
+        feed.hides += 1
+      when DOWN_VOTED
+        feed.down_votes += 1
+      end
+      feed.add_score(+SCORE[new_state])
+      feed.save(changed: true)
+      self[:state] = new_state
+    end
+  end
+
+  
   
   def zombie?
     self[:previous_refresh] && feed[:previous_refresh] && (self[:previous_refresh] < feed[:previous_refresh])
