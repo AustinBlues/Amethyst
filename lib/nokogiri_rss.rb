@@ -160,8 +160,8 @@ module NokogiriRSS
                      tmp.content
                    else
                      attrs[:status] = 'missing date'
-                     Refresh.log "NO DATE: "#{title}'.", :warning
-                     now.to_s
+                     Refresh.log "NO DATE: "#{attrs[:title]}'.", :warning
+                     Time.now.to_s
                    end
 #    attrs[:published_at] = Time.parse(attrs[:time])
     attrs[:published_at] = Refresh.raw2time(attrs[:time])
