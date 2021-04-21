@@ -61,9 +61,9 @@ module NokogiriRSS
           item.each do |post|
             attrs = case standard
                     when 'rss'
-                      parse_rss_item(post)
+                      parse_rss_item(post, feed)
                     when 'ATOM'
-                      parse_atom_item(post)
+                      parse_atom_item(post, feed)
                     else
                       #              description = post.content
                       #              ident = post.id.to_s
@@ -136,7 +136,7 @@ module NokogiriRSS
   end
 
 
-  def parse_rss_item(post)
+  def parse_rss_item(post, feed)
     attrs = {}
 
     attrs[:title] = post.at_css('title').content
@@ -148,7 +148,7 @@ module NokogiriRSS
                     elsif (tmp = post.at_css('link'))
                       strip_tags(tmp.content)
                     else
-                      attrs[:status] = 'missing ident'
+                      feed.status = 'missing ident'
                       Refresh.log "NO IDENT: "#{attrs[:title]}'.", :warning
                       attrs[:title]
                     end
@@ -159,8 +159,8 @@ module NokogiriRSS
                    elsif (tmp = post.at_css('dc|date'))
                      tmp.content
                    else
-                     attrs[:status] = 'missing date'
-                     Refresh.log "NO DATE: "#{attrs[:title]}'.", :warning
+                     feed.status = 'missing date'
+                     Refresh.log "NO DATE: '#{attrs[:title]}'.", :warning
                      Time.now.to_s
                    end
 #    attrs[:published_at] = Time.parse(attrs[:time])
@@ -170,15 +170,15 @@ module NokogiriRSS
                  elsif !(link = post.at_css('enclosure')).nil?
                    link['url']
                  else
-                   p.status = 'missing URL'
+                   feed.status = 'missing URL'
                    Refresh.log "MISSING URL: '#{p.name}'.", :error
-                   post.feed.rss_url
+                   feed.rss_url
                  end
     attrs
   end
 
 
-  def parse_atom_item(post)
+  def parse_atom_item(post, feed)
     attrs = {}
 
     attrs[:title] = post.at_css('title')
@@ -193,7 +193,7 @@ module NokogiriRSS
                     elsif (tmp = post.at_css('link'))
                       tmp['href']
                     else
-                      attrs[:status] = 'missing ident'
+                      feed.status = 'missing ident'
                       Refresh.log "NO IDENT: "#{title}'.", :warning
                       attrs[:title]
                     end
@@ -206,8 +206,8 @@ module NokogiriRSS
                      elsif (tmp = post.at_css('dc|date'))
                        tmp.content
                      else
-                       attrs[:status] = 'missing date'
-                       Refresh.log "NO DATE: "#{title}'.", :warning
+                       feed.status = 'missing date'
+                       Refresh.log "NO DATE: '#{attrs[:title]}'.", :warning
                        now.to_s
                      end
     rescue Nokogiri::XML::XPath::SyntaxError
@@ -220,12 +220,13 @@ module NokogiriRSS
                  elsif !(link = post.at_css('enclosure')).nil?
                    link['url']
                  else
-                   p.status = 'missing URL'
+                   feed.status = 'missing URL'
                    Refresh.log "MISSING URL: '#{p.name}'.", :error
-                   post.feed.rss_url
+                   feed.rss_url
                  end
     attrs
   end
+
 
   def truncate(str, truncate_at, options = {})
     return str.dup unless str.length > truncate_at
