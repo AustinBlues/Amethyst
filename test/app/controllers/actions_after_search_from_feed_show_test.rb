@@ -4,8 +4,7 @@ require 'nokogiri'
 
 describe '/feed/search' do
   before do
-    Occurrence.truncate
-    Context.truncate
+    Occurrence.where(true).delete
     Word.all{|w| w.delete}
     Post.all{|p| p.delete}
     Feed.all{|f| f.delete}
@@ -22,8 +21,7 @@ describe '/feed/search' do
   end
 
   after do
-    Occurrence.truncate
-    Context.truncate
+    Occurrence.where(true).delete
     Word.all{|w| w.delete}
     Post.all{|p| p.delete}
     Feed.all{|f| f.delete}

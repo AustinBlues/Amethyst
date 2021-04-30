@@ -2,16 +2,14 @@ require File.expand_path(File.dirname(__FILE__) + '/../test_config.rb')
 
 describe "Word Model" do
   before do
-    Occurrence.truncate
-    Context.truncate
+    Occurrence.where(true).delete
     Word.all{|w| w.delete}
     Post.all{|p| p.delete}
     Feed.all{|f| f.delete}
   end
 
   after do
-    Occurrence.truncate
-    Context.truncate
+    Occurrence.where(true).delete
     Word.all{|w| w.delete}
     Post.all{|p| p.delete}
     Feed.all{|f| f.delete}

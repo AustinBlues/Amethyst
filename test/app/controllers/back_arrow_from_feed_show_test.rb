@@ -3,8 +3,7 @@ require 'nokogiri'
 
 describe "/feed" do
   before do
-    Occurrence.truncate
-    Context.truncate
+    Occurrence.where(true).delete	# no primary key
     Word.all{|w| w.delete}
     Post.all{|p| p.delete}
     Feed.all{|f| f.delete}
@@ -20,8 +19,7 @@ describe "/feed" do
   end
 
   after do
-    Occurrence.truncate
-    Context.truncate
+    Occurrence.where(true).delete	# no primary key
     Word.all{|w| w.delete}
     Post.all{|p| p.delete}
     Feed.all{|f| f.delete}
@@ -35,7 +33,6 @@ describe "/feed" do
     end
 
     it 'should return earliest unread Post and all back links point to origin' do
-puts "ORIGIN: #{@origin}."
       get "/post/#{@posts[0][:id]}?origin=#{CGI.escape(@origin)}"
       p = Nokogiri::HTML.parse(last_response.body)
       assert_equal(@posts[0][:description], p.at_css('p').content.strip)
