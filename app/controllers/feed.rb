@@ -14,7 +14,7 @@ Amethyst::App.controllers :feed do
       redirect url_for(:feed, :index, page: 1)
     else
       # (previous_refresh == next_refresh) is a signal that Feed is queued for deletion in background process
-      @feeds = Feed.exclude(Sequel.lit('previous_refresh <=> next_refresh')).reverse(:score).paginate(@page, PAGE_SIZE)
+      @feeds = Feed.exclude(Sequel.lit('(previous_refresh <=> next_refresh) = 1')).reverse(:score).paginate(@page, PAGE_SIZE)
       if !@feeds.page_range.cover?(@page)
         redirect url_for(:feed, :index, page: @feeds.page_count)
       else
