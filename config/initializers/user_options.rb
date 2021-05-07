@@ -18,8 +18,8 @@ RELATED_POSTS_MAX = ENV['RELATED_POSTS_MAX'] ? ENV['RELATED_POSTS_MAX'].to_i : 5
 DISPLAY_WORDS = ENV['DISPLAY_WORDS'] ? ENV['DISPLAY_WORDS'].to_i : 12
 
 # Exponential Moving Average (EMA) period for Feed scores and volume
-# How long between posts of least frequent blogger posts is a good starting value
-EMA_DAYS = 30
+# Twice as long between posts of least frequent blogger posts is a good starting value
+EMA_DAYS = 60
 
 PAGINATION = ENV['AMETHYST_PAGINATION'] ? ENV['AMETHYST_PAGINATION'].to_i(2) : TOP_PAGINATION
 PAGINATED = PAGINATION != 0
