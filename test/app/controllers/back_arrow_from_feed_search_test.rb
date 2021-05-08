@@ -10,7 +10,7 @@ describe "/feed" do
 
     # Create Feed and Posts in database
     now = Time.now - PAGE_SIZE
-    @feed = Feed.create(title: 'Feed 1', rss_url: 'http://127.0.0.1', previous_refresh: now)
+    @feed = Feed.create(title: 'Feed 1', rss_url: 'http://127.0.0.1', next_refresh: now)
     @posts = (PAGE_SIZE+5).times.map do |i|
       Post.create(title: "Post #{i+1}", feed_id: @feed[:id], ident: i, url: "http://127.0.0.1/#{i}",
                   description: "Post #{i+1} content.", published_at: now+i)
