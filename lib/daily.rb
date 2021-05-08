@@ -12,9 +12,9 @@ module Daily
   def self.perform
     Refresh.log "Daily maintenance at #{short_datetime(Time.now)}."
     Benchmark.bm do |x|
-      x.report{ Feed.age }
-      x.report{ Post.zombie_killer}
-      x.report{ Word.age }
+      x.report('Feed: '){ Feed.age }
+      x.report('Zombie: '){ Post.zombie_killer}
+      x.report('Word: '){ Word.age }
     end
   end
 end
