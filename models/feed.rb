@@ -62,7 +62,7 @@ class Feed < Sequel::Model
   end
 
   def self.age
-    dataset.update(score: Sequel[:score]*(1.0 - Daily::ALPHA))
-    dataset.update(ema_volume: Sequel[:ema_volume]*(1.0 - Daily::ALPHA))
+    dataset.update(score: Sequel[:score]*(1.0 - ALPHA))
+    dataset.update(ema_volume: Sequel[:ema_volume]*(1.0 - ALPHA))
   end
 end

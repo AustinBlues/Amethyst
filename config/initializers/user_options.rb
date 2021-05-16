@@ -11,6 +11,7 @@ UNREAD_LIMIT = 50
 # How many days for Feed score Exponential Moving Average (EMA)
 # Twice as long between posts of least frequent post is a good starting value
 EMA_DAYS = 60
+ALPHA = 2.0/(EMA_DAYS + 1.0)	# don't change unless you really understand EMA and know a better way
 
 PAGINATION = ENV['AMETHYST_PAGINATION'] && (Padrino.env != :test) ? ENV['AMETHYST_PAGINATION'].to_i(2) : TOP_PAGINATION
 PAGINATED = (PAGINATION != 0)
