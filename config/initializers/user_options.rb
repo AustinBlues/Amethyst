@@ -20,6 +20,7 @@ DISPLAY_WORDS = ENV['DISPLAY_WORDS'] ? ENV['DISPLAY_WORDS'].to_i : 12
 # Exponential Moving Average (EMA) period for Feed scores and volume
 # Twice as long between posts of least frequent blogger posts is a good starting value
 EMA_DAYS = 60
+ALPHA = 2.0/(EMA_DAYS + 1.0)	# don't change unless you know Exponential Moving Average very well
 
 PAGINATION = ENV['AMETHYST_PAGINATION'] ? ENV['AMETHYST_PAGINATION'].to_i(2) : TOP_PAGINATION
 PAGINATED = PAGINATION != 0

@@ -75,7 +75,7 @@ module RubyRSS
             new = nil	# force scope
             Post.update_or_create(feed_id: feed.id, ident: ident) do |p|
               if (new = p.new?)
-                feed.ema_volume += Daily::ALPHA 
+                feed.ema_volume += ALPHA 
                 p.title = title.empty? ? nil : title
                 p.description = description
                 p.published_at = published_at	# TimeDate object
