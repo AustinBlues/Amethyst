@@ -13,10 +13,7 @@ module NokogiriRSS
 #      open("|curl -s -4 '#{feed.rss_url}'") do |rss|
       rss = %x(wget '#{feed.rss_url}' -4 -q -O -)
       if $?.to_s !~ /exit 0/
-#        puts("WGET: #{$?}.")
         rss = %x(curl -s -4 '#{feed.rss_url}')
-#        puts "RSS: #{rss.size} bytes."
-#        puts "RSS: #{rss}."
       end
 
       f = Nokogiri::XML.parse(rss)
