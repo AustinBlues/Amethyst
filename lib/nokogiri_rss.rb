@@ -9,16 +9,15 @@ module NokogiriRSS
     feed.status = nil
     begin
       # open-uri is gagging on IPv6 address and doesn't support forcing to IPv4
-      # libcurl and curb Gem appear to have same limitation.
-      # Invoking curl CLI is fast enough
-#      open("|curl -s -4 '#{feed.rss_url}'") do |rss|
       rss = %x(wget '#{feed.rss_url}' -4 -q -O -)
       if $?.to_s !~ /exit 0/
 #        puts("WGET: #{$?}.")
+        # libcurl and curb Gem appear to have same limitation.
+        # Invoking curl CLI is fast enough
         rss = %x(curl -s -4 '#{feed.rss_url}')
-#        puts "RSS: #{rss.size} bytes."
-#        puts "RSS: #{rss}."
       end
+#      puts "RSS: #{rss.size} bytes."
+#      puts "RSS: #{rss}."
 
       f = Nokogiri::XML.parse(rss)
       begin
