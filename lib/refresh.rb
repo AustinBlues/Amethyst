@@ -3,8 +3,8 @@
 require 'redis'
 require 'redis-namespace'
 require 'nokogiri_rss'
-require 'time'
 #require 'ruby_rss'
+require 'time'
 require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/post_helper.rb')
 require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/amethyst_helper.rb')
 require 'logger'
@@ -28,13 +28,6 @@ module Refresh
   @@redis = Redis::Namespace.new(ROOT, redis: Redis.new)
 
   SLUDGE = ENV['SLUDGE'] || (ARGV.find{|f| f =~ /^SLUDGE=(.*)/} ? $~[1] : nil)
-#  SLUDGE = if ENV['SLUDGE']
-#             ENV['SLUDGE']
-#           elsif 
-#             $~[1]
-#           else
-#             nil
-#           end
 
 
   def self.log(msg, level = :default)
