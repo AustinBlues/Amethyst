@@ -2,23 +2,31 @@
 require 'nokogiri'
 require 'time'
 require 'htmlentities'
-
+require 'curb'
 
 module NokogiriRSS
   def refresh_feed(feed, now)
     feed.status = nil
     begin
-      # open-uri is gagging on IPv6 address and doesn't support forcing to IPv4
-      rss = %x(wget '#{feed.rss_url}' -4 -q -O -)
-      if $?.to_s !~ /exit 0/
-#        puts("WGET: #{$?}.")
-        # libcurl and curb Gem appear to have same limitation.
-        # Invoking curl CLI is fast enough
-        rss = %x(curl -s -4 '#{feed.rss_url}')
-      end
-#      puts "RSS: #{rss.size} bytes."
-#      puts "RSS: #{rss}."
-
+       rss = nil	# force scope
+       if true
+         tmp = Curl.get(feed.rss_url)
+#         puts "CURB: #{tmp.inspect}."
+         puts "RSS: #{tmp.body.size}."
+         rss = tmp.body
+       else
+         rss = %x(wget '#{feed.rss_url}' -4 -q -O -)
+         if $?.to_s !~ /exit 0/
+           rss = %x(curl -s -4 '#{feed.rss_url}')
+         end
+         if $?.to_s !~ /exit 0/
+#          puts("RESULT: #{$?}.")
+           # libcurl and curb Gem appear to have same limitation.
+           # Invoking curl CLI is fast enough
+           rss = %x(curl -s -4 '#{feed.rss_url}')
+         end
+       end
+ 
       f = Nokogiri::XML.parse(rss)
       begin
         if f.at_css('rss')
