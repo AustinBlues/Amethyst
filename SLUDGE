@@ -1,4 +1,4 @@
-If the RSS feeds you subscribe too are fine, you can ignore this file.  If
+If the RSS feeds you subscribe to are fine, you can ignore this file.  If
 there are certain topics, people, countries you wish to ignore, read on.
 These topics are considered sludge and filtered out using the Maria/MySQL
 database's full text search extension using its boolean mode.  This tutorial
