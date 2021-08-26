@@ -2,44 +2,14 @@
 require 'nokogiri'
 require 'time'
 require 'htmlentities'
-require 'curb'
-
-LIBCURL = 1
-CURL = 2
-WGET = 3
-MAX_METHOD = 3
+require 'refresh'
 
 
 module NokogiriRSS
   def refresh_feed(feed, now)
     feed.status = nil
     begin
-      rss = nil	# force scope
-      method = 0
-      while method < MAX_METHOD && (rss.nil? || rss.size == 0) do
-        method += 1
-        case method
-        when LIBCURL
-#         tmp = Curl.get(feed.rss_url, follow_location: 1)
-         tmp = Curl.get(feed.rss_url)
-#         puts "CURB: #{tmp.inspect}."
-#         puts "CURB: #{tmp.body.size}."
-         puts "CURB: #{tmp.body}." if 0 < tmp.body.size && tmp.body.size < 1000	# debug
-         rss = tmp.body
-        when WGET
-         rss = %x(wget '#{feed.rss_url}' -4 -q -O -)
-         puts "WGET: #{rss.size}."
-         rss = nil if $?.to_s !~ /exit 0/
-        when CURL
-#          rss = %x(curl -s -4 '#{feed.rss_url}')
-          rss = %x(curl -s '#{feed.rss_url}')
-          puts "CURL: #{rss.size}."
-          rss = nil if $?.to_s !~ /exit 0/
-        else
-          raise "PROGRAMMER ERROR"
-        end
-      end
- 
+      rss = Refresh.fetch(feed.rss_url)
       f = Nokogiri::XML.parse(rss)
       begin
         if f.at_css('rss')
