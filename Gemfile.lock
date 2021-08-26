@@ -2,6 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     concurrent-ruby (1.1.8)
+    curb (0.9.11)
     erubi (1.10.0)
     htmlentities (4.3.4)
     i18n (0.9.5)
@@ -84,6 +85,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  curb
   erubi (~> 1.6)
   htmlentities
   minitest
