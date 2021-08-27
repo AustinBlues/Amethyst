@@ -8,6 +8,7 @@ require 'time'
 require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/post_helper.rb')
 require 'logger'
 require 'benchmark'
+require 'curb'
 
 
 module Refresh
@@ -18,9 +19,15 @@ module Refresh
   SLUDGE_HORIZON = 2*3600	# 2 hours
   RESIDUE_KEY = 'residue'
   extend Padrino::Helpers::FormatHelpers
-  #  extend RubyRSS
+#  extend RubyRSS
   extend NokogiriRSS
   extend Amethyst::App::PostHelper
+
+  # fetch() parameters
+  LIBCURL = 1
+  CURL = 2
+  WGET = 3
+  MAX_METHOD = 3
   
   LVL2CLR = {error: :red, warning: :yellow, highlight: :green, info: :default, debug: :cyan, devel: :magenta}
 
@@ -133,7 +140,9 @@ module Refresh
       log(query.sql, :debug) if verbosity >= 3
       query.each do |q|
         if q[:score] >= 0.5
-          log("(#{'%0.2f' % q[:score]}) #{!q[:title].empty? ? q[:title] : q[:description]}".colorize(:red)) if verbosity >= 0
+           if verbosity >= 0
+             log("(#{'%0.2f' % q[:score]}) #{!q[:title].empty? ? q[:title] : q[:description]}".colorize(:red))
+           end
           if false
             q.update(state: Post::HIDDEN)
           else
@@ -143,15 +152,55 @@ module Refresh
           end
         elsif q[:score] >= 0.25
           q.update(state: Post::HIDDEN)
-          log("(#{'%0.2f' % q[:score]}) #{!q[:title].empty? ? q[:title] : q[:description]}".colorize(:yellow)) if verbosity >= 1
+          if verbosity >= 1
+            log("(#{'%0.2f' % q[:score]}) #{!q[:title].empty? ? q[:title] : q[:description]}".colorize(:yellow))
+          end
         elsif true
-          log("(#{'%0.2f' % q[:score]}) #{!q[:title].empty? ? q[:title] : q[:description]}".colorize(:magenta)) if verbosity >= 2
+          if verbosity >= 2
+            log("(#{'%0.2f' % q[:score]}) #{!q[:title].empty? ? q[:title] : q[:description]}".colorize(:magenta))
+          end
         end
       end
     end
   end
-  
 
+
+  def self.fetch(url)
+    # open-uri is gagging on IPv6 address and doesn't support forcing to IPv4
+    # libcurl and curb Gem appear to have same limitation.
+    # Invoking curl or wget CLI is fast enough
+
+    rss = nil	# force scope
+    method = 0
+    while method < MAX_METHOD && (rss.nil? || rss.size == 0) do
+      method += 1
+      case method
+      when LIBCURL
+#        tmp = Curl.get(url, follow_location: 1)
+        tmp = Curl.get(url)
+#        puts "CURB: #{tmp.inspect}." if Padrino.env == :development
+#        puts "CURB: #{tmp.body.size}." if Padrino.env == :development
+        puts "CURB: #{tmp.body}." if tmp.body.size && tmp.body.size < 1000	# debug
+        rss = tmp.body
+      when WGET
+#        rss = %x(wget '#{url}' -4 -q -O -)
+        rss = %x(wget '#{url}' -q -O -)
+        puts "WGET: #{rss.size}."
+        rss = nil if $?.to_s !~ /exit 0/
+      when CURL
+#        rss = %x(curl -s -4 '#{url}')
+        rss = %x(curl -s '#{url}')
+        puts "CURL: #{rss.size}."
+        rss = nil if $?.to_s !~ /exit 0/
+      else
+        raise "PROGRAMMER ERROR"
+      end
+    end
+
+    rss
+  end
+
+  
   def self.refresh_slice
     # Refresh distribution of uneven slices
     residue = (@@redis.get(RESIDUE_KEY) || 0).to_i
