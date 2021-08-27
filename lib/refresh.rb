@@ -176,11 +176,11 @@ module Refresh
       when LIBCURL
         @@curl.url = url
         @@curl.perform
-        tmp = @@curl
-#        puts "CURB: #{tmp.inspect}."
-#        puts "CURB: #{tmp.body.size}."
-        puts "CURB: #{tmp.body}." if 0 < tmp.body.size && tmp.body.size < 1000	# debug
-        rss = tmp.body
+        @@curl = @@curl
+#        puts "CURB: #{@@curl.inspect}."
+#        puts "CURB: #{@@curl.body.size}."
+        puts "CURB: #{@@curl.body}." if 0 < @@curl.body.size && @@curl.body.size < 1000	# debug
+        rss = @@curl.body
       when WGET
         rss = %x(wget '#{url}' -4 -q -O -)
         puts "WGET: #{rss.size}."
