@@ -1,8 +1,8 @@
 require 'rss'
 
 
-module RubyRSS
-  def first_nonblank(*args)
+module Refresh
+  def self.first_nonblank(*args)
     if args.nil?
       nil
     elsif args.size == 1
@@ -22,7 +22,7 @@ module RubyRSS
   end
 
 
-  def refresh_feed(feed, now)
+  def self.refresh_feed(feed, now)
     feed.status = nil
     begin
       rss = Refresh.fetch(feed.rss_url)

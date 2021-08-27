@@ -2,8 +2,11 @@
 #
 require 'redis'
 require 'redis-namespace'
-require 'nokogiri_rss'
-#require 'ruby_rss'
+if false
+  require 'nokogiri_rss'
+else
+  require 'ruby_rss'
+end
 require 'time'
 require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/post_helper.rb')
 require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/amethyst_helper.rb')
@@ -15,11 +18,9 @@ module Refresh
   INTERVAL_TIME = 5 * 60	# how often to refresh a slice: 5 minutes
   INTERVALS = CYCLE_TIME/INTERVAL_TIME
   VERBOSITY = 2		# default sludge_filter() verbosity
-  SLUDGE_HORIZON = 2*3600	# 2 hours
+  SLUDGE_HORIZON = 2*3600	# how long to log posts w/ sludge; currently 2 hours, i.e., twice
   REDIS_KEY = 'residue'
   extend Padrino::Helpers::FormatHelpers
-#  extend RubyRSS
-  extend NokogiriRSS
   extend Amethyst::App::AmethystHelper
   extend Amethyst::App::PostHelper
 
@@ -28,6 +29,9 @@ module Refresh
   CURL = 2
   WGET = 3
   MAX_METHOD = 3
+
+  @@curl = Curl::Easy.new
+  @@curl.follow_location = true
   
   LVL2CLR = {error: :red, warning: :yellow, highlight: :green, info: :default, debug: :cyan, devel: :magenta}
 
@@ -44,7 +48,7 @@ module Refresh
   def self.raw2time(raw)
     verbose = false
     if true
-      tmp = Time.parse(raw)
+      tmp = Time.parse(raw)	# good enough
       verbose = true
     else
       tmp = case raw
@@ -136,7 +140,9 @@ module Refresh
       log(query.sql, :debug) if verbosity >= 3
       query.each do |q|
         if q[:score] >= 0.5
-          log("(#{'%0.2f' % q[:score]}) #{!q[:title].empty? ? q[:title] : q[:description]}".colorize(:red)) if verbosity >= 0
+          if verbosity >= 0
+            log("(#{'%0.2f' % q[:score]}) #{!q[:title].empty? ? q[:title] : q[:description]}".colorize(:red))
+          end
           if false
             q.update(state: Post::HIDDEN)
           else
@@ -146,9 +152,13 @@ module Refresh
           end
         elsif q[:score] >= 0.25
           q.update(state: Post::HIDDEN)
-          log("(#{'%0.2f' % q[:score]}) #{!q[:title].empty? ? q[:title] : q[:description]}".colorize(:yellow)) if verbosity >= 1
-        elsif true
-          log("(#{'%0.2f' % q[:score]}) #{!q[:title].empty? ? q[:title] : q[:description]}".colorize(:magenta)) if verbosity >= 2
+          if verbosity >= 1
+            log("(#{'%0.2f' % q[:score]}) #{!q[:title].empty? ? q[:title] : q[:description]}".colorize(:yellow))
+          end
+        else
+          if verbosity >= 2
+            log("(#{'%0.2f' % q[:score]}) #{!q[:title].empty? ? q[:title] : q[:description]}".colorize(:magenta))
+          end
         end
       end
     end
@@ -156,9 +166,7 @@ module Refresh
 
 
   def self.fetch(url)
-    # open-uri is gagging on IPv6 address and doesn't support forcing to IPv4
-    # libcurl and curb Gem appear to have same limitation.
-    # Invoking curl or wget CLI is fast enough
+    # open-uri appears to be gagging on IPv6 addresses and doesn't support forcing to IPv4
 
     rss = nil	# force scope
     method = 0
@@ -166,8 +174,9 @@ module Refresh
       method += 1
       case method
       when LIBCURL
-#        tmp = Curl.get(url, follow_location: 1)
-        tmp = Curl.get(url)
+        @@curl.url = url
+        @@curl.perform
+        tmp = @@curl
 #        puts "CURB: #{tmp.inspect}."
 #        puts "CURB: #{tmp.body.size}."
         puts "CURB: #{tmp.body}." if 0 < tmp.body.size && tmp.body.size < 1000	# debug
@@ -178,7 +187,7 @@ module Refresh
         rss = nil if $?.to_s !~ /exit 0/
       when CURL
 #        rss = %x(curl -s -4 '#{url}')
-        rss = %x(curl -s '#{url}')
+        rss = %x(curl -s -L '#{url}')
         puts "CURL: #{rss.size}."
         rss = nil if $?.to_s !~ /exit 0/
       else
