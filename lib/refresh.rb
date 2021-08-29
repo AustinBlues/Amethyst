@@ -175,12 +175,17 @@ module Refresh
       case method
       when LIBCURL
         @@curl.url = url
-        @@curl.perform
-        @@curl = @@curl
-#        puts "CURB: #{@@curl.inspect}."
-#        puts "CURB: #{@@curl.body.size}."
-        puts "CURB: #{@@curl.body}." if 0 < @@curl.body.size && @@curl.body.size < 1000	# debug
-        rss = @@curl.body
+        begin
+          @@curl.perform
+        rescue
+          STDERR.puts "Exception: #{$!.class.to_s.split('::').last}"
+        else
+          @@curl = @@curl
+#          puts "CURB: #{@@curl.inspect}."
+#          puts "CURB: #{@@curl.body.size}."
+          puts "CURB: #{@@curl.body}." if 0 < @@curl.body.size && @@curl.body.size < 1000	# debug
+          rss = @@curl.body
+        end
       when WGET
         rss = %x(wget '#{url}' -4 -q -O -)
         puts "WGET: #{rss.size}."
