@@ -2,8 +2,11 @@
 #
 require 'redis'
 require 'redis-namespace'
-require 'nokogiri_rss'
-#require 'ruby_rss'
+if true
+  require 'nokogiri_rss'
+else
+  require 'ruby_rss'
+end
 require 'time'
 require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/post_helper.rb')
 require 'logger'
@@ -19,8 +22,6 @@ module Refresh
   SLUDGE_HORIZON = 2*3600	# 2 hours
   RESIDUE_KEY = 'residue'
   extend Padrino::Helpers::FormatHelpers
-#  extend RubyRSS
-  extend NokogiriRSS
   extend Amethyst::App::PostHelper
 
   # fetch() parameters
@@ -28,6 +29,9 @@ module Refresh
   CURL = 2
   WGET = 3
   MAX_METHOD = 3
+  
+  @@curl = Curl::Easy.new
+  @@curl.follow_location = true
   
   LVL2CLR = {error: :red, warning: :yellow, highlight: :green, info: :default, debug: :cyan, devel: :magenta}
 
@@ -167,21 +171,18 @@ module Refresh
 
   def self.fetch(url)
     # open-uri is gagging on IPv6 address and doesn't support forcing to IPv4
-    # libcurl and curb Gem appear to have same limitation.
-    # Invoking curl or wget CLI is fast enough
-
     rss = nil	# force scope
     method = 0
     while method < MAX_METHOD && (rss.nil? || rss.size == 0) do
       method += 1
       case method
       when LIBCURL
-#        tmp = Curl.get(url, follow_location: 1)
-        tmp = Curl.get(url)
-#        puts "CURB: #{tmp.inspect}." if Padrino.env == :development
-#        puts "CURB: #{tmp.body.size}." if Padrino.env == :development
-        puts "CURB: #{tmp.body}." if tmp.body.size && tmp.body.size < 1000	# debug
-        rss = tmp.body
+        @@curl.url = url
+        @@curl.perform
+#        puts "CURB: #{@@curl.inspect}." if Padrino.env == :development
+#        puts "CURB: #{@@curl.body.size}." if Padrino.env == :development
+        puts "CURB: #{@@curl.body}." if @@curl.body.size && @@curl.body.size < 1000	# debug
+        rss = @@curl.body
       when WGET
 #        rss = %x(wget '#{url}' -4 -q -O -)
         rss = %x(wget '#{url}' -q -O -)
