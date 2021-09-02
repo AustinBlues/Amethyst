@@ -2,7 +2,7 @@
 #
 require 'redis'
 require 'redis-namespace'
-if false
+if true
   require 'nokogiri_rss'
 else
   require 'ruby_rss'
@@ -11,6 +11,7 @@ require 'time'
 require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/post_helper.rb')
 require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/amethyst_helper.rb')
 require 'logger'
+require 'curb'
 
 
 module Refresh
