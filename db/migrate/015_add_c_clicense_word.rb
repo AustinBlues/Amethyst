@@ -1,5 +1,5 @@
 Sequel.migration do
-  STOP_WORDS = %w{Creative Commons NonCommercial License Attribution licensed sell copy share}
+  STOP_WORDS = %w{Creative Commons NonCommercial License Attribution licensed sell copy share ISSN ISBN}
 
   up do
     STOP_WORDS.each do |sw|

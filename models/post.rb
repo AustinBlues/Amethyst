@@ -38,7 +38,9 @@ class Post < Sequel::Model
         puts("URL(#{f.class.inspect}): #{self[:url]}.") unless f.is_a?(Tempfile) || f.is_a?(StringIO)	# debugging/exploration
         doc = Nokogiri::HTML.parse(f)
         content = doc.css('p').map{|i| i.content}.join(' ')
-        cwords = content.split(/[^[[:word:]]]+/).take(WORDS_LIMIT)
+        tmp = content.split(/[^[[:word:]]]+/)
+        tmp.delete_if{|w| w =~ /^[[:digit]]+$/}
+        cwords = tmp.take(WORDS_LIMIT)
       end
     rescue Errno::ENOENT
       Refresh.log "URL '#{self[:url]}' not found.", :error
@@ -48,7 +50,9 @@ class Post < Sequel::Model
       Refresh.log "Unknown error(#{$!.class}): #{$!}.", :error
     end
 
-    dwords = Post.html2words(self[:description]).take(WORDS_LIMIT)
+    tmp = Post.html2words(self[:description])
+    tmp.delete_if{|w| w =~ /^[[:digit]]+$/}
+    dwords = tmp.take(WORDS_LIMIT)
 
     words = (cwords.size > dwords.size) ? cwords : dwords
 
