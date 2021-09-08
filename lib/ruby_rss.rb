@@ -1,8 +1,9 @@
 require 'rss'
+require 'benchmark'
 
 
-module Refresh
-  def self.first_nonblank(*args)
+module RubyRSS
+  def first_nonblank(*args)
     if args.nil?
       nil
     elsif args.size == 1
@@ -22,65 +23,67 @@ module Refresh
   end
 
 
-  def self.refresh_feed(feed, now)
+  def refresh_feed(feed, now)
     feed.status = nil
     begin
       rss = Refresh.fetch(feed.rss_url)
-      f = RSS::Parser.parse(rss)
-
-      if f.respond_to?(:channel)
-        # Is this what I want, hand-edited title overridden?
-        feed.title ||= strip_tags(f.channel.title)
-      elsif f.respond_to?(:title)
-        # Is this what I want, hand-edited title overridden?
-        feed.title ||= strip_tags(f.title.to_s)
+      if rss.nil?
+        Refresh.log "Feed '#{feed.name}' is non-existant.", :error
       else
-        Refresh.log "MISSING TITLE: '#{feed.name}'.", :warning
-      end
+        tmp = Benchmark.measure do
+          f = RSS::Parser.parse(rss)
 
-      if f.items.nil?
-        Refresh.log "Feed '#{feed.name}' items is non-existant.", :error
-      elsif f.items.size == 0
-        Refresh.log "Feed '#{feed.name}' is empty.", :warning
-      else
-        f.items.each do |post|
-          title = strip_tags(post.title.to_s)
-          
-          case post.class.to_s
-          when 'RSS::Atom::Feed::Entry'
-            description = post.content
-            ident = post.id.to_s
-            published_at = strip_tags(post.updated.to_s)
-#            Refresh.log "ID: #{ident}.", :debug
-#            Refresh.log "UPDATED: #{published_at}.", :debug
-#            Refresh.log "METHODS(#{post.class}): #{post.methods}", :debug
+          if f.respond_to?(:channel)
+            # Is this what I want, hand-edited title overridden?
+            feed.title ||= strip_tags(f.channel.title).strip
+          elsif f.respond_to?(:title)
+            # Is this what I want, hand-edited title overridden?
+            feed.title ||= strip_tags(f.title.to_s).strip
           else
-#            Refresh.log "GUID: #{post.guid}.", :debug
-#            Refresh.log "PubDATE: #{post.pubDate}.", :debug
-#            Refresh.log "DATE: #{post.date}.", :debug
-            description = post.description
-            ident = post.guid ? post.guid.to_s : post.link
-
-            if post.pubDate != post.date
-              Refresh.log "DATES: pubDate: #{post.pubDate}, date: #{post.date},  dc_date: #{post.dc_date}.", :warning
-            end
-            published_at = first_nonblank(post.pubDate, post.date, post.dc_date, now)
+            Refresh.log "MISSING TITLE: '#{feed.name}'.", :warning
           end
 
-          ident = title if ident.empty?
+          if f.items.nil?
+            Refresh.log "Feed '#{feed.name}' items is non-existant.", :error
+          elsif f.items.size == 0
+            Refresh.log "Feed '#{feed.name}' is empty.", :warning
+          else
+            f.items.each do |post|
+              title = strip_tags(post.title.to_s)
+              title.strip!
+              
+              case post.class.to_s
+              when 'RSS::Atom::Feed::Entry'
+                description = post.content.to_s
+                ident = post.id.to_s
+                published_at = strip_tags(post.updated.to_s)
+              else
+                description = post.description.to_s
+                ident = post.guid ? post.guid.to_s : post.link
 
-          Post.update_or_create(feed_id: feed.id, ident: ident) do |p|
-            if p.new?
-              Refresh.log "NEW: #{title.inspect}.", :highlight
-              feed.ema_volume += ALPHA 
-              p.title = title.empty? ? nil : title
-              p.description = description
-              p.published_at = published_at	# TimeDate object
-              p.time = published_at	# actual String
-              p.url = post.link
+                if post.pubDate != post.date
+                  Refresh.log "DATES: pubDate: #{post.pubDate}, date: #{post.date},  dc_date: #{post.dc_date}.", :warning
+                end
+                published_at = first_nonblank(post.pubDate, post.date, post.dc_date, now)
+              end
+              description.strip!
+              published_at.strip!
+
+              ident = title if ident.empty?
+
+              Post.update_or_create(feed_id: feed.id, ident: ident) do |p|
+                if p.new?
+                  Refresh.log "NEW: #{title.inspect}.", :highlight
+                  feed.ema_volume += ALPHA 
+                  p.title = title.empty? ? nil : title
+                  p.description = description
+                  p.published_at = DateTime.parse(published_at)	# TimeDate object
+                  p.time = published_at	# actual String
+                  p.url = post.link
+                end
+                p.previous_refresh = now
+              end
             end
-            p.previous_refresh = now
-#            Refresh.log "  #{p.inspect}", :debug
           end
         end
       end
@@ -90,6 +93,7 @@ module Refresh
     else
       feed.previous_refresh = now
     end
+#    log "REFRESH: #{feed.name} at #{short_datetime(now)} in #{tmp.real} seconds."
     feed.next_refresh = now + Refresh::CYCLE_TIME
     feed.save(changed: true)
   end

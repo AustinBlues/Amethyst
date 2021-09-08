@@ -1,16 +1,11 @@
 # All periodic refresh of Feeds policy is in this module.
 #
+NOKOGIRI = false
 require 'redis'
 require 'redis-namespace'
-if true
-  require 'nokogiri_rss'
-else
-  require 'ruby_rss'
-end
 require 'time'
 require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/post_helper.rb')
 require 'logger'
-require 'benchmark'
 require 'curb'
 
 
@@ -21,6 +16,7 @@ module Refresh
   VERBOSITY = 2		# default sludge_filter() verbosity
   SLUDGE_HORIZON = 2*3600	# 2 hours
   RESIDUE_KEY = 'residue'
+  extend NOKOGIRI ? NokogiriRSS : RubyRSS
   extend Padrino::Helpers::FormatHelpers
   extend Amethyst::App::PostHelper
 
@@ -32,6 +28,8 @@ module Refresh
   
   @@curl = Curl::Easy.new
   @@curl.follow_location = true
+#  @@curl.connect_timeout = 20.0
+  @@curl.timeout = 40.0
   
   LVL2CLR = {error: :red, warning: :yellow, highlight: :green, info: :default, debug: :cyan, devel: :magenta}
 
@@ -73,7 +71,7 @@ module Refresh
     end
     # KLUDGE
     tmp = tmp.localtime if tmp.zone.nil?
-    #    STDERR.puts("TIME: '#{raw}' => '#{tmp}' (#{tmp.zone})") if verbose 
+#    STDERR.puts("TIME: '#{raw}' => '#{tmp}' (#{tmp.zone})") if verbose 
     STDERR.puts("TIME: '#{raw}' => '#{tmp}' (#{tmp.zone})") if tmp.zone.nil?
     tmp
   end
@@ -103,11 +101,9 @@ module Refresh
            log "Deleted: #{f.name} at #{short_datetime(time)}."
          else          
            f = Feed.with_pk(args)
-           tmp = Benchmark.measure do
-             refresh_feed(f, time)
-           end
+           refresh_feed(f, time)
+           log "First fetch: '#{f.name}' at #{short_datetime(time)}."
            @@redis.incr(RESIDUE_KEY)
-           log "First fetch: #{f.name} at #{short_datetime(time)} in #{tmp.total} seconds."
          end
       else
         log("Invalid argument: #{args.inspect}.", :error)
@@ -182,6 +178,7 @@ module Refresh
           @@curl.perform
         rescue
           STDERR.puts "Exception: #{$!.class.to_s.split('::').last}"
+          puts $!.backtrace.join("\n")
 #          puts "CURB: #{@@curl.inspect}."
         else
 #          puts "CURB: #{@@curl.inspect}."
