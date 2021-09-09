@@ -54,32 +54,33 @@ module RubyRSS
               
               case post.class.to_s
               when 'RSS::Atom::Feed::Entry'
-                description = post.content.to_s
+                description = post.content
                 ident = post.id.to_s
                 published_at = strip_tags(post.updated.to_s)
               else
-                description = post.description.to_s
-                ident = post.guid ? post.guid.to_s : post.link
+                description = post.description
+                ident = (post.guid ? post.guid : post.link).to_s
 
                 if post.pubDate != post.date
                   Refresh.log "DATES: pubDate: #{post.pubDate}, date: #{post.date},  dc_date: #{post.dc_date}.", :warning
                 end
                 published_at = first_nonblank(post.pubDate, post.date, post.dc_date, now)
               end
-              description.strip!
-              published_at.strip!
+              ident.strip!
 
               ident = title if ident.empty?
 
               Post.update_or_create(feed_id: feed.id, ident: ident) do |p|
                 if p.new?
                   Refresh.log "NEW: #{title.inspect}.", :highlight
-                  feed.ema_volume += ALPHA 
+                  feed.ema_volume += ALPHA
+                  
                   p.title = title.empty? ? nil : title
-                  p.description = description
+                  p.description = description.to_s.strip
+                  p.ident = ident.to_s.strip
                   p.published_at = DateTime.parse(published_at)	# TimeDate object
-                  p.time = published_at	# actual String
-                  p.url = post.link
+                  p.time = published_at.strip	# actual String
+                  p.url = post.link.to_s.strip
                 end
                 p.previous_refresh = now
               end
