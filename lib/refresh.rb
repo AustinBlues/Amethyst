@@ -1,8 +1,9 @@
 # All periodic refresh of Feeds policy is in this module.
 #
+NOKOGIRI = false
 require 'redis'
 require 'redis-namespace'
-if true
+if NOKOGIRI
   require 'nokogiri_rss'
 else
   require 'ruby_rss'
@@ -12,6 +13,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/post_helper.r
 require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/amethyst_helper.rb')
 require 'logger'
 require 'curb'
+require 'open-uri'
 
 
 module Refresh
@@ -21,18 +23,22 @@ module Refresh
   VERBOSITY = 2		# default sludge_filter() verbosity
   SLUDGE_HORIZON = 2*3600	# how long to log posts w/ sludge; currently 2 hours, i.e., twice
   REDIS_KEY = 'residue'
+  extend NOKOGIRI ? Nokogiri_RSS : RubyRSS
   extend Padrino::Helpers::FormatHelpers
   extend Amethyst::App::AmethystHelper
   extend Amethyst::App::PostHelper
 
   # fetch() parameters
-  LIBCURL = 1
-  CURL = 2
-  WGET = 3
-  MAX_METHOD = 3
+  OPEN_URI = 1
+  LIBCURL = 2
+  CURL = 3
+  WGET = 4
+  MAX_METHOD = 4
 
   @@curl = Curl::Easy.new
   @@curl.follow_location = true
+#  @@curl.connect_timeout = 30.0
+  @@curl.timeout = 40.0
   
   LVL2CLR = {error: :red, warning: :yellow, highlight: :green, info: :default, debug: :cyan, devel: :magenta}
 
@@ -167,23 +173,37 @@ module Refresh
 
 
   def self.fetch(url)
-    # open-uri appears to be gagging on IPv6 addresses and doesn't support forcing to IPv4
-
     rss = nil	# force scope
     method = 0
     while method < MAX_METHOD && (rss.nil? || rss.size == 0) do
       method += 1
       case method
+      when OPEN_URI
+        begin
+          tmp  = open(url)
+        rescue OpenURI::HTTPError
+          STDERR.puts "Exception: #{$!.to_s}."
+        rescue
+          STDERR.puts "Exception: #{$!.class}: #{$!.to_s}."
+          STDERR.puts $!.backtrace[0..-10]
+        else
+          rss = tmp.read
+        end
+        rss
       when LIBCURL
         @@curl.url = url
         begin
           @@curl.perform
         rescue
           STDERR.puts "Exception: #{$!.class.to_s.split('::').last}"
+          puts "LIBCURL: #{@@curl.status}."
+          puts "LIBCURL: #{@@curl.os_errno}."
         else
           @@curl = @@curl
 #          puts "CURB: #{@@curl.inspect}."
-#          puts "CURB: #{@@curl.body.size}."
+          puts "CURB: #{@@curl.body.size}."
+          puts "CURB: #{@@curl.total_time} seconds."
+          puts "CURB: #{@@curl.status}."
           puts "CURB: #{@@curl.body}." if 0 < @@curl.body.size && @@curl.body.size < 1000	# debug
           rss = @@curl.body
         end

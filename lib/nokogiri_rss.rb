@@ -2,11 +2,10 @@
 require 'nokogiri'
 require 'time'
 require 'htmlentities'
-require 'refresh'
 
 
-module Refresh
-  def self.refresh_feed(feed, now)
+module NokogiriRSS
+  def refresh_feed(feed, now)
     feed.status = nil
     begin
       rss = Refresh.fetch(feed.rss_url)
@@ -132,7 +131,7 @@ module Refresh
   end
 
 
-  def self.parse_rss_item(post, feed)
+  def parse_rss_item(post, feed)
     attrs = {}
 
     attrs[:title] = post.at_css('title').content
@@ -176,7 +175,8 @@ module Refresh
   end
 
 
-  def self.parse_atom_item(post, feed)
+  def parse_atom_item(post, feed)
+    puts "Nokogiri::ATOM: #{feed.name}."
     attrs = {}
 
     attrs[:title] = post.at_css('title')
