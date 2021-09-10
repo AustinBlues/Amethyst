@@ -7,6 +7,7 @@ require 'time'
 require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/post_helper.rb')
 require 'logger'
 require 'curb'
+require 'open-uri'
 
 
 module Refresh
@@ -21,10 +22,11 @@ module Refresh
   extend Amethyst::App::PostHelper
 
   # fetch() parameters
-  LIBCURL = 1
-  CURL = 2
-  WGET = 3
-  MAX_METHOD = 3
+  OPEN_URI = 1
+  LIBCURL = 2
+  CURL = 3
+  WGET = 4
+  MAX_METHOD = 4
   
   @@curl = Curl::Easy.new
   @@curl.follow_location = true
@@ -172,6 +174,18 @@ module Refresh
     while method < MAX_METHOD && (rss.nil? || rss.size == 0) do
       method += 1
       case method
+      when OPEN_URI
+        begin
+          tmp  = open(url)
+        rescue OpenURI::HTTPError
+          STDERR.puts "Exception: #{$!.to_s}."
+        rescue
+          STDERR.puts "Exception: #{$!.class}: #{$!.to_s}."
+          STDERR.puts $!.backtrace[0..-10]
+        else
+          rss = tmp.read
+        end
+        rss
       when LIBCURL
         @@curl.url = url
         begin
