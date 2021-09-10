@@ -1,6 +1,5 @@
 # All periodic refresh of Feeds policy is in this module.
 #
-NOKOGIRI = false
 require 'redis'
 require 'redis-namespace'
 require 'time'
@@ -11,6 +10,7 @@ require 'open-uri'
 
 
 module Refresh
+  NOKOGIRI = true
   CYCLE_TIME = 60 * 60	# time to refresh all Feeds: 1 hour
   INTERVAL_TIME = 5 * 60	# how often to refresh a slice: 5 minutes
   INTERVALS = CYCLE_TIME/INTERVAL_TIME
@@ -176,9 +176,12 @@ module Refresh
       case method
       when OPEN_URI
         begin
-          tmp  = open(url)
+          # OPEN-URI doesn't handle 'file://' protocol, use File class instead.
+          tmp = (url =~ %r{^file://(.+)$}) ? File.open($~[1]) : open(url)
         rescue OpenURI::HTTPError
           STDERR.puts "Exception: #{$!.to_s}."
+        rescue Errno::ENOENT
+          # ignore
         rescue
           STDERR.puts "Exception: #{$!.class}: #{$!.to_s}."
           STDERR.puts $!.backtrace[0..-10]

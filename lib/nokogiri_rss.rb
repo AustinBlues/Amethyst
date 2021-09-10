@@ -149,7 +149,6 @@ module NokogiriRSS
                    elsif (tmp = post.at_css('dc|date'))
                      tmp.content
                    else
-                     puts "NO DATE"
                      feed.status = 'missing date'
                      Refresh.log "NO DATE: '#{attrs[:title]}'.", :warning
                      Time.now.to_s
