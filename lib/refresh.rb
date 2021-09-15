@@ -1,13 +1,7 @@
 # All periodic refresh of Feeds policy is in this module.
 #
-NOKOGIRI = false
 require 'redis'
 require 'redis-namespace'
-if NOKOGIRI
-  require 'nokogiri_rss'
-else
-  require 'ruby_rss'
-end
 require 'time'
 require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/post_helper.rb')
 require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/amethyst_helper.rb')
@@ -17,13 +11,14 @@ require 'open-uri'
 
 
 module Refresh
+  NOKOGIRI = true
   CYCLE_TIME = 60 * 60	# time to refresh all Feeds: 1 hour
   INTERVAL_TIME = 5 * 60	# how often to refresh a slice: 5 minutes
   INTERVALS = CYCLE_TIME/INTERVAL_TIME
   VERBOSITY = 2		# default sludge_filter() verbosity
   SLUDGE_HORIZON = 2*3600	# how long to log posts w/ sludge; currently 2 hours, i.e., twice
   REDIS_KEY = 'residue'
-  extend NOKOGIRI ? Nokogiri_RSS : RubyRSS
+  extend NOKOGIRI ? NokogiriRSS : RubyRSS
   extend Padrino::Helpers::FormatHelpers
   extend Amethyst::App::AmethystHelper
   extend Amethyst::App::PostHelper
@@ -33,7 +28,7 @@ module Refresh
   LIBCURL = 2
   CURL = 3
   WGET = 4
-  MAX_METHOD = 4
+  MAX_METHOD = 2	# curl and wget don't do anything libcurl and/or Open-URI can't do
 
   @@curl = Curl::Easy.new
   @@curl.follow_location = true
@@ -189,7 +184,6 @@ module Refresh
         else
           rss = tmp.read
         end
-        rss
       when LIBCURL
         @@curl.url = url
         begin
@@ -201,7 +195,7 @@ module Refresh
         else
           @@curl = @@curl
 #          puts "CURB: #{@@curl.inspect}."
-          puts "CURB: #{@@curl.body.size}."
+          puts "CURB: #{@@curl.body.size} bytes."
           puts "CURB: #{@@curl.total_time} seconds."
           puts "CURB: #{@@curl.status}."
           puts "CURB: #{@@curl.body}." if 0 < @@curl.body.size && @@curl.body.size < 1000	# debug
