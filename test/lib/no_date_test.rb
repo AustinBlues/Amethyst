@@ -3,7 +3,6 @@ require File.expand_path(File.dirname(__FILE__) + '/../test_config.rb')
 
 describe '/lib/nokogiri' do
   before do
-    assert Refresh::NOKOGIRI
     rss_url = "file://#{File.expand_path(File.dirname(__FILE__))}/../../test_data/no_date.xml"
     @feed = Feed.create(rss_url: rss_url, title: 'No date')
   end
@@ -14,8 +13,13 @@ describe '/lib/nokogiri' do
 
     
   it 'parsing XML with no date for an item' do
-    Refresh.refresh_feed(@feed, Time.now)
+    now = Time.now
+    Refresh.refresh_feed(@feed, now)
 
-    assert_equal 'missing date', @feed.status
+    if defined?(Refresh::NOKOGIRI) && Refresh::NOKOGIRI
+      assert_equal 'missing date', @feed.status
+    else
+      assert_equal now.to_s, @feed.post[0].time
+    end
   end
 end
