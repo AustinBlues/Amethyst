@@ -10,7 +10,7 @@ require 'open-uri'
 
 
 module Refresh
-  NOKOGIRI = true
+  NOKOGIRI = false
   CYCLE_TIME = 60 * 60	# time to refresh all Feeds: 1 hour
   INTERVAL_TIME = 5 * 60	# how often to refresh a slice: 5 minutes
   INTERVALS = CYCLE_TIME/INTERVAL_TIME
@@ -26,7 +26,7 @@ module Refresh
   LIBCURL = 2
   CURL = 3
   WGET = 4
-  MAX_METHOD = 4
+  MAX_METHOD = 2	# curl and wget don't do anything libcurl and/or Open-URI can't do
   
   @@curl = Curl::Easy.new
   @@curl.follow_location = true
@@ -194,12 +194,15 @@ module Refresh
         begin
           @@curl.perform
         rescue
+          puts "LIBCURL: #{@@curl.status}."
+          puts "LIBCURL: #{@@curl.os_errno}."
           STDERR.puts "Exception: #{$!.class.to_s.split('::').last}"
           puts $!.backtrace.join("\n")
 #          puts "CURB: #{@@curl.inspect}."
         else
 #          puts "CURB: #{@@curl.inspect}."
 #          puts "CURB: #{@@curl.body.size}."
+          puts "CURB: #{@@curl.status}."
           puts "CURB: #{@@curl.body}." if 0 < @@curl.body.size && @@curl.body.size < 1000	# debug
           rss = @@curl.body
         end
