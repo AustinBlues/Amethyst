@@ -51,18 +51,12 @@ module RubyRSS
           f.items.each do |post|
             title = strip_tags(post.title.to_s)
 
-            case post.class.to_s
-            when 'RSS::Atom::Feed::Entry'
+            case post.class
+            when RSS::Atom::Feed::Entry
               description = post.content
               ident = post.id.to_s
               published_at = strip_tags(post.updated.to_s)
-            #            Refresh.log "ID: #{ident}.", :debug
-            #            Refresh.log "UPDATED: #{published_at}.", :debug
-            #            Refresh.log "METHODS(#{post.class}): #{post.methods}", :debug
             else
-              #            Refresh.log "GUID: #{post.guid}.", :debug
-              #            Refresh.log "PubDATE: #{post.pubDate}.", :debug
-              #            Refresh.log "DATE: #{post.date}.", :debug
               description = post.description
               ident = post.guid ? post.guid.to_s : post.link
 
@@ -84,7 +78,6 @@ module RubyRSS
                 p.time = published_at	# actual String
                 p.url = post.link
               end
-              Refresh.log("NEW: #{title}", :highlight) if new
               p.previous_refresh = now
               #            Refresh.log "  #{p.inspect}", :debug
             end
