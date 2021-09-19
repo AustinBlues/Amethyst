@@ -11,7 +11,7 @@ require 'open-uri'
 
 
 module Refresh
-  NOKOGIRI = true
+  NOKOGIRI = false
   CYCLE_TIME = 60 * 60	# time to refresh all Feeds: 1 hour
   INTERVAL_TIME = 5 * 60	# how often to refresh a slice: 5 minutes
   INTERVALS = CYCLE_TIME/INTERVAL_TIME
@@ -239,7 +239,8 @@ module Refresh
       feeds = Feed.slice(slice_size)
       feeds.each do |f|
         refreshed_at = f.previous_refresh
-        refresh_feed(f, now)
+        rss = Refresh.fetch(f.rss_url)
+        refresh_feed(f, rss, now)
 
         sludge_filter(f, SLUDGE) if SLUDGE
       
