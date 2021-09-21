@@ -21,7 +21,7 @@ module Refresh
   extend Padrino::Helpers::FormatHelpers
   extend Amethyst::App::PostHelper
 
-  # fetch() parameters
+  # fetch() constants
   OPEN_URI = 1
   LIBCURL = 2
   CURL = 3
@@ -103,7 +103,7 @@ module Refresh
            log "Deleted: #{f.name} at #{short_datetime(time)}."
          else          
            f = Feed.with_pk(args)
-           refresh_feed(f, time)
+           refresh_feed(f, Refresh.fetch(f.rss_url), time)
            log "First fetch: '#{f.name}' at #{short_datetime(time)}."
            @@redis.incr(RESIDUE_KEY)
          end
@@ -243,7 +243,7 @@ module Refresh
       feeds = Feed.slice(slice_size, now + INTERVAL_TIME/2).all
       feeds.each do |f|
         refreshed_at = f.previous_refresh
-        refresh_feed(f, now)
+        refresh_feed(f, Refresh.fetch(f.rss_url), now)
 
         sludge_filter(f, SLUDGE) if SLUDGE
         

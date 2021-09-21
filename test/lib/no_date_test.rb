@@ -14,7 +14,7 @@ describe '/lib/nokogiri' do
     
   it 'parsing XML with no date for an item' do
     now = Time.now
-    Refresh.refresh_feed(@feed, now)
+    Refresh.refresh_feed(@feed, Refresh.fetch(@feed.rss_url), now)
 
     if defined?(Refresh::NOKOGIRI) && Refresh::NOKOGIRI
       assert_equal 'missing date', @feed.status
