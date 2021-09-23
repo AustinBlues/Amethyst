@@ -38,4 +38,4 @@ gem 'padrino', '0.14.4'
 
 gem 'resque'
 gem 'nokogiri'
-gem 'curb'
+gem 'htmlentities'
