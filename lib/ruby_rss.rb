@@ -23,10 +23,8 @@ module RubyRSS
 
 
   def refresh_feed(feed, rss, now)
-    feed.status = nil
-    if rss.nil?
-      Refresh.log "Feed '#{feed.name}' is non-existant.", :error
-    else
+    if rss
+      feed.status = nil
       begin
         if (f = RSS::Parser.parse(rss)).nil?
           Refresh.log "Feed '#{feed.name}' has no content.", :error
@@ -74,7 +72,7 @@ module RubyRSS
                 else
                   Refresh.log("NEW: #{title}", :highlight)
                 end
-                #                  Refresh.log "NEW: #{title.inspect}.", :highlight
+#                  Refresh.log "NEW: #{title.inspect}.", :highlight
                 feed.ema_volume += ALPHA
 
                 p.title = title.empty? ? nil : title
@@ -97,5 +95,7 @@ module RubyRSS
     end
     feed.next_refresh = now + Refresh::CYCLE_TIME
     feed.save(changed: true)
+
+    !rss.nil?
   end
 end

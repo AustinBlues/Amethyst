@@ -6,8 +6,6 @@ require 'time'
 require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/post_helper.rb')
 require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/amethyst_helper.rb')
 require 'logger'
-require 'curb'
-require 'open-uri'
 
 
 module Refresh
@@ -22,18 +20,6 @@ module Refresh
   extend Padrino::Helpers::FormatHelpers
   extend Amethyst::App::AmethystHelper
   extend Amethyst::App::PostHelper
-
-  # fetch() parameters
-  OPEN_URI = 1
-  LIBCURL = 2
-  CURL = 3
-  WGET = 4
-  MAX_METHOD = 2	# curl and wget don't do anything libcurl and/or Open-URI can't do
-
-  @@curl = Curl::Easy.new
-  @@curl.follow_location = true
-#  @@curl.connect_timeout = 30.0
-  @@curl.timeout = 40.0
   
   LVL2CLR = {error: :red, warning: :yellow, highlight: :green, info: :default, debug: :cyan, devel: :magenta}
 
@@ -104,7 +90,7 @@ module Refresh
           f.destroy
         else          
           f = Feed.with_pk(args)
-          refresh_feed(f, fetch(f.rss_url), time)
+          refresh_feed(f, fetch(f), time)
           log("First fetch: #{f.name} at #{short_datetime(time)}.")
         end
       else
@@ -167,52 +153,42 @@ module Refresh
   end
 
 
-  def self.fetch(url)
+  def self.fetch(feed)
     rss = nil	# force scope
-    method = 0
-    while method < MAX_METHOD && (rss.nil? || rss.size == 0) do
-      method += 1
-      case method
-      when OPEN_URI
-        begin
-          tmp  = open(url)
-        rescue OpenURI::HTTPError
-          STDERR.puts "Exception: #{$!.to_s}."
-        rescue
-          STDERR.puts "Exception: #{$!.class}: #{$!.to_s}."
-          STDERR.puts $!.backtrace[0..-10]
-        else
-          rss = tmp.read
-        end
-      when LIBCURL
-        @@curl.url = url
-        begin
-          @@curl.perform
-        rescue
-          STDERR.puts "Exception: #{$!.class.to_s.split('::').last}"
-          puts "LIBCURL: #{@@curl.status}."
-          puts "LIBCURL: #{@@curl.os_errno}."
-        else
-          @@curl = @@curl
-#          puts "CURB: #{@@curl.inspect}."
-          puts "CURB: #{@@curl.body.size} bytes."
-          puts "CURB: #{@@curl.total_time} seconds."
-          puts "CURB: #{@@curl.status}."
-          puts "CURB: #{@@curl.body}." if 0 < @@curl.body.size && @@curl.body.size < 1000	# debug
-          rss = @@curl.body
-        end
-      when WGET
-        rss = %x(wget '#{url}' -4 -q -O -)
-        puts "WGET: #{rss.size}."
-        rss = nil if $?.to_s !~ /exit 0/
-      when CURL
-#        rss = %x(curl -s -4 '#{url}')
-        rss = %x(curl -s -L '#{url}')
-        puts "CURL: #{rss.size}."
-        rss = nil if $?.to_s !~ /exit 0/
+    url = feed.rss_url
+    tries = 3
+    begin
+      uri = URI.parse(url)
+      f = uri.open(redirect: false)
+    rescue OpenURI::HTTPRedirect => redirect
+      url = redirect.uri.to_s
+      case redirect.to_s
+      when /^302 /
+        log "Temporary redirect to '#{url}'.", :info
+      when /^301 /
+        log "Permanent redirect to '#{url}'.", :info
+        feed.status = 'Permanent redirect.'
+        feed.rss_url = url
       else
-        raise "PROGRAMMER ERROR"
+        log "Unknown redirect to '#{url}' - #{redirect.to_s}.", :error
+        feed.status = 'Unknown redirect'
       end
+      retry if (tries -= 1) > 0
+    rescue OpenURI::HTTPError => e
+      if e.to_s =~ /^302 /
+        log "Temporary redirect: '#{e}' - #{e.inspect}.", :info
+      else
+        log "Error fetching '#{feed.name}': #{$!}.", :error
+        feed.status = "HTTP error - #{e}"
+      end
+    rescue SocketError, Errno::ENETUNREACH
+      log "No network connection to '#{feed.name}.", :error
+      feed.status = 'no network connection'
+    rescue
+      log "EXCEPTION(#{$!.class.to_s}): #{$!}.", :error
+    else
+      rss = f.read
+      log("Feed '#{url}' is empty or non-existant.", :warning) if rss.size == 0
     end
 
     rss
@@ -228,38 +204,43 @@ module Refresh
     # Refresh distribution of uneven slices
     residue = (@@redis.get(REDIS_KEY) || 0).to_i
     feed_count = Feed.count
-    slice_size = (feed_count + residue) / INTERVALS
-    residue = (feed_count + residue) % INTERVALS
+    if true
+      slice_size, residue = (feed_count + residue).divmod(INTERVALS)
+    else
+      slice_size = (feed_count + residue) / INTERVALS
+      residue = (feed_count + residue) % INTERVALS
+    end
     @@redis.set(REDIS_KEY, residue)
     
     if slice_size == 0
       log "Nothing to fetch at #{Time.now.strftime('%l:%M%P').strip}."
     else
       # Update all Feeds in the slice
-      feeds = Feed.slice(slice_size)
+      feeds = Feed.slice(slice_size, now + INTERVAL_TIME/2)
+      fetch_cnt = feeds.count
       feeds.each do |f|
         refreshed_at = f.previous_refresh
-        refresh_feed(f, Refresh.fetch(f.rss_url), now)
+        if refresh_feed(f, fetch(f), now)
+          sludge_filter(f, SLUDGE) if SLUDGE
 
-        sludge_filter(f, SLUDGE) if SLUDGE
-
-        # Hide unread Posts older than UNREAD_LIMIT
-        cutoff = Post.where(feed_id: f[:id], state: Post::UNREAD).order(Sequel.desc(:published_at)).
-                   offset(UNREAD_LIMIT-1).get(:published_at)
-        if cutoff
-          n = Post.where(feed_id: f[:id], state: Post::UNREAD).where{published_at < cutoff}.update(state: Post::HIDDEN)
-          log("Hiding #{n} older post(s).", :debug) if n > 0
+          # Hide unread Posts older than UNREAD_LIMIT
+          cutoff = Post.where(feed_id: f[:id], state: Post::UNREAD).order(Sequel.desc(:published_at)).
+                     offset(UNREAD_LIMIT-1).get(:published_at)
+          if cutoff
+            n = Post.where(feed_id: f[:id], state: Post::UNREAD).where{published_at < cutoff}.update(state: Post::HIDDEN)
+            log("Hiding #{n} older post(s).", :debug) if n > 0
+          end
         end
-
+        
         if refreshed_at
-          log "Refreshed #{Refresh.time_ago_in_words(refreshed_at, true)} ago: #{f.name}."
+          log "Previous '#{f.name}' refresh #{Refresh.time_ago_in_words(refreshed_at, true)} ago."
         else
-          log "Refreshed (no previous refresh): #{f.name}."
+          log "Refreshed '#{f.name}' (no previous refresh)."
         end
       end
 
       # Report progress.  The second case is when Amethyst catching up after not running (e.g. hibernation).
-      tmp = (feeds.count == max_refresh) ? max_refresh : "#{feeds.count}:#{max_refresh}"
+      tmp = (fetch_cnt == max_refresh) ? max_refresh : "#{fetch_cnt}:#{max_refresh}"
       log "Fetched #{tmp}/#{feed_count} channels at #{Time.now.strftime('%l:%M%P').strip}."
     end
   end
