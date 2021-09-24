@@ -8,6 +8,7 @@ Amethyst::App.controllers :feed do
 #    puts("ORIGIN: #{@origin}.") if Padrino.env != :test
   end
 
+
   get :index do
     @page = (params[:page] || 1).to_i
     if @page <= 0
@@ -57,35 +58,40 @@ Amethyst::App.controllers :feed do
   
 
   post :create, '/feed' do
-    # I'm surprised I have to do this.
-    params.delete('authenticity_token')
+    params[:rss_url].strip!
+    if !URI.parse(params[:rss_url]).kind_of?(URI::HTTP)
+      flash[:error] = "'#{params[:rss_url]}' is not valid."
+      redirect @origin
+    else
+      params.delete('authenticity_token')      # I'm surprised I have to do this.
 
-    begin
       params[:next_refresh] = Time.now
-      w = Feed.create(params)
-    rescue Sequel::UniqueConstraintViolation => e
-      if /unique_(\w+)s'/ !~ e.to_s
-        STDERR.puts "'#{params[:rss_url]}' already followed."
-        w = Feed.where(rss_url: params[:rss_url]).first
-        flash[:warning] = "'#{w.name}' already followed."
-      else
-        flash[:error] = "Duplicate #{$~[1]}."
-        case $~[0]
-        when 'title'
-          w = Feed.where(title: params[:title]).first
-        when 'filename'
-          w = Feed.where(filename: params[:filename]).first
-        else
-          w = Feed.first
-        end
-      end
-    rescue Exception => e
-      flash[:error] = "Unknown exception: #{e}."
-      w = Feed.first
-    end
 
-    # Redirect to index where new feed will appear.
-    redirect url_for(:feed, :index, page: w.page_number)
+      begin
+        w = Feed.create(params)
+      rescue Sequel::UniqueConstraintViolation => e
+        if /unique_(\w+)s'/ !~ e.to_s
+          STDERR.puts "'#{params[:rss_url]}' already followed."
+          w = Feed.where(rss_url: params[:rss_url]).first
+          flash[:warning] = "'#{w.name}' already followed."
+        else
+          flash[:error] = "Duplicate #{$~[1]}."
+          case $~[0]
+          when 'title'
+            w = Feed.where(title: params[:title]).first
+          when 'filename'
+            w = Feed.where(filename: params[:filename]).first
+          else
+            w = Feed.first
+          end
+        end
+      rescue Exception => e
+        flash[:error] = "Unknown exception: #{e}."
+      end
+
+      # Redirect to index where new feed will appear.
+      redirect url_for(:feed, :index, page: w.page_number)
+    end
   end
 
 
