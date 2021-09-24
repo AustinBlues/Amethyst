@@ -27,4 +27,3 @@ PAGINATED = PAGINATION != 0
 
 # Prefix used to make Redis and databases unique to a Amethyst server
 ROOT = ENV['ROOT'] || ENV['PWD'].split('/').last
->>>>>>> RELATED_POSTS
