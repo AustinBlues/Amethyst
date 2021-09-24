@@ -1,35 +1,31 @@
 # All periodic refresh of Feeds policy is in this module.
 #
 require 'redis'
-require 'nokogiri_rss'
+require 'redis-namespace'
 require 'time'
-#require 'ruby_rss'
 require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/post_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/amethyst_helper.rb')
 require 'logger'
 
+
 module Refresh
+  NOKOGIRI = false
   CYCLE_TIME = 60 * 60	# time to refresh all Feeds: 1 hour
   INTERVAL_TIME = 5 * 60	# how often to refresh a slice: 5 minutes
   INTERVALS = CYCLE_TIME/INTERVAL_TIME
   VERBOSITY = 2		# default sludge_filter() verbosity
-  SLUDGE_HORIZON = 2*3600	# 2 hours
+  SLUDGE_HORIZON = 2*3600	# how long to log posts w/ sludge; currently 2 hours, i.e., twice
   REDIS_KEY = 'residue'
+  extend NOKOGIRI ? NokogiriRSS : RubyRSS
   extend Padrino::Helpers::FormatHelpers
-#  extend RubyRSS
-  extend NokogiriRSS
+  extend Amethyst::App::AmethystHelper
   extend Amethyst::App::PostHelper
   
   LVL2CLR = {error: :red, warning: :yellow, highlight: :green, info: :default, debug: :cyan, devel: :magenta}
 
-  @@redis = Redis.new
+  @@redis = Redis::Namespace.new(ROOT, redis: Redis.new)
+
   SLUDGE = ENV['SLUDGE'] || (ARGV.find{|f| f =~ /^SLUDGE=(.*)/} ? $~[1] : nil)
-#  SLUDGE = if ENV['SLUDGE']
-#             ENV['SLUDGE']
-#           elsif 
-#             $~[1]
-#           else
-#             nil
-#           end
 
 
   def self.log(msg, level = :default)
@@ -40,7 +36,7 @@ module Refresh
   def self.raw2time(raw)
     verbose = false
     if true
-      tmp = Time.parse(raw)
+      tmp = Time.parse(raw)	# good enough
       verbose = true
     else
       tmp = case raw
@@ -88,9 +84,15 @@ module Refresh
         refresh_slice
       elsif args.is_a?(Integer)
         time = Time.now
-        f = Feed.with_pk(args)
-        refresh_feed(f, time)
-        log("First fetch: #{f.name} at #{short_datetime(time)}.")
+        if args < 0
+          f = Feed.with_pk(-args)
+          log("Deleting: #{f.name} at #{short_datetime(time)}.")
+          f.destroy
+        else          
+          f = Feed.with_pk(args)
+          refresh_feed(f, fetch(f), time)
+          log("First fetch: #{f.name} at #{short_datetime(time)}.")
+        end
       else
         log("Invalid argument: #{args.inspect}.", :error)
       end
@@ -126,7 +128,9 @@ module Refresh
       log(query.sql, :debug) if verbosity >= 3
       query.each do |q|
         if q[:score] >= 0.5
-          log("(#{'%0.2f' % q[:score]}) #{!q[:title].empty? ? q[:title] : q[:description]}".colorize(:red)) if verbosity >= 0
+          if verbosity >= 0
+            log("(#{'%0.2f' % q[:score]}) #{!q[:title].empty? ? q[:title] : q[:description]}".colorize(:red))
+          end
           if false
             q.update(state: Post::HIDDEN)
           else
@@ -136,14 +140,60 @@ module Refresh
           end
         elsif q[:score] >= 0.25
           q.update(state: Post::HIDDEN)
-          log("(#{'%0.2f' % q[:score]}) #{!q[:title].empty? ? q[:title] : q[:description]}".colorize(:yellow)) if verbosity >= 1
-        elsif true
-          log("(#{'%0.2f' % q[:score]}) #{!q[:title].empty? ? q[:title] : q[:description]}".colorize(:magenta)) if verbosity >= 2
+          if verbosity >= 1
+            log("(#{'%0.2f' % q[:score]}) #{!q[:title].empty? ? q[:title] : q[:description]}".colorize(:yellow))
+          end
+        else
+          if verbosity >= 2
+            log("(#{'%0.2f' % q[:score]}) #{!q[:title].empty? ? q[:title] : q[:description]}".colorize(:magenta))
+          end
         end
       end
     end
   end
-  
+
+
+  def self.fetch(feed)
+    rss = nil	# force scope
+    url = feed.rss_url
+    tries = 3
+    begin
+      uri = URI.parse(url)
+      f = uri.open(redirect: false)
+    rescue OpenURI::HTTPRedirect => redirect
+      url = redirect.uri.to_s
+      case redirect.to_s
+      when /^302 /
+        log "Temporary redirect to '#{url}'.", :info
+      when /^301 /
+        log "Permanent redirect to '#{url}'.", :info
+        feed.status = 'Permanent redirect.'
+        feed.rss_url = url
+      else
+        log "Unknown redirect to '#{url}' - #{redirect.to_s}.", :error
+        feed.status = 'Unknown redirect'
+      end
+      retry if (tries -= 1) > 0
+    rescue OpenURI::HTTPError => e
+      if e.to_s =~ /^302 /
+        log "Temporary redirect: '#{e}' - #{e.inspect}.", :info
+      else
+        log "Error fetching '#{feed.name}': #{$!}.", :error
+        feed.status = "HTTP error - #{e}"
+      end
+    rescue SocketError, Errno::ENETUNREACH
+      log "No network connection to '#{feed.name}.", :error
+      feed.status = 'no network connection'
+    rescue
+      log "EXCEPTION(#{$!.class.to_s}): #{$!}.", :error
+    else
+      rss = f.read
+      log("Feed '#{url}' is empty or non-existant.", :warning) if rss.size == 0
+    end
+
+    rss
+  end
+
 
   def self.refresh_slice
     # grab time now before lengthy downloads
@@ -154,36 +204,44 @@ module Refresh
     # Refresh distribution of uneven slices
     residue = (@@redis.get(REDIS_KEY) || 0).to_i
     feed_count = Feed.count
-    slice_size = (feed_count + residue) / INTERVALS
-    residue = (feed_count + residue) % INTERVALS
-    @@redis.set(REDIS_KEY, residue)
-
-    # Update all Feeds in the slice
-    feeds = Feed.slice(slice_size).all
-    feeds.each do |f|
-      refreshed_at = f.previous_refresh
-      refresh_feed(f, now)
-
-      sludge_filter(f, SLUDGE) if SLUDGE
-      
-      # Hide unread Posts older than UNREAD_LIMIT
-      cutoff = Post.where(feed_id: f[:id], state: Post::UNREAD).order(Sequel.desc(:published_at)).
-                 offset(UNREAD_LIMIT-1).get(:published_at)
-      if cutoff
-        n = Post.where(feed_id: f[:id], state: Post::UNREAD).where{published_at < cutoff}.update(state: Post::HIDDEN)
-#        log << "Hiding #{n} older post(s).", :debug) if n > 0
-        log("Hiding #{n} older post(s).", :debug) if n > 0
-      end
-      
-      if refreshed_at
-        log "Refreshed #{Refresh.time_ago_in_words(refreshed_at, true)} ago: #{f.name}."
-      else
-        log "Refreshed (no previous refresh): #{f.name}."
-      end
+    if true
+      slice_size, residue = (feed_count + residue).divmod(INTERVALS)
+    else
+      slice_size = (feed_count + residue) / INTERVALS
+      residue = (feed_count + residue) % INTERVALS
     end
+    @@redis.set(REDIS_KEY, residue)
+    
+    if slice_size == 0
+      log "Nothing to fetch at #{Time.now.strftime('%l:%M%P').strip}."
+    else
+      # Update all Feeds in the slice
+      feeds = Feed.slice(slice_size, now + INTERVAL_TIME/2)
+      fetch_cnt = feeds.count
+      feeds.each do |f|
+        refreshed_at = f.previous_refresh
+        if refresh_feed(f, fetch(f), now)
+          sludge_filter(f, SLUDGE) if SLUDGE
 
-    # Report progress.  The second case is when Amethyst catching up after not running (e.g. hibernation).
-    tmp = (feeds.size == max_refresh) ? max_refresh : "#{feeds.size}:#{max_refresh}"
-    log "Fetched #{tmp}/#{feed_count} channels at #{Time.now.strftime('%l:%M%P').strip}."
+          # Hide unread Posts older than UNREAD_LIMIT
+          cutoff = Post.where(feed_id: f[:id], state: Post::UNREAD).order(Sequel.desc(:published_at)).
+                     offset(UNREAD_LIMIT-1).get(:published_at)
+          if cutoff
+            n = Post.where(feed_id: f[:id], state: Post::UNREAD).where{published_at < cutoff}.update(state: Post::HIDDEN)
+            log("Hiding #{n} older post(s).", :debug) if n > 0
+          end
+        end
+        
+        if refreshed_at
+          log "Previous '#{f.name}' refresh #{Refresh.time_ago_in_words(refreshed_at, true)} ago."
+        else
+          log "Refreshed '#{f.name}' (no previous refresh)."
+        end
+      end
+
+      # Report progress.  The second case is when Amethyst catching up after not running (e.g. hibernation).
+      tmp = (fetch_cnt == max_refresh) ? max_refresh : "#{fetch_cnt}:#{max_refresh}"
+      log "Fetched #{tmp}/#{feed_count} channels at #{Time.now.strftime('%l:%M%P').strip}."
+    end
   end
 end

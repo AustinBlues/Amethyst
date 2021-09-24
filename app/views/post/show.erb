@@ -13,14 +13,55 @@
     </div>
     
     <h2 class="card-title"><%= link_to(@post.name, @post.url, target: '_blank',
-	  title: "#{@post.feed.name}  #{short_datetime(@post.published_at)}") %></h2>
+	  title: "#{@post.feed.name}  #{short_datetime(@post.published_at)}") %>
+    </h2>
+
 
     <%= partial 'layouts/flash' %>
   </div>
 
   <div class="card-body">
-    <p class="card-text">
-      <%== @post.description || @post.synopsis || '<b><em>Missing description or invalid UTF-8</em></b>' %>
-    </p>
+    <table>
+      <tr>
+        <td style="vertical-align: top">
+          <p class="card-text">
+            <%== @post[:description] || @post.synopsis || '<b><em>Missing description or invalid UTF-8</em></b>' %>
+          </p>
+	</td>
+	<td style="vertical-align: top">
+	  <table>
+	    <% @words.take(DISPLAY_WORDS).each do |w| %>
+	      <tr><td>
+	        <%= w[:name] %>&nbsp;(<%= w[:count] %>:<%= w[:frequency].round %>)
+	      </td></tr>
+	    <% end %>
+	  </table>
+	</td>
+      </tr>
+      <tr>
+        <td colspan="2">
+	  <div>
+	    <h2>Related posts:</h2>
+	 </div>
+	</td>
+      </tr>
+      <% @related.each do |r| %>
+        <tr>
+	  <td style="vertical-align: top">
+	    <br>
+	    <h4><%= link_to_post_show(r, @origin, false) %>&nbsp;(<%= r[:strength].round %>)</h4>
+
+	    <p class="card-text">
+	      <%= truncate(r.description, VARCHAR_MAX, separator: /\s/) %>
+	    </p>
+	  </td>
+	  <td style="vertical-align: top">
+	    <% r[:wic].take(DISPLAY_WORDS).each do |w| %>
+	      <br><%= w[:name] %>&nbsp;(<%= w[:count] %>:<%= w[:frequency].round %>)
+	    <% end %>
+	  </td>
+	</tr>
+      <% end %>
+    </table>
   </div>
 </div>

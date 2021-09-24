@@ -1,6 +1,8 @@
       <!-- Modal content-->
       <div class="modal-content">
         <% form_for :feed, url(:feed, :create), :class => 'form-horizontal' do |f| %>
+	  <%= hidden_field_tag(:origin, value: @origin) %>
+
           <div class="modal-header">
             <h4 class="modal-title">Feed</h4>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">

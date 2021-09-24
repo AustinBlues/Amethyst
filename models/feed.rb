@@ -1,27 +1,21 @@
 require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/amethyst_helper.rb')
 
-# Just enough to make Resque work
-module Refresh
-  @queue = :Refresh
-end
-
-
 class Feed < Sequel::Model
   one_to_many :post
   extend Amethyst::App::AmethystHelper
 
   
   def before_create
+    # Set score so initially in the middle of the Feed.index
     self[:score] ||= (Feed.count == 0) ? 0.0 : (Feed.avg(:score) + Feed.order(:score).first.score)/2.0
-    # KLUDGE: can't ensure, can only make unlikely.  Not really a problem if it is.  No new Post.
-#    # ensure won't be refreshed by periodic Refresh.perform calling Refresh.refresh_slice
-#    self[:next_refresh] = Time.now + Refresh::INTERVAL_TIME
     super
   end
 
+
   def after_create
     super
-    Resque.enqueue(Refresh, self[:id]) if Padrino.env != :test
+    # Initial queue is highest priority (higher than Refresh or daily).
+    Resque.enqueue_to('Initial', Refresh, self[:id]) if Padrino.env != :test
   end
 
   
@@ -51,24 +45,29 @@ class Feed < Sequel::Model
   
   
   def before_destroy
-    Post.where(feed_id: self[:id]).delete
+    Post.where(feed_id: self[:id]).destroy
     super
   end
   
   
   # Sequel dataset (query) for a slice of the oldest Feeds
-  def self.slice(size)
-    limit(size).order(:next_refresh)
+  def self.slice(size, horizon)
+    # TODO when is next_refresh nil?
+#    (size == 0) ? [] : exclude(next_refresh: nil).where{next_refresh <= horizon}.limit(size).order(:next_refresh)
+    # is the below safer or faste?
+    (size == 0) ? [] : exclude(next_refresh: nil).where(Sequel.lit('next_refresh <= ?', horizon)).
+                         limit(size).order(:next_refresh)
+#    (size == 0) ? [] : limit(size).order(:next_refresh)
   end
 
 
   # Sequel dataset (query) for Feeds to be refreshed on or before limit
-  def self.refreshable(limit)
-    where(Sequel.lit('next_refresh <= ?', limit))
+  def self.refreshable(horizon)
+    exclude(next_refresh: nil).where(Sequel.lit('next_refresh <= ?', horizon))
   end
 
   def self.age
-    dataset.update(score: Sequel[:score]*(1.0 - Aging::ALPHA))
-    dataset.update(ema_volume: Sequel[:ema_volume]*(1.0 - Aging::ALPHA))
+    dataset.update(score: Sequel[:score]*(1.0 - ALPHA))
+    dataset.update(ema_volume: Sequel[:ema_volume]*(1.0 - ALPHA))
   end
 end

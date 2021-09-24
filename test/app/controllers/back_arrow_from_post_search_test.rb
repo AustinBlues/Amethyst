@@ -3,6 +3,11 @@ require 'nokogiri'
 
 describe "/feed" do
   before do
+    Occurrence.where(true).delete
+    Word.all{|w| w.delete}
+    Post.all{|p| p.delete}
+    Feed.all{|f| f.delete}
+
     # Create Feed and Posts in database
     now = Time.now - PAGE_SIZE
     @feed = Feed.create(title: 'Feed 1', rss_url: 'http://127.0.0.1', previous_refresh: now)
@@ -15,8 +20,10 @@ describe "/feed" do
   end
 
   after do
-    Feed.truncate
-    Post.truncate
+    Occurrence.where(true).delete
+    Word.all{|w| w.delete}
+    Post.all{|p| p.delete}
+    Feed.all{|f| f.delete}
   end
 
 

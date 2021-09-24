@@ -22,80 +22,80 @@ module RubyRSS
   end
 
 
-  def refresh_feed(feed, now)
-    feed.status = nil
-    begin
-      # open-uri is gagging on IPv6 address and doesn't support forcing to IPv4
-      # libcurl and curb Gem appear to have same limitation.
-      # Invoking curl CLI is fast enough
-      open("|curl -s -4 #{feed.rss_url}") do |rss|
-        f = RSS::Parser.parse(rss)
-        
-        if f.respond_to?(:channel)
-          # Is this what I want, hand-edited title overridden?
-          feed.title ||= strip_tags(f.channel.title)
-        elsif f.respond_to?(:title)
-          # Is this what I want, hand-edited title overridden?
-          feed.title ||= strip_tags(f.title.to_s)
-        else
-          Refresh.log "MISSING TITLE: '#{feed.name}'.", :warning
-        end
-        
-        if f.items.nil?
-          Refresh.log "Feed '#{feed.name}' items is non-existant.", :error
+  def refresh_feed(feed, rss, now)
+    if rss
+      feed.status = nil
+      begin
+        if (f = RSS::Parser.parse(rss)).nil?
+          Refresh.log "Feed '#{feed.name}' has no content.", :error
         elsif f.items.size == 0
-          Refresh.log "Feed '#{feed.name}' is empty.", :warning
+          Refresh.log "Feed '#{feed.name}' has no posts.", :warning
         else
+          if f.respond_to?(:channel)
+            feed.title ||= strip_tags(f.channel.title).strip
+          elsif f.respond_to?(:title)
+            feed.title ||= strip_tags(f.title.to_s).strip
+          else
+            Refresh.log "MISSING TITLE: '#{feed.name}'.", :warning
+          end
+
+          unless (f.items[0].class == RSS::Rss::Channel::Item) || (f.items[0].class == RSS::Atom::Feed::Entry)
+            Refresh.log "CLASS: #{f.items[0].class}.", :highlight
+          end
+
           f.items.each do |post|
             title = strip_tags(post.title.to_s)
+            title.strip!
 
             case post.class.to_s
             when 'RSS::Atom::Feed::Entry'
               description = post.content
               ident = post.id.to_s
               published_at = strip_tags(post.updated.to_s)
-#              Refresh.log "ID: #{ident}.", :debug
-#              Refresh.log "UPDATED: #{published_at}.", :debug
-#              Refresh.log "METHODS(#{post.class}): #{post.methods}", :debug
             else
-#              Refresh.log "GUID: #{post.guid}.", :debug
-#              Refresh.log "PubDATE: #{post.pubDate}.", :debug
-#              Refresh.log "DATE: #{post.date}.", :debug
               description = post.description
-              ident = post.guid ? post.guid.to_s : post.link
+              ident = (post.guid ? post.guid : post.link).to_s
 
               if post.pubDate != post.date
                 Refresh.log "DATES: pubDate: #{post.pubDate}, date: #{post.date},  dc_date: #{post.dc_date}.", :warning
               end
               published_at = first_nonblank(post.pubDate, post.date, post.dc_date, now)
             end
+            ident.strip!
 
             ident = title if ident.empty?
-            
+
             Post.update_or_create(feed_id: feed.id, ident: ident) do |p|
               if p.new?
-                Refresh.log "NEW: #{title.inspect}.", :highlight
-                feed.ema_volume += Aging::ALPHA 
+                if post.class == RSS::Atom::Feed::Entry
+                  Refresh.log("ATOM: #{title}", :highlight)
+                else
+                  Refresh.log("NEW: #{title}", :highlight)
+                end
+#                  Refresh.log "NEW: #{title.inspect}.", :highlight
+                feed.ema_volume += ALPHA
+
                 p.title = title.empty? ? nil : title
-                p.description = description
-                p.published_at = published_at	# TimeDate object
-                p.time = published_at	# actual String
-                p.url = post.link
+                p.description = description.to_s.strip
+                p.ident = ident.to_s.strip
+                p.published_at = DateTime.parse(published_at)	# TimeDate object
+                p.time = published_at.strip	# actual String
+                p.url = post.link.to_s.strip
               end
               p.previous_refresh = now
-#              Refresh.log "  #{p.inspect}", :debug
             end
           end
         end
+      rescue
+        feed.status = $!.class
+        Refresh.log "Exception: #{$!}.", :error
+      else
+        feed.previous_refresh = now
       end
-    rescue
-      feed.status = $!.class
-      Refresh.log "Exception: #{$!}.", :error
-    else
-      feed.previous_refresh = now
     end
-
     feed.next_refresh = now + Refresh::CYCLE_TIME
     feed.save(changed: true)
+
+    !rss.nil?
   end
 end

@@ -12,11 +12,6 @@ describe "Post Model" do
   end
   
   
-  it 'can construct a new instance' do
-#    @post = Post.new
-    refute_nil @post
-  end
-
   it 'can click! a Post and clicked? is true' do
     @post.click!
     assert @post.clicked?, 'Post is not clicked? after click!'

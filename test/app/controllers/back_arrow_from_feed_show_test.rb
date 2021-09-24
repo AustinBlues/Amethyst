@@ -3,6 +3,11 @@ require 'nokogiri'
 
 describe "/feed" do
   before do
+    Occurrence.where(true).delete	# no primary key
+    Word.all{|w| w.delete}
+    Post.all{|p| p.delete}
+    Feed.all{|f| f.delete}
+
     # Create Feed and Posts in database
     now = Time.now - PAGE_SIZE
     @feed = Feed.create(title: 'Feed 1', rss_url: 'http://127.0.0.1', previous_refresh: now)
@@ -14,8 +19,10 @@ describe "/feed" do
   end
 
   after do
-    Feed.truncate
-    Post.truncate
+    Occurrence.where(true).delete	# no primary key
+    Word.all{|w| w.delete}
+    Post.all{|p| p.delete}
+    Feed.all{|f| f.delete}
   end
 
   describe 'when showing a Feed' do
@@ -26,7 +33,7 @@ describe "/feed" do
     end
 
     it 'should return earliest unread Post and all back links point to origin' do
-      get "/post/1?origin=#{CGI.escape(@origin)}"
+      get "/post/#{@posts[0][:id]}?origin=#{CGI.escape(@origin)}"
       p = Nokogiri::HTML.parse(last_response.body)
       assert_equal(@posts[0][:description], p.at_css('p').content.strip)
       links = p.css('div.card a.btn')
