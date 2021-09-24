@@ -1,5 +1,4 @@
 require 'rss'
-require 'benchmark'
 
 
 module RubyRSS
@@ -24,13 +23,11 @@ module RubyRSS
 
 
   def refresh_feed(feed, rss, now)
-    feed.status = nil
-    if rss.nil?
-      Refresh.log "Feed '#{feed.name}' is non-existant.", :error
-    else
+    if rss
+      feed.status = nil
       begin
         if (f = RSS::Parser.parse(rss)).nil?
-          Refresh.log "Feed '#{feed.name}' is empty.", :error
+          Refresh.log "Feed '#{feed.name}' has no content.", :error
         elsif f.items.size == 0
           Refresh.log "Feed '#{feed.name}' has no posts.", :warning
         else
@@ -42,7 +39,6 @@ module RubyRSS
             Refresh.log "MISSING TITLE: '#{feed.name}'.", :warning
           end
 
-          # Debug statement: print any class of an item that I don't know about.
           unless (f.items[0].class == RSS::Rss::Channel::Item) || (f.items[0].class == RSS::Atom::Feed::Entry)
             Refresh.log "CLASS: #{f.items[0].class}.", :highlight
           end
@@ -50,7 +46,7 @@ module RubyRSS
           f.items.each do |post|
             title = strip_tags(post.title.to_s)
             title.strip!
-            
+
             case post.class.to_s
             when 'RSS::Atom::Feed::Entry'
               description = post.content
@@ -71,15 +67,20 @@ module RubyRSS
 
             Post.update_or_create(feed_id: feed.id, ident: ident) do |p|
               if p.new?
+                if post.class == RSS::Atom::Feed::Entry
+                  Refresh.log("ATOM: #{title}", :highlight)
+                else
+                  Refresh.log("NEW: #{title}", :highlight)
+                end
+#                  Refresh.log "NEW: #{title.inspect}.", :highlight
                 feed.ema_volume += ALPHA
-                
+
                 p.title = title.empty? ? nil : title
                 p.description = description.to_s.strip
                 p.ident = ident.to_s.strip
                 p.published_at = DateTime.parse(published_at)	# TimeDate object
                 p.time = published_at.strip	# actual String
                 p.url = post.link.to_s.strip
-                Refresh.log "NEW: #{title.inspect}.", :highlight
               end
               p.previous_refresh = now
             end
@@ -92,8 +93,9 @@ module RubyRSS
         feed.previous_refresh = now
       end
     end
-#    log "REFRESH: #{feed.name} at #{short_datetime(now)} in #{tmp.real} seconds."
     feed.next_refresh = now + Refresh::CYCLE_TIME
     feed.save(changed: true)
+
+    !rss.nil?
   end
 end

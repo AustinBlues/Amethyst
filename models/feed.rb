@@ -52,7 +52,12 @@ class Feed < Sequel::Model
   
   # Sequel dataset (query) for a slice of the oldest Feeds
   def self.slice(size, horizon)
-    (size == 0) ? [] : exclude(next_refresh: nil).where{next_refresh <= horizon}.limit(size).order(:next_refresh)
+    # TODO when is next_refresh nil?
+#    (size == 0) ? [] : exclude(next_refresh: nil).where{next_refresh <= horizon}.limit(size).order(:next_refresh)
+    # is the below safer or faste?
+    (size == 0) ? [] : exclude(next_refresh: nil).where(Sequel.lit('next_refresh <= ?', horizon)).
+                         limit(size).order(:next_refresh)
+#    (size == 0) ? [] : limit(size).order(:next_refresh)
   end
 
 
