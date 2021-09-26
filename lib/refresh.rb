@@ -91,6 +91,7 @@ module Refresh
         else          
           f = Feed.with_pk(args)
           refresh_feed(f, fetch(f), time)
+          @@redis.INCR(REDIS_KEY)
           log("First fetch: #{f.name} at #{short_datetime(time)}.")
         end
       else
@@ -204,12 +205,7 @@ module Refresh
     # Refresh distribution of uneven slices
     residue = (@@redis.get(REDIS_KEY) || 0).to_i
     feed_count = Feed.count
-    if true
-      slice_size, residue = (feed_count + residue).divmod(INTERVALS)
-    else
-      slice_size = (feed_count + residue) / INTERVALS
-      residue = (feed_count + residue) % INTERVALS
-    end
+    slice_size, residue = (feed_count + residue).divmod(INTERVALS)
     @@redis.set(REDIS_KEY, residue)
     
     if slice_size == 0
