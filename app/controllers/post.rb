@@ -14,7 +14,19 @@ Amethyst::App.controllers :post do
     if @page <= 0
       redirect url_for(:post, :index, page: 1)
     else
-      @posts = Post.unread.order(Sequel.desc(:published_at)).paginate(@page, PAGE_SIZE)
+      order = case params[:order]
+              when 'title'
+                :title
+              when 'published'
+                 :published_at
+               when 'id'
+                 :id
+               else
+                 flash[:error] = 'Unsupported order' unless params[:order].nil?
+                 :published_at
+#                 :id
+              end
+      @posts = Post.unread.order(Sequel.desc(order)).paginate(@page, PAGE_SIZE)
       if @page > @posts.page_count
         redirect url_for(:post, :index, page: @posts.page_count)
       else
@@ -23,7 +35,7 @@ Amethyst::App.controllers :post do
         @controller = :post
         @action = :index
 
-        @options = {page: @page}
+        @options = {page: @page, order: params[:order], search: params[:search]}
 
         @datetime_only = false
         @back_title = 'to Feeds'
@@ -55,7 +67,7 @@ Amethyst::App.controllers :post do
                     'UNKNOWN'
                   end
     @datetime_only = false
-    ds = Post.dataset.full_text_search([:title, :description], params[:search]).order(:state)
+    ds = Post.dataset.full_text_search([:title, :description], params[:search]).reverse(:id)
     @posts = ds.paginate(@page, PAGE_SIZE)
 
     render 'index'
@@ -74,7 +86,7 @@ Amethyst::App.controllers :post do
                   else
                     'Unknown'
                   end
-    @post = Post.with_pk! params[:id]
+    @post = Post.with_pk! params['id']
     @post.click!
     @post.save(changed: true)
 
@@ -84,11 +96,12 @@ Amethyst::App.controllers :post do
 
 #  put :hide, '/post/:id/hide' do
   get :hide, '/post/:id/hide' do
-    post = Post.with_pk! params[:id]
+    post = Post.with_pk! params.delete('id')
     post.hide!
     post.save(changed: true)
 
-    redirect @origin
+    params[:origin] = @origin if @origin && !@origin.empty?
+    redirect url_for(:post, params[:search] ? :search : :index, params)
   end
 
   
@@ -98,7 +111,8 @@ Amethyst::App.controllers :post do
     post.down_vote!
     post.save(changed: true)
 
-    redirect @origin
+    params[:origin] = @origin if @origin && !@origin.empty?
+    redirect url_for(:post, params[:search] ? :search : :index, params)
   end
 
   
