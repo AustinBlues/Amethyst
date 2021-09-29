@@ -18,15 +18,15 @@ Amethyst::App.controllers :post do
               when 'title'
                 :title
               when 'published'
-                 :published_at
+                 Sequel.desc(:published_at)
                when 'id'
-                 :id
+                 Sequel.desc(:id)
                else
                  flash[:error] = 'Unsupported order' unless params[:order].nil?
-                 :published_at
-#                 :id
+                 Sequel.desc(:published_at)
+#                 Sequel.desc(:id)
               end
-      @posts = Post.unread.order(Sequel.desc(order)).paginate(@page, PAGE_SIZE)
+      @posts = Post.unread.order(order).paginate(@page, PAGE_SIZE)
       if @page > @posts.page_count
         redirect url_for(:post, :index, page: @posts.page_count)
       else

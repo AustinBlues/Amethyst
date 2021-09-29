@@ -49,7 +49,7 @@ Amethyst::App.controllers :feed do
 
         @datetime_only = true
 
-        @options = {id: params[:id], page: @feed.page_number}
+        @options = {page: @feed.page_number}
 
         render 'show'
       end
