@@ -1,7 +1,10 @@
 require 'rss'
+require 'htmlentities'
 
 
 module RubyRSS
+  @@entities_decoder = HTMLEntities.new
+  
   def first_nonblank(*args)
     if args.nil?
       nil
@@ -32,9 +35,9 @@ module RubyRSS
           Refresh.log "Feed '#{feed.name}' has no posts.", :warning
         else
           if f.respond_to?(:channel)
-            feed.title ||= strip_tags(f.channel.title).strip
+            feed.title ||= @@entities_decoder.decode(strip_tags(f.channel.title).strip)
           elsif f.respond_to?(:title)
-            feed.title ||= strip_tags(f.title.to_s).strip
+            feed.title ||= @@entities_decoder.decode(strip_tags(f.title.to_s).strip)
           else
             Refresh.log "MISSING TITLE: '#{feed.name}'.", :warning
           end
@@ -44,7 +47,7 @@ module RubyRSS
           end
 
           f.items.each do |post|
-            title = strip_tags(post.title.to_s)
+            title = @@entities_decoder.decode(strip_tags(post.title.to_s))
             title.strip!
 
             case post.class.to_s
