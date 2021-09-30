@@ -9,10 +9,10 @@
       <%= pagination.first_page? ? LSAQUO : link_to(LSAQUO, url_for(@controller, @action, @options.merge(page: pagination.prev_page)),
       	     title: 'previous page') %>
       <span style="font-size: large"> <%= "#{pagination.current_page} of #{pagination.page_count}" %> </span>
-      <%= pagination.last_page? ? RSAQUO : link_to(RSAQUO, url_for(@controller, @action, @options.merge(page: pagination.next_page)),
-      	     title: 'next page') %>
-      <%= pagination.last_page? ? RAQUO : link_to(RAQUO, url_for(@controller, @action, @options.merge(page: pagination.page_count)),
-      	     title: 'last page') %>
+      <%= pagination.last_page? ? RSAQUO : link_to(RSAQUO, url_for(@controller, @action,
+            @options.merge(page: pagination.next_page)), title: 'next page') %>
+      <%= pagination.last_page? ? RAQUO : link_to(RAQUO, url_for(@controller, @action,
+            @options.merge(page: pagination.page_count)), title: 'last page') %>
     </div>
 
     <% if ENV['TOP_PAGINATION'] %>
