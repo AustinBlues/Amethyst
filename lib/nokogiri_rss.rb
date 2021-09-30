@@ -1,7 +1,5 @@
 # coding: utf-8
 require 'nokogiri'
-require 'time'
-require 'htmlentities'
 
 
 module NokogiriRSS
@@ -63,17 +61,18 @@ module NokogiriRSS
                         Refresh.log "METHODS: #{post.methods}", :debug
                         nil
                       end
-              attrs[:title] = truncate(post.at_css('title').content, VARCHAR_MAX, separator: /\s/)
+#              attrs[:title] = truncate(post.at_css('title').content, VARCHAR_MAX, separator: /\s/)
+              attrs[:title] = truncate(post.at_css('title').content, {length: VARCHAR_MAX, omission: ELLIPSE})
               attrs[:title].strip!
 
               if attrs[:description].nil?
                 attrs[:description] = 'No description'
               else
                 attrs[:description].strip!
-                attrs[:description] = truncate(attrs[:description], TEXT_MAX, separator: /\s/)
+                attrs[:description] = truncate(attrs[:description], {length: TEXT_MAX, omission: ELLIPSE})
               end
 
-              attrs[:title] = truncate(attrs[:description], VARCHAR_MAX, separator: /\s/) if attrs[:title].empty?
+              attrs[:title] = truncate(attrs[:description], {length: VARCHAR_MAX, omission: ELLIPSE}) if attrs[:title].empty?
 
               retries = 0
               begin
