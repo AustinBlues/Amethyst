@@ -52,7 +52,7 @@
 	    <h4><%= link_to_post_show(r, @origin, false) %>&nbsp;(<%= r[:strength].round %>)</h4>
 
 	    <p class="card-text">
-	      <%= truncate(r.description, VARCHAR_MAX, separator: /\s/) %>
+	      <%= truncate(r.description, {length: VARCHAR_MAX, omission: ELLIPSIS}) %>
 	    </p>
 	  </td>
 	  <td style="vertical-align: top">
