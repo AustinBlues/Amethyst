@@ -18,6 +18,7 @@ ELLIPSIS = "\u2026"
 LAQUO = SafeBuffer.new('&laquo;')
 LSAQUO = SafeBuffer.new('&lsaquo;')
 LEFT_ARROW = SafeBuffer.new('&larr;')
+MINUS = SafeBuffer.new('&minus;')
 PLUS = SafeBuffer.new('&plus;')
 RSAQUO = SafeBuffer.new('&rsaquo;')
 RAQUO = SafeBuffer.new('&raquo;')
