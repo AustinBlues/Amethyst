@@ -6,7 +6,7 @@ class Feed < Sequel::Model
 
   @@entities_decoder = HTMLEntities.new	# DB handles UTF-8/Unicode
 
-    
+
   def before_create
     self[:title] = @@entities_decoder.decode(self[:title]) if self[:title]	# preserve nil
     # Set score initially in the middle of the Feed.index
