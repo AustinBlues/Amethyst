@@ -4,9 +4,12 @@ class Feed < Sequel::Model
   one_to_many :post
   extend Amethyst::App::AmethystHelper
 
-  
+  @@entities_decoder = HTMLEntities.new	# DB handles UTF-8/Unicode
+
+    
   def before_create
-    # Set score so initially in the middle of the Feed.index
+    self[:title] = @@entities_decoder.decode(self[:title]) if self[:title]	# preserve nil
+    # Set score initially in the middle of the Feed.index
     self[:score] ||= (Feed.count == 0) ? 0.0 : (Feed.avg(:score) + Feed.order(:score).first.score)/2.0
     super
   end
@@ -20,7 +23,7 @@ class Feed < Sequel::Model
 
   
   def name
-    (title.nil? || title.empty?) ? rss_url : title
+    (self[:title] && !self[:title].empty?) ? self[:title] : rss_url
   end
 
   

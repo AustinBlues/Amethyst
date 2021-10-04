@@ -1,3 +1,6 @@
+require 'htmlentities'
+
+
 class Post < Sequel::Model
   many_to_one :feed
   ONE_DAY = 24 * 60 * 60
@@ -12,9 +15,18 @@ class Post < Sequel::Model
   SCORE = {READ => 1.0, DOWN_VOTED => -1.0}
   SCORE.default = 0
 
+  @@entities_decoder = HTMLEntities.new	# DB handles UTF-8/Unicode
+
+
+  def before_create
+    self[:title] = @@entities_decoder.decode(self[:title]) unless self[:title].nil?	# preserve nil
+    self[:description] = @@entities_decoder.decode(self[:description]) unless self[:description].nil?	# preserve nil
+    super
+  end
+
   
   def name
-    (!title.nil? && !title.empty?) ? title : SafeBuffer.new("<b><em>Post #{id}</em></b>")
+    (self[:title] && !self[:title].empty?) ? self[:title] : SafeBuffer.new("<b><em>Post #{id}</em></b>")
   end
 
 
