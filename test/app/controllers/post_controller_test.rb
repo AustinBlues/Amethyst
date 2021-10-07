@@ -65,9 +65,10 @@ describe "/post" do
       links = p.css('.card-header div a.btn')
 
       # UNCLICK, HIDE, and DOWN links
-      assert_equal("/post/#{@posts[0][:id]}/unclick?#{origin}", links[0].attr('href'))
-      assert_equal("/post/#{@posts[0][:id]}/hide?#{origin}", links[1].attr('href'))
-      assert_equal("/post/#{@posts[0][:id]}/down?#{origin}", links[2].attr('href'))
+      ACTIONS = %w{unclick hide down}
+      links.each_with_index do |l, i|
+        assert_equal("/post/#{@posts[0][:id]}/#{ACTIONS[i]}?#{origin}", links[i].attr('href'))
+      end
     end
   end
 
