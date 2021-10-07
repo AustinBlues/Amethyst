@@ -46,6 +46,32 @@ describe "/post" do
   end
 
   describe 'when displaying Post show' do
+    it 'should identify as Post show with correct header and Post title and links' do
+      origin = 'origin=%2Fpost%3Fpage%3D1'
+      get "/post/#{@posts[0][:id]}?#{origin}"
+
+      p = Nokogiri::HTML.parse(last_response.body)
+
+      title = p.at_css('h2.card-title a')
+      assert_equal(title.content, @posts[0][:title])
+      assert_equal(title.attr('href'), @posts[0][:url])
+
+      # check Post has expected title and URL
+      link = p.at_css('.card-header a.btn')
+      assert_equal(link.attr('title'), 'to Posts')
+      assert_equal(link.attr('href'), '/post?page=1')
+
+      # check first Post has correct action links
+      links = p.css('.card-header div a.btn')
+
+      # UNCLICK, HIDE, and DOWN links
+      assert_equal("/post/#{@posts[0][:id]}/unclick?#{origin}", links[0].attr('href'))
+      assert_equal("/post/#{@posts[0][:id]}/hide?#{origin}", links[1].attr('href'))
+      assert_equal("/post/#{@posts[0][:id]}/down?#{origin}", links[2].attr('href'))
+    end
+  end
+
+  describe 'TBD' do
     if false
       # check HIDE and DOWN have expected redirect
       hide = links[2].attr('href')
