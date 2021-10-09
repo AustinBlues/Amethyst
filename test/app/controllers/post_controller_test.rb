@@ -40,8 +40,8 @@ describe "/post" do
       links = p.css('tbody:first-child a.btn')
 
       # HIDE, and DOWN links
-      assert_equal("/post/#{@posts[EXTRA-1][:id]}/hide?page=2", links[0].attr('href'))
-      assert_equal("/post/#{@posts[EXTRA-1][:id]}/down?page=2", links[1].attr('href'))
+      assert_equal("/post/#{@posts[EXTRA-1][:id]}/hide?origin=#{CGI.escape('/post?page=2')}", links[0].attr('href'))
+      assert_equal("/post/#{@posts[EXTRA-1][:id]}/down?origin=#{CGI.escape('/post?page=2')}", links[1].attr('href'))
     end
   end
 
