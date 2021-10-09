@@ -44,7 +44,7 @@ Amethyst::App.controllers :post do
         @controller = :post
         @action = :index
 
-        @options = {page: @page, order: params[:order], search: params[:search]}
+        @options = {page: @page, order: params[:order], search: params[:search]}	# used in _pagination
         @parameters = {origin: request.fullpath}
         
         @datetime_only = false
@@ -63,7 +63,7 @@ Amethyst::App.controllers :post do
     @controller = :post
     @action = :search
     @context = "Search: '#{params[:search]}'"
- #   @options = {page: @page, search: params[:search], origin: @origin}
+    @options = {page: @page, search: params[:search], origin: @origin}	# used in _pagination
     @parameters = {origin: request.fullpath}
     @back_title = case @origin
                   when /^\/post\/search/
