@@ -5,7 +5,7 @@ Amethyst::App.controllers :post do
               else
                 params.delete(:origin)
               end
-#    puts("ORIGIN: #{@origin}.") if Padrino.env != :test
+    puts("ORIGIN: #{@origin}.") if Padrino.env != :test
   end
 
   
@@ -14,19 +14,28 @@ Amethyst::App.controllers :post do
     if @page <= 0
       redirect url_for(:post, :index, page: 1)
     else
-      order = case params[:order]
-              when 'title'
-                :title
-              when 'published'
-                 Sequel.desc(:published_at)
-               when 'id'
-                 Sequel.desc(:id)
-               else
-                 flash[:error] = 'Unsupported order' unless params[:order].nil?
-                 Sequel.desc(:published_at)
-#                 Sequel.desc(:id)
-              end
-      @posts = Post.unread.order(order).paginate(@page, PAGE_SIZE)
+      if params[:order] == 'cull'
+        # KLUDGE this is more my use culling The Hill feeds
+        now = Time.now
+        midnight = Time.new(now.year, now.month, now.day)
+#        tmp = Post.unread.where{published_at < midnight}
+        tmp = Post.unread.where(Sequel.lit('published_at < ?', midnight))
+        @posts = Post.where(title: tmp.map{|p| p[:title]}).order(:title).paginate(@page, PAGE_SIZE)
+      else
+        order = case params[:order]
+                when 'title'
+                  :title
+                when 'published'
+                  Sequel.desc(:published_at)
+                when 'id'
+                  Sequel.desc(:id)
+                else
+                  flash[:error] = 'Unsupported order' unless params[:order].nil?
+                  Sequel.desc(:published_at)
+#                  Sequel.desc(:id)
+                end
+        @posts = Post.unread.order(order).paginate(@page, PAGE_SIZE)
+      end
       if @page > @posts.page_count
         redirect url_for(:post, :index, page: @posts.page_count)
       else
@@ -36,7 +45,8 @@ Amethyst::App.controllers :post do
         @action = :index
 
         @options = {page: @page, order: params[:order], search: params[:search]}
-
+        @parameters = {origin: request.fullpath}
+        
         @datetime_only = false
         @back_title = 'to Feeds'
         @back_url = '/feed'
@@ -53,7 +63,8 @@ Amethyst::App.controllers :post do
     @controller = :post
     @action = :search
     @context = "Search: '#{params[:search]}'"
-    @options = {page: @page, search: params[:search], origin: @origin}
+ #   @options = {page: @page, search: params[:search], origin: @origin}
+    @parameters = {origin: request.fullpath}
     @back_title = case @origin
                   when /^\/post\/search/
                     'to Search'
@@ -100,8 +111,17 @@ Amethyst::App.controllers :post do
     post.hide!
     post.save(changed: true)
 
-    params[:origin] = @origin if @origin && !@origin.empty?
-    redirect url_for(:post, params[:search] ? :search : :index, params)
+    if !params[:search].nil?
+      params[:origin] = @origin
+      puts "HIDE from SEARCH ORIGIN: #{@origin}."
+      redirect url_for(:post, :search, params)
+    elsif @origin =~ %r{^/post}
+      redirect url_for(@origin)
+    elsif @origin =~ %r{^/feed}
+      redirect url_for(@origin)
+    else
+      raise "Unknown origin: #{@origin}."
+    end
   end
 
   
@@ -111,8 +131,19 @@ Amethyst::App.controllers :post do
     post.down_vote!
     post.save(changed: true)
 
-    params[:origin] = @origin if @origin && !@origin.empty?
-    redirect url_for(:post, params[:search] ? :search : :index, params)
+
+    if !params[:search].nil?
+      params[:origin] = @origin
+      puts "HIDE from SEARCH ORIGIN: #{@origin}."
+      redirect url_for(:post, :search, params)
+    elsif @origin =~ %r{^/post}
+      redirect url_for(@origin)
+    elsif @origin =~ %r{^/feed}
+      redirect url_for(@origin)
+    else
+      raise "Unknown origin: #{@origin}."
+    end
+#    redirect url_for(:post, params[:search] ? :search : :index, params)
   end
 
   

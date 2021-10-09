@@ -1,3 +1,4 @@
+<% puts "OPTIONS: #{@options}." %>
 <div class="card">
   <div class="card-header bg-info">
     <%= link_to LEFT_ARROW, url_for(:feed, :index, page: @options[:page]), title: 'to Feeds',
@@ -5,7 +6,7 @@
 
     <button type="button" class="btn btn-default btn-lg"  data-toggle="modal" data-target="#deleteModal"
             aria-label="Delete" style="float:right">
-      &minus;
+      &times;
     </button>
 
     <button type="button" class="btn btn-default btn-lg"  data-toggle="modal" data-target="#editModal"

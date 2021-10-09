@@ -1,4 +1,5 @@
 <% unclick_url = url_for(:post, :unclick, id: @post.id, origin: @origin) %>
+<% puts "OPTIONS: #{@options}." %>
 <% hide_url = url_for(:post, :hide, id: @post.id, origin: @origin) %>
 <% down_url = url_for(:post, :down, id: @post.id, origin: @origin) %>
 
@@ -8,7 +9,7 @@
     
     <div style="float: right">
       <%= link_to UNDO, unclick_url, method: :put, title: 'unclick', class: 'btn btn-link action', style: 'font-size: x-large' %>
-      <%= link_to TIMES, hide_url, method: :put, title: 'hide', class: 'btn btn-link action' %>
+      <%= link_to MINUS, hide_url, method: :put, title: 'hide', class: 'btn btn-link action' %>
       <%= link_to DOWN_ARROW, down_url, method: :put, title: 'down vote', class: 'btn btn-link action' %>
     </div>
 

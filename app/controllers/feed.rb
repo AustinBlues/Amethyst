@@ -49,7 +49,8 @@ Amethyst::App.controllers :feed do
 
         @datetime_only = true
 
-        @options = {page: @feed.page_number}
+        @options = {id: params[:id], origin: "/feed/#{params[:id]}?page=#{page}"}
+        @parameters = {origin: request.fullpath}
 
         render 'show'
       end
