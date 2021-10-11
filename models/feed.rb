@@ -15,7 +15,7 @@ class Feed < Sequel::Model
   end
 
 
-  def after_create
+  def after_save
     super
     # Initial queue is highest priority (higher than Refresh or daily).
     Resque.enqueue_to('Initial', Refresh, self[:id]) if Padrino.env != :test
