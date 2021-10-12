@@ -114,9 +114,8 @@ Amethyst::App.controllers :feed do
       flash[:error] = (/unique_(\w+)s'/ =~ e.to_s) ? "Duplicate #{$~[1]}." : 'Unique Constraint Violation'
     rescue
       flash[:error] = 'Unknown exception'
-    ensure
-      feed ||= Feed.with_pk! params[:id]
     end
+    feed ||= Feed.with_pk! params[:id]
 
     redirect url(:feed, :index, page: feed.page_number)
   end
