@@ -3,13 +3,17 @@ require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/amethyst_help
 class Feed < Sequel::Model
   one_to_many :post
   extend Amethyst::App::AmethystHelper
-
-  @@entities_decoder = HTMLEntities.new	# DB handles UTF-8/Unicode
-
+  include Sanitize
+  
 
   def before_create
-    self[:title] = @@entities_decoder.decode(self[:title]) if self[:title]	# preserve nil
-    # Set score initially in the middle of the Feed.index
+    if true
+      sanitize(:title, VARCHAR_MAX)
+    else
+      if !sanitize(:title, VARCHAR_MAX)
+        feed.status = "Invalid UTF-8 encoding in Feed title"
+      end
+    end
     self[:score] ||= (Feed.count == 0) ? 0.0 : (Feed.avg(:score) + Feed.order(:score).first.score)/2.0
     super
   end

@@ -81,6 +81,9 @@ Amethyst::App.controllers :post do
     ds = Post.dataset.full_text_search([:title, :description], params[:search]).reverse(:id)
     @posts = ds.paginate(@page, PAGE_SIZE)
 
+    STDERR.puts "ORIGIN: #{@origin.inspect}."
+    STDERR.puts "OPTIONS: #{@options.inspect}."
+    STDERR.puts "PARAMETERS: #{@parameters.inspect}."
     render 'index'
   end
 
@@ -100,6 +103,8 @@ Amethyst::App.controllers :post do
     @post = Post.with_pk! params['id']
     @post.click!
     @post.save(changed: true)
+
+    @parameters = {origin: request.fullpath}
 
     render 'show'
   end

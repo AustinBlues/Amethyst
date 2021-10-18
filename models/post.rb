@@ -2,6 +2,7 @@ require 'htmlentities'
 
 
 class Post < Sequel::Model
+  include Sanitize
   many_to_one :feed
   ONE_DAY = 24 * 60 * 60
 
@@ -15,12 +16,21 @@ class Post < Sequel::Model
   SCORE = {READ => 1.0, DOWN_VOTED => -1.0}
   SCORE.default = 0
 
-  @@entities_decoder = HTMLEntities.new	# DB handles UTF-8/Unicode
-
 
   def before_create
-    self[:title] = @@entities_decoder.decode(self[:title]) unless self[:title].nil?	# preserve nil
-    self[:description] = @@entities_decoder.decode(self[:description]) unless self[:description].nil?	# preserve nil
+    if true
+      sanitize(:title, VARCHAR_MAX)
+      sanitize(:description, TEXT_MAX)
+    else
+      if !sanitize(:title, VARCHAR_MAX)
+        Refresh.log "#{feed[:title]}: Invalid UTF-8 encoding in '#{self[:title]}' title."
+        feed.status = "Invalid UTF-8 encoding in Post title"
+      end
+      if !sanitize(:description, TEXT_MAX)
+        Refresh.log "#{feed[:title]}: Invalid UTF-8 encoding in '#{self[:title]}' description."
+        feed.status = "Invalid UTF-8 encoding in Post description"
+      end
+    end
     super
   end
 

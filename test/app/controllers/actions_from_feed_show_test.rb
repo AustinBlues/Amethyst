@@ -10,12 +10,11 @@ describe "/feed" do
       Post.create(title: "Post #{i+1}", feed_id: @feed[:id], ident: i, url: "http://127.0.0.1/#{i}",
                   description: "Post #{i+1} content.", published_at: now+i)
     end
-    @origin = "/feed/#{@feed[:id]}?page=2"
+    @origin = "/feed/#{@feed[:id]}?page=2&origin=#{CGI.escape('/feed')}"
   end
 
   after do
     Feed.all{|f| f.destroy}
-#    Post.truncate
   end
 
   describe 'when showing a Feed' do
@@ -33,20 +32,20 @@ describe "/feed" do
       header = p.at_css('div.card-header a.btn')
 #      puts "HEADER: #{header.inspect}."
       assert_equal('to Feeds', header.attr('title'))
-      assert_equal('/feed?page=1', header.attr('href'))
+      assert_equal('/feed', header.attr('href'))
 
       # hide, down links
       actions = p.css('a.action')
       hide = actions[0].attr('href')
-      assert_equal("/post/#{@posts[-(PAGE_SIZE+1)][:id]}/hide?origin=#{CGI.escape(@origin)}", hide)
+      assert_equal("/post/#{@posts[-(PAGE_SIZE+1)][:id]}/hide?origin=#{CGI.escape('/feed')}", hide)
       down = actions[1].attr('href')
-      assert_equal("/post/#{@posts[-(PAGE_SIZE+1)][:id]}/down?origin=#{CGI.escape(@origin)}", down)
+      assert_equal("/post/#{@posts[-(PAGE_SIZE+1)][:id]}/down?origin=#{CGI.escape('/feed')}", down)
 
       # check HIDE and DOWN have expected redirect
       get hide
-      assert_equal("http://example.org#{@origin}", last_response.location.encode('utf-8'))
+      assert_equal('http://example.org/feed', last_response.location.encode('utf-8'))
       get down
-      assert_equal("http://example.org#{@origin}", last_response.location.encode('utf-8'))
+      assert_equal("http://example.org/feed", last_response.location.encode('utf-8'))
 
       # check Post show for correct action links
       get "/post/#{@posts[0][:id]}?origin=#{CGI.escape(@origin)}"

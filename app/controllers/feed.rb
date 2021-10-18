@@ -1,11 +1,11 @@
 Amethyst::App.controllers :feed do
   before do
-    @origin = if [:index, :show].include?(request.action)
+    @origin = if [:index].include?(request.action)
                 request.fullpath
               else
                 params.delete(:origin)
               end
-#    puts("ORIGIN: #{@origin}.") if Padrino.env != :test
+    puts("ORIGIN: #{@origin}.") if Padrino.env != :test
   end
 
 
@@ -50,8 +50,12 @@ Amethyst::App.controllers :feed do
         @datetime_only = true
 
         @options = {id: params[:id], origin: "/feed/#{params[:id]}?page=#{page}"}
-        @parameters = {origin: request.fullpath}
+        @parameters = {origin: @origin}
 
+        STDERR.puts "PARAMS: #{params.inspect}."
+        STDERR.puts "OPTIONS: #{@options.inspect}."
+        STDERR.puts "PARAMETERS: #{@parameters.inspect}."
+        
         render 'show'
       end
     end
@@ -87,6 +91,8 @@ Amethyst::App.controllers :feed do
           end
         end
       rescue Exception => e
+#        STDERR.puts "Exception in Feed controller: #{$!}."
+        Refresh.log "Exception in Feed controller: #{$!}.", :error
         flash[:error] = "Unknown exception: #{e}."
       end
 

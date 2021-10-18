@@ -1,7 +1,6 @@
 <div class="card">
   <div class="card-header bg-info">
-    <%= link_to LEFT_ARROW, url_for(:feed, :index, page: @options[:page]), title: 'to Feeds',
-    	class: 'btn btn-link navigation' %>
+    <%= link_to LEFT_ARROW, url_for(@parameters[:origin]), title: 'to Feeds', class: 'btn btn-link navigation' %>
 
     <button type="button" class="btn btn-default btn-lg"  data-toggle="modal" data-target="#deleteModal"
             aria-label="Delete" style="float:right">

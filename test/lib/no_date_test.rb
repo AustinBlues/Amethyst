@@ -14,12 +14,13 @@ describe '/lib/nokogiri' do
     
   it 'parsing XML with no date for an item' do
     now = Time.now
-    Refresh.refresh_feed(@feed, Refresh.fetch(@feed.rss_url), now)
+    Refresh.refresh_feed(@feed, Refresh.fetch(@feed), now)
 
     if defined?(Refresh::NOKOGIRI) && Refresh::NOKOGIRI
       assert_equal 'missing date', @feed.status
     else
-      assert_equal now.to_s, @feed.post[0].time
+      # RubyRSS doesn't check for no datetime
+      assert_equal now.to_s, (@feed.next_refresh - Refresh::CYCLE_TIME).to_s
     end
   end
 end

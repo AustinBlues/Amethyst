@@ -78,7 +78,6 @@ describe "/post" do
       hide = links[2].attr('href')
       assert_equal("/post/#{@posts[0][:id]}/hide?origin=#{CGI.escape(@origin)}", hide)
       get hide
-      puts "RESPONSE: #{last_response.body}"
       assert_equal("http://example.org#{@origin}", last_response.location.encode('utf-8'))
 
       down = links[3].attr('href')

@@ -87,6 +87,12 @@ module RubyRSS
             end
           end
         end
+      rescue Mysql2::Error
+        feed.status = "MySQL encoding error" if $!.to_s =~ /Incorrect string value:/
+        Refresh.log "MySQL: #{$!}.", :error
+      rescue Sequel::DatabaseError
+        feed.status = "Sequel encoding error" if $!.to_s =~ /Incorrect string value:/
+        Refresh.log "MySQL: #{$!}.", :error
       rescue
         feed.status = $!.class
         Refresh.log "Exception: #{$!}.", :error
