@@ -1,6 +1,3 @@
-require 'htmlentities'
-
-
 class Post < Sequel::Model
   include Sanitize
   many_to_one :feed
@@ -18,17 +15,17 @@ class Post < Sequel::Model
 
 
   def before_create
-    if true
-      sanitize(:title, VARCHAR_MAX)
-      sanitize(:description, TEXT_MAX)
+    if false
+      sanitize!(:title, VARCHAR_MAX)
+      sanitize!(:description, TEXT_MAX)
     else
-      if !sanitize(:title, VARCHAR_MAX)
-        Refresh.log "#{feed[:title]}: Invalid UTF-8 encoding in '#{self[:title]}' title."
-        feed.status = "Invalid UTF-8 encoding in Post title"
+      if sanitize!(:title, VARCHAR_MAX)
+        Refresh.log "'#{post[:title]}' title sanitized.", :warning
+        feed.status = 'Post title sanitized'
       end
-      if !sanitize(:description, TEXT_MAX)
-        Refresh.log "#{feed[:title]}: Invalid UTF-8 encoding in '#{self[:title]}' description."
-        feed.status = "Invalid UTF-8 encoding in Post description"
+      if sanitize!(:description, TEXT_MAX)
+        Refresh.log "'#{post[:title]}' description sanitized.", :warning
+        feed.status = 'Post description sanitized'
       end
     end
     super

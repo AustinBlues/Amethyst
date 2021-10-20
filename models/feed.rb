@@ -7,11 +7,12 @@ class Feed < Sequel::Model
   
 
   def before_create
-    if true
-      sanitize(:title, VARCHAR_MAX)
+    if false
+      sanitize!(:title, VARCHAR_MAX)
     else
-      if !sanitize(:title, VARCHAR_MAX)
-        feed.status = "Invalid UTF-8 encoding in Feed title"
+      if sanitize!(:title, VARCHAR_MAX)
+        feed.status = 'Title sanitized'
+        Refresh.log "#{feed[:title]} sanitized.", :warning
       end
     end
     self[:score] ||= (Feed.count == 0) ? 0.0 : (Feed.avg(:score) + Feed.order(:score).first.score)/2.0
