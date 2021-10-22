@@ -6,7 +6,7 @@ PAGE_SIZE = ENV['PAGE_SIZE'] && (Padrino.env != :test) ? ENV['PAGE_SIZE'].to_i :
 DAYS_OF_THE_DEAD = 34
 
 # How many Unread post to keep visible
-UNREAD_LIMIT = 50
+UNREAD_LIMIT = 100
 
 # How many days for Feed score Exponential Moving Average (EMA)
 # Twice as long between posts of least frequent post is a good starting value
