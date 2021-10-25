@@ -65,13 +65,13 @@ Amethyst::App.controllers :post do
     @context = "Search: '#{params[:search]}'"
     @options = {page: @page, search: params[:search], origin: @origin}	# used in _pagination
     @parameters = {origin: request.fullpath}
-    @back_title = case @origin
-                  when /^\/post\/search/
-                    'to Search'
+    @back_title = case @back_url
                   when /^\/post/
                     'to Posts'
                   when /^\/feed/
                     'to Feeds'
+                  when /^\/post\/search/
+                    'to Search'
                   else
                     flash[:error] = 'Unknown origin'
                     STDERR.puts "UNKNOWN ORIGIN: #{params[:origin]}."

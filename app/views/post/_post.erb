@@ -1,16 +1,18 @@
 <% hide_url = url_for(:post, :hide, post.id, @parameters) %>
 <% down_url = url_for(:post, :down, post.id, @parameters) %>
+<% title = @datetime_only ? "#{short_datetime(post.published_at)}" :
+         "#{post.feed.name}  #{short_datetime(post.published_at)}"
+%>
 
 <tr id="post<%= post.id %>">
   <td>
-    <%= link_to(post.name, url_for(:post, :show, id: post.id, origin: @parameters[:origin]), class: post_classes(post),
-	  title: @datetime_only ? "#{short_datetime(post.published_at)}" :
-	        "#{post.feed.name}  #{short_datetime(post.published_at)}") %>
+    <%= link_to(post.name, url_for(:post, :show, id: post.id, origin: @origin), class: post_classes(post),
+	  title: title) %>
   </td>
   <td style="width: 3em">
     <div>
-      <%= link_to(MINUS, hide_url, method: :put, class: 'btn btn-link action', style: 'padding: 0') %>
-      <%= link_to(DOWN_ARROW, down_url, method: :put, class: 'btn btn-link action', style: 'padding: 0') %>
+      <%= link_to(DELETE_ICON, hide_url, method: :put, class: 'btn btn-link action', style: 'padding: 0') %>
+      <%= link_to(DOWN_VOTE_ICON, down_url, method: :put, class: 'btn btn-link action', style: 'padding: 0') %>
     </div>
   </td>
 </tr>

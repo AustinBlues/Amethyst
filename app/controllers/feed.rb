@@ -5,7 +5,7 @@ Amethyst::App.controllers :feed do
               else
                 params.delete(:origin)
               end
-    puts("ORIGIN: #{@origin}.") if Padrino.env != :test
+    puts("Feed ORIGIN: #{@origin}.") if Padrino.env != :test
   end
 
 
@@ -21,6 +21,7 @@ Amethyst::App.controllers :feed do
       else
         @context = 'Feeds'
 
+        # TODO: can these next two lines be moved to before hook?
         @controller = :feed
         @action = :index
 
@@ -49,11 +50,10 @@ Amethyst::App.controllers :feed do
 
         @datetime_only = true
 
-        @options = {id: params[:id], origin: "/feed/#{params[:id]}?page=#{page}"}
+        @options = {id: params[:id], origin: request.fullpath}
         @parameters = {origin: @origin}
 
-        STDERR.puts "PARAMS: #{params.inspect}."
-        STDERR.puts "OPTIONS: #{@options.inspect}."
+        STDERR.puts "Feed#show OPTIONS: #{@options.inspect}."
         STDERR.puts "PARAMETERS: #{@parameters.inspect}."
         
         render 'show'
