@@ -25,7 +25,7 @@ Amethyst::App.controllers :feed do
         @controller = :feed
         @action = :index
 
-        @options = {page: @page}
+        @pagination = {page: @page}
 
         render 'index'
       end
@@ -50,10 +50,10 @@ Amethyst::App.controllers :feed do
 
         @datetime_only = true
 
-        @options = {id: params[:id], origin: request.fullpath}
+        @pagination = {id: params[:id], origin: request.fullpath}
         @parameters = {origin: @origin}
 
-        STDERR.puts "Feed#show OPTIONS: #{@options.inspect}."
+        STDERR.puts "Feed#show OPTIONS: #{@pagination.inspect}."
         STDERR.puts "PARAMETERS: #{@parameters.inspect}."
         
         render 'show'

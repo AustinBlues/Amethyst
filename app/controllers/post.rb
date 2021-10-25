@@ -44,7 +44,7 @@ Amethyst::App.controllers :post do
         @controller = :post
         @action = :index
 
-        @options = {page: @page, order: params[:order], search: params[:search]}	# used in _pagination
+        @pagination = {page: @page, order: params[:order], search: params[:search]}	# used in _pagination
         @parameters = {origin: request.fullpath}
         
         @datetime_only = false
@@ -63,7 +63,7 @@ Amethyst::App.controllers :post do
     @controller = :post
     @action = :search
     @context = "Search: '#{params[:search]}'"
-    @options = {page: @page, search: params[:search], origin: @origin}	# used in _pagination
+    @pagination = {page: @page, search: params[:search], origin: @origin}	# used in _pagination
     @parameters = {origin: request.fullpath}
     @back_title = case @back_url
                   when /^\/post/
@@ -82,7 +82,7 @@ Amethyst::App.controllers :post do
     @posts = ds.paginate(@page, PAGE_SIZE)
 
     STDERR.puts "ORIGIN: #{@origin.inspect}."
-    STDERR.puts "OPTIONS: #{@options.inspect}."
+    STDERR.puts "OPTIONS: #{@pagination.inspect}."
     STDERR.puts "PARAMETERS: #{@parameters.inspect}."
     render 'index'
   end
