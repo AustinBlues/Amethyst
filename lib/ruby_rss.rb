@@ -55,12 +55,16 @@ module RubyRSS
               published_at = strip_tags(post.updated.to_s)
             else
               description = post.description
-              ident = (post.guid ? post.guid : post.link).to_s
+              ident = (post.respond_to?(:guid) ? post.guid : post.link).to_s
 
-              if post.pubDate != post.date
+              if post.respond_to?(:pubDate) && (post.pubDate != post.date)
                 Refresh.log "DATES: pubDate: #{post.pubDate}, date: #{post.date},  dc_date: #{post.dc_date}.", :warning
               end
-              published_at = first_nonblank(post.pubDate, post.date, post.dc_date, now)
+              if post.class.to_s == 'RSS::RDF::Item'
+                published_at = first_nonblank(post.date, post.dc_date, now)
+              else
+                published_at = first_nonblank(post.pubDate, post.date, post.dc_date, now)
+              end
             end
             ident.strip!
 
