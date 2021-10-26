@@ -1,6 +1,8 @@
 Amethyst::App.controllers :post do
   before do
-    @origin = if [:index].include?(request.action)
+    @controller = :post
+    @action = request.action
+    @origin = if [:index].include?(@action)
                 request.fullpath
               else
                 params.delete(:origin)
@@ -41,9 +43,6 @@ Amethyst::App.controllers :post do
       else
         @context = 'Posts'
 
-        @controller = :post
-        @action = :index
-
         @pagination = {page: @page, order: params[:order], search: params[:search]}	# used in _pagination
         @parameters = {origin: request.fullpath}
         
@@ -60,8 +59,6 @@ Amethyst::App.controllers :post do
   get :search do
     @back_url = @origin
     @page = (params[:page] || 1).to_i
-    @controller = :post
-    @action = :search
     @context = "Search: '#{params[:search]}'"
     @pagination = {page: @page, search: params[:search], origin: @origin}	# used in _pagination
     @parameters = {origin: request.fullpath}

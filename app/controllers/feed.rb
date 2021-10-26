@@ -1,6 +1,8 @@
 Amethyst::App.controllers :feed do
   before do
-    @origin = if [:index].include?(request.action)
+    @controller = :feed
+    @action = request.action
+    @origin = if [:index].include?(@action)
                 request.fullpath
               else
                 params.delete(:origin)
@@ -20,11 +22,6 @@ Amethyst::App.controllers :feed do
         redirect url_for(:feed, :index, page: @feeds.page_count)
       else
         @context = 'Feeds'
-
-        # TODO: can these next two lines be moved to before hook?
-        @controller = :feed
-        @action = :index
-
         @pagination = {page: @page}
 
         render 'index'
@@ -45,13 +42,10 @@ Amethyst::App.controllers :feed do
       else
         @context = @feed.name	# allow URL for new Feeds that haven't refreshed or have no title tag
 
-        @controller = :feed
-        @action = :show
-
         @datetime_only = true
 
         @pagination = {id: params[:id], origin: request.fullpath}
-        @parameters = {origin: @origin}
+        @parameters = {origin: request.fullpath}
 
         STDERR.puts "Feed#show OPTIONS: #{@pagination.inspect}."
         STDERR.puts "PARAMETERS: #{@parameters.inspect}."
