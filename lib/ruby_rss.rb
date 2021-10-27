@@ -40,8 +40,9 @@ module RubyRSS
             Refresh.log "MISSING TITLE: '#{feed.name}'.", :warning
           end
 
-          unless (f.items[0].class == RSS::Rss::Channel::Item) || (f.items[0].class == RSS::Atom::Feed::Entry)
-            Refresh.log "CLASS: #{f.items[0].class}.", :highlight
+          unless (f.items[0].class == RSS::Rss::Channel::Item) || (f.items[0].class == RSS::Atom::Feed::Entry) ||
+                 (f.items[0].class == RSS::RDF::Item)
+            Refresh.log "CLASS: #{f.items[0].class}.", :info
           end
 
           f.items.each do |post|
