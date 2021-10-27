@@ -1,7 +1,7 @@
 <% count = feed.unread.count %>
 <tr id="feed<%= feed.id %>">
   <td>
-    <%= link_to feed.name, url_for(:feed, :show, id: feed.id, origin: @origin), title: tooltip_fmt(feed) %>
+    <%= link_to feed.name, url_for(:feed, :show, id: feed.id, origin: @current_url), title: tooltip_fmt(feed) %>
     <%= (count == 0) ? '' : "(#{count})" %>
   </td>
   <td>

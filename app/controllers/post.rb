@@ -2,8 +2,9 @@ Amethyst::App.controllers :post do
   before do
     @controller = :post
     @action = request.action
+    @current_url = request.fullpath
     @origin = if [:index].include?(@action)
-                request.fullpath
+                @current_url
               else
                 params.delete(:origin)
               end
@@ -44,11 +45,10 @@ Amethyst::App.controllers :post do
         @context = 'Posts'
 
         @pagination = {page: @page, order: params[:order], search: params[:search]}	# used in _pagination
-        @parameters = {origin: request.fullpath}
         
         @datetime_only = false
         @back_title = 'to Feeds'
-        @back_url = '/feed'
+        @back_url = url_for(:feed, :index)
 
         render 'index'
       end
@@ -97,11 +97,10 @@ Amethyst::App.controllers :post do
                   else
                     'Unknown'
                   end
+
     @post = Post.with_pk! params['id']
     @post.click!
     @post.save(changed: true)
-
-    @parameters = {origin: request.fullpath}
 
     render 'show'
   end

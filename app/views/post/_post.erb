@@ -1,5 +1,5 @@
-<% hide_url = url_for(:post, :hide, post.id, @parameters) %>
-<% down_url = url_for(:post, :down, post.id, @parameters) %>
+<% hide_url = url_for(:post, :hide, post.id, origin: @current_url) %>
+<% down_url = url_for(:post, :down, post.id, origin: @current_url) %>
 <% title = @datetime_only ? "#{short_datetime(post.published_at)}" :
          "#{post.feed.name}  #{short_datetime(post.published_at)}"
 %>

@@ -2,8 +2,9 @@ Amethyst::App.controllers :feed do
   before do
     @controller = :feed
     @action = request.action
+    @current_url = request.fullpath
     @origin = if [:index].include?(@action)
-                request.fullpath
+                @current_url
               else
                 params.delete(:origin)
               end
@@ -43,12 +44,7 @@ Amethyst::App.controllers :feed do
         @context = @feed.name	# allow URL for new Feeds that haven't refreshed or have no title tag
 
         @datetime_only = true
-
         @pagination = {id: params[:id], origin: request.fullpath}
-        @parameters = {origin: request.fullpath}
-
-        STDERR.puts "Feed#show OPTIONS: #{@pagination.inspect}."
-        STDERR.puts "PARAMETERS: #{@parameters.inspect}."
         
         render 'show'
       end
