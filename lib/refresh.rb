@@ -34,11 +34,11 @@ module Refresh
 
 
   def self.raw2time(raw)
-    verbose = false
-    if true
+     if false
       tmp = Time.parse(raw)	# good enough
       verbose = true
     else
+      verbose = false
       tmp = case raw
             when /^[a-zA-Z]+, \d+ [a-zA-Z]+ \d+ \d+:\d+:\d+ [-+]\d+$/
               time = Time.rfc2822(raw)
@@ -59,11 +59,9 @@ module Refresh
               time
             end
     end
-    # KLUDGE
-    tmp = tmp.localtime if tmp.zone.nil?
-#    STDERR.puts("TIME: '#{raw}' => '#{tmp}' (#{tmp.zone})") if verbose 
-    STDERR.puts("TIME: '#{raw}' => '#{tmp}' (#{tmp.zone})") if tmp.zone.nil?
-    tmp
+    STDERR.puts("TIME: '#{raw}' => '#{tmp}' (#{tmp.zone})") if verbose 
+#    STDERR.puts("TIME: '#{raw}' => '#{tmp}' (#{tmp.zone})") if tmp.zone.nil?
+    tmp.localtime
   end
 
   
