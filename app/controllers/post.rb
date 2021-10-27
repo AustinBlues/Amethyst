@@ -61,7 +61,6 @@ Amethyst::App.controllers :post do
     @page = (params[:page] || 1).to_i
     @context = "Search: '#{params[:search]}'"
     @pagination = {page: @page, search: params[:search], origin: @origin}	# used in _pagination
-    @parameters = {origin: request.fullpath}
     @back_title = case @back_url
                   when /^\/post/
                     'to Posts'
@@ -78,9 +77,6 @@ Amethyst::App.controllers :post do
     ds = Post.dataset.full_text_search([:title, :description], params[:search]).reverse(:id)
     @posts = ds.paginate(@page, PAGE_SIZE)
 
-    STDERR.puts "ORIGIN: #{@origin.inspect}."
-    STDERR.puts "OPTIONS: #{@pagination.inspect}."
-    STDERR.puts "PARAMETERS: #{@parameters.inspect}."
     render 'index'
   end
 
