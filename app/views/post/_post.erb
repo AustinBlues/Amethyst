@@ -6,7 +6,7 @@
 
 <tr id="post<%= post.id %>">
   <td>
-    <%= link_to(post.name, url_for(:post, :show, id: post.id, origin: @origin), class: post_classes(post),
+    <%= link_to(post.name, url_for(:post, :show, id: post.id, origin: @current_url), class: post_classes(post),
 	  title: title) %>
   </td>
   <td style="width: 3em">
