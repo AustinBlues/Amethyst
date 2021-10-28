@@ -86,7 +86,11 @@ module RubyRSS
                 p.ident = ident.to_s.strip
                 p.published_at = DateTime.parse(published_at)	# TimeDate object
                 p.time = published_at.strip	# actual String
-                p.url = post.link.to_s.strip
+                if post.class != RSS::Atom::Feed::Entry
+                  p.url = post.link.to_s.strip
+                else
+                  p.url = post.link.href.to_s.strip
+                end
               end
               p.previous_refresh = now
             end
