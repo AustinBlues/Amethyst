@@ -20,11 +20,11 @@ class Post < Sequel::Model
       sanitize!(:description, TEXT_MAX)
     else
       if sanitize!(:title, VARCHAR_MAX)
-        Refresh.log "'#{post[:title]}' title sanitized.", :warning
+        Refresh.log "'#{self[:title]}' title sanitized.", :warning
         feed.status = 'Post title sanitized'
       end
       if sanitize!(:description, TEXT_MAX)
-        Refresh.log "'#{post[:title]}' description sanitized.", :warning
+        Refresh.log "'#{self[:title]}' description sanitized.", :warning
         feed.status = 'Post description sanitized'
       end
     end
