@@ -31,7 +31,14 @@ module RubyRSS
         elsif f.items.size == 0
           Refresh.log "Feed '#{feed.name}' has no posts.", :warning
         else
-          Refresh.log("ENCODING: #{f.encoding}.", :warning) unless f.encoding == 'UTF-8'
+          case f.encoding
+          when 'UTF-8'
+            # preferred/assumed/Ruby native encoding
+          when nil, ''
+            Refresh.log("NO ENCODING specified.", :warning)
+          else
+            Refresh.log("ENCODING: #{f.encoding.inspect}.", :warning)
+          end
           if f.respond_to?(:channel)
             feed.title ||= strip_tags(f.channel.title).strip
           elsif f.respond_to?(:title)
