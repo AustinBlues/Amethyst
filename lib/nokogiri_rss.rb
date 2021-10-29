@@ -9,7 +9,14 @@ module NokogiriRSS
       begin
         f = Nokogiri::XML.parse(rss)
         begin
-          puts "ENCODING: #{f.encoding}." unless f.encoding == 'utf-8'
+          case f.encoding
+          when 'utf-8', 'UTF-8'
+            # preferred/native/expected encoding
+          when nil, ''
+            Refresh.log 'NO ENCODING', :warning
+          else
+            Refresh.log "ENCODING: #{f.encoding.inspect}.", :error
+          end
           if f.at_css('rss')
             standard = f.at_css('rss').name
             version = f.at_css('rss')['version']
