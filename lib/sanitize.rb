@@ -7,7 +7,6 @@ module Sanitize
     if self[which].nil?
       sanitized = false
     else
-      original_length = self[which].length
       sanitized = false
       if self.respond_to?('feed') && self.feed.title == 'AustinGO RSS'
         # Workarounds for AustinGO RSS feed mangled encoding.  Delete when fixed.
@@ -23,8 +22,9 @@ module Sanitize
       end
       self[which].gsub!("\u{1F449}", "\u{261E}")	# MariaDB doesn't accept Unicode white right pointing index
       sanitized ||= !$~.nil?
-#      sanitized = (original_length != self[which].length)
+      original_length = self[which].length
       self[which] = @@entities_decoder.decode(self[which])
+      sanitized ||= (original_length != self[which].length)
     end
     sanitized
   end
