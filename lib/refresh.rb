@@ -184,6 +184,9 @@ module Refresh
     rescue SocketError, Errno::ENETUNREACH
       log "No network connection to '#{feed.name}.", :error
       feed.status = 'no network connection'
+    rescue OpenSSL::SSL::SSLError
+      log 'Certificate verify failed', :error
+      feed.status = 'Certificate verify failed'
     rescue
       log "EXCEPTION(#{$!.class.to_s}): #{$!}.", :error
     else
