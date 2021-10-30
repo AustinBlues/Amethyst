@@ -8,14 +8,6 @@ class Feed < Sequel::Model
   VERBOSE = false
 
   def before_create
-    if false
-      sanitize!(:title, VARCHAR_MAX)
-    else
-      if sanitize!(:title, VARCHAR_MAX)
-        feed.status = 'Title sanitized'
-        Refresh.log("#{feed[:title]} sanitized.", :info) if VERBOSE
-      end
-    end
     self[:score] ||= (Feed.count == 0) ? 0.0 : (Feed.avg(:score) + Feed.order(:score).first.score)/2.0
     super
   end
@@ -36,7 +28,15 @@ class Feed < Sequel::Model
     Resque.enqueue_to('Initial', Refresh, self[:id]) if Padrino.env != :test
   end
 
-  
+
+  def title=(str)
+    self[:title] = str
+    if sanitize!(:title, VARCHAR_MAX)
+      Refresh.log(feed.status = 'Feed title sanitized', :info) if VERBOSE
+    end
+  end
+
+
   def name
     (self[:title] && !self[:title].empty?) ? self[:title] : rss_url
   end

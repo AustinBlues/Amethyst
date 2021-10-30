@@ -3,7 +3,7 @@ class Post < Sequel::Model
   many_to_one :feed
   ONE_DAY = 24 * 60 * 60
 
-  VERBOSE = false
+  VERBOSE = true
 
   # state enumeration
   STATES = %w{UNREAD READ HIDDEN DOWN_VOTED}
@@ -16,26 +16,24 @@ class Post < Sequel::Model
   SCORE.default = 0
 
 
-  def before_create
-    if false
-      sanitize!(:title, VARCHAR_MAX)
-      sanitize!(:description, TEXT_MAX)
-    else
-      if sanitize!(:title, VARCHAR_MAX)
-        Refresh.log("'#{self[:title]}' title sanitized.", :info) if VERBOSE
-        feed.status = 'Post title sanitized'
-      end
-      if sanitize!(:description, TEXT_MAX)
-        Refresh.log("'#{self[:description]}' description sanitized.", :info) if VERBOSE
-        feed.status = 'Post description sanitized'
-      end
+  def title=(str)
+    self[:title] = str
+    if sanitize!(:title, VARCHAR_MAX)
+      Refresh.log(feed.status = 'Post title sanitized', :info) if VERBOSE
     end
-    super
   end
 
-  
+
   def name
     (self[:title] && !self[:title].empty?) ? self[:title] : SafeBuffer.new("<b><em>Post #{id}</em></b>")
+  end
+
+
+  def description=(str)
+    self[:description] = str
+    if sanitize!(:description, TEXT_MAX)
+      Refresh.log(feed.status = 'Post description sanitized', :info) if VERBOSE
+    end
   end
 
 
