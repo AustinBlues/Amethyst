@@ -4,7 +4,8 @@ class Feed < Sequel::Model
   one_to_many :post
   extend Amethyst::App::AmethystHelper
   include Sanitize
-  
+
+  VERBOSE = false
 
   def before_create
     if false
@@ -12,7 +13,7 @@ class Feed < Sequel::Model
     else
       if sanitize!(:title, VARCHAR_MAX)
         feed.status = 'Title sanitized'
-        Refresh.log "#{feed[:title]} sanitized.", :warning
+        Refresh.log("#{feed[:title]} sanitized.", :info) if VERBOSE
       end
     end
     self[:score] ||= (Feed.count == 0) ? 0.0 : (Feed.avg(:score) + Feed.order(:score).first.score)/2.0
