@@ -80,23 +80,23 @@ module RubyRSS
 
             Post.update_or_create(feed_id: feed.id, ident: ident) do |p|
               if p.new?
-                if post.class == RSS::Atom::Feed::Entry
-                  Refresh.log("ATOM: #{title}", :highlight)
-                else
-                  Refresh.log("NEW: #{title}", :highlight)
-                end
-#                  Refresh.log "NEW: #{title.inspect}.", :highlight
                 feed.ema_volume += ALPHA
 
                 p.title = title.empty? ? nil : title
                 p.description = description.to_s.strip
-                p.ident = ident.to_s.strip
-                p.published_at = DateTime.parse(published_at)	# TimeDate object
+#                p.ident = ident.to_s.strip
+                p.published_at = Refresh.raw2time(published_at)
                 p.time = published_at.strip	# actual String
                 if post.class != RSS::Atom::Feed::Entry
                   p.url = post.link.to_s.strip
                 else
                   p.url = post.link.href.to_s.strip
+                end
+
+                if post.class == RSS::Atom::Feed::Entry
+                  Refresh.log("ATOM: #{p.name}", :highlight)
+                else
+                  Refresh.log("NEW: #{p.name}", :highlight)
                 end
               end
               p.previous_refresh = now
