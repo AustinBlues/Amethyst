@@ -4,7 +4,7 @@ require 'nokogiri'
 
 module NokogiriRSS
   def refresh_feed(feed, rss, now)
-    if !rss.nil?
+    if rss
       feed.status = nil
       begin
         f = Nokogiri::XML.parse(rss)
@@ -42,8 +42,12 @@ module NokogiriRSS
             standard = 'ATOM'
             feed.title = f.at_css('title').content
             item = f.css('entry')
+          elsif f.namespaces['xmlns:rdf']
+            standard = 'RDF'
+            feed.title = f.at_css('title').content
+            item = f.css('item')
           else
-            feed.status = 'download or RSS parse failed'
+            feed.status = 'Unknown Feed type'
             #          Refresh.log "OOPS(#{feed.name}): #{f.inspect}.", :error
             #          Refresh.log "METHODS: #{f.methods}.", :debug
             item = []
@@ -61,11 +65,6 @@ module NokogiriRSS
                       when 'ATOM'
                         parse_atom_item(post, feed)
                       else
-                        #              description = post.content
-                        #              ident = post.id.to_s
-                        #              published_at = strip_tags(post.updated.to_s)
-                        #              Refresh.log "ID: #{ident}.", :debug
-                        #              Refresh.log "UPDATED: #{published_at}.", :debug
                         Refresh.log "METHODS: #{post.methods}", :debug
                         nil
                       end
@@ -74,6 +73,7 @@ module NokogiriRSS
 
               if attrs[:description].nil?
                 attrs[:description] = 'No description'
+                Refresh.log "MISSING DESCRIPTION: '#{attrs[:title]}.", :warning
               else
                 attrs[:description].strip!
                 attrs[:description] = truncate(attrs[:description], {length: TEXT_MAX, omission: ELLIPSIS})
@@ -89,12 +89,12 @@ module NokogiriRSS
                 post = Post.update_or_create(feed_id: feed.id, ident: attrs[:ident]) do |p|
                   if (new = p.new?)
                     feed.ema_volume += ALPHA
-                    if attrs[:description].nil?
-                      attrs[:description] = 'No description'
-                      Refresh.log "MISSING DESCRIPTION: '#{attrs[:title]}.", :warning
-                    end
+                    # This is to be sure assignment done by write accessor, not directly to self[:description]
+                    p.description = attrs.delete(:description)
+                    attrs[:published_at] = Refresh.raw2time(attrs[:time])
                     p.set(attrs)
                   end
+                  STDERR.puts("IDENT: #{p.inspect}.") if feed[:id] == 203
                   p.previous_refresh = now
                 end
                 Refresh.log("NEW: #{post.name}", :highlight) if new
@@ -122,9 +122,8 @@ module NokogiriRSS
             end
           end
         end
-
       rescue Nokogiri::XML::XPath::SyntaxError
-      # Benign as far as I can tell
+        # Benign as far as I can tell
       rescue Exception => e
         STDERR.puts e.backtrace.join('\n')
         feed.status = e.class
@@ -140,6 +139,7 @@ module NokogiriRSS
 
     !rss.nil?
   end
+
 
   def parse_rss_item(post, feed)
     attrs = {}
@@ -170,8 +170,6 @@ module NokogiriRSS
                      Refresh.log "NO DATE: '#{attrs[:title]}'.", :warning
                      Time.now.to_s
                    end
-#    attrs[:published_at] = Time.parse(attrs[:time])
-    attrs[:published_at] = Refresh.raw2time(attrs[:time])
     attrs[:url] = if !(link = post.at_css('link')).nil?
                     link.content
                   elsif !(link = post.at_css('enclosure')).nil?
@@ -189,7 +187,13 @@ module NokogiriRSS
     attrs = {}
 
     attrs[:title] = post.at_css('title')
-    attrs[:description] = (tmp = post.at_css('content')).nil? ? nil : tmp.content
+    attrs[:description] = if (tmp = post.at_css('content'))
+                            tmp.content
+                          elsif (tmp = post.at_css('summary'))
+                            tmp.content
+                          else
+                            nil
+                          end
 
     if (tmp = post.at_css('summary'))
       attrs[:synopsis] = tmp.content
@@ -220,17 +224,15 @@ module NokogiriRSS
     rescue Nokogiri::XML::XPath::SyntaxError
       attrs[:time] = Time.now.to_s
     end
-#    attrs[:published_at] = Time.parse(attrs[:time])
-    attrs[:published_at] = Refresh.raw2time(attrs[:time])
     attrs[:url] = if !(link = post.at_css('link')).nil?
-                   link['href']
-                 elsif !(link = post.at_css('enclosure')).nil?
-                   link['url']
-                 else
-                   p.status = 'missing URL'
-                   Refresh.log "MISSING URL: '#{p.name}'.", :error
-                   post.feed.rss_url
-                 end
+                    link['href']
+                  elsif !(link = post.at_css('enclosure')).nil?
+                    link['url']
+                  else
+                    p.status = 'missing URL'
+                    Refresh.log "MISSING URL: '#{p.name}'.", :error
+                    post.feed.rss_url
+                  end
     attrs
   end
 end
