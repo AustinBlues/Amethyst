@@ -3,7 +3,7 @@ class Post < Sequel::Model
   many_to_one :feed
   ONE_DAY = 24 * 60 * 60
 
-  VERBOSE = true
+  VERBOSE = false
 
   # state enumeration
   STATES = %w{UNREAD READ HIDDEN DOWN_VOTED}
