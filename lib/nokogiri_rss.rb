@@ -17,6 +17,7 @@ module NokogiriRSS
           else
             Refresh.log "ENCODING: #{f.encoding.inspect}.", :error
           end
+          standard = nil	# force scope
           if f.at_css('rss')
             standard = f.at_css('rss').name
             version = f.at_css('rss')['version']
@@ -60,13 +61,13 @@ module NokogiriRSS
           else
             item.each do |post|
               attrs = case standard
-                      when 'rss'
+                      when 'rss', 'RDF'
                         parse_rss_item(post, feed)
                       when 'ATOM'
                         parse_atom_item(post, feed)
                       else
                         Refresh.log "METHODS: #{post.methods}", :debug
-                        nil
+                        {}
                       end
               attrs[:title] = truncate(post.at_css('title').content, {length: VARCHAR_MAX, omission: ELLIPSIS})
               attrs[:title].strip!
@@ -79,10 +80,8 @@ module NokogiriRSS
                 attrs[:description] = truncate(attrs[:description], {length: TEXT_MAX, omission: ELLIPSIS})
               end
 
-              if attrs[:title].empty?
-                attrs[:title] = truncate(attrs[:description], {length: VARCHAR_MAX, omission: ELLIPSIS})
-              end
-
+              attrs[:title] = attrs[:description] if attrs[:title].empty?
+ 
               retries = 0
               begin
                 new = nil	# force scope
@@ -94,7 +93,6 @@ module NokogiriRSS
                     attrs[:published_at] = Refresh.raw2time(attrs[:time])
                     p.set(attrs)
                   end
-                  STDERR.puts("IDENT: #{p.inspect}.") if feed[:id] == 203
                   p.previous_refresh = now
                 end
                 Refresh.log("NEW: #{post.name}", :highlight) if new
@@ -164,10 +162,9 @@ module NokogiriRSS
                    elsif (tmp = post.at_css('date'))
                      tmp.content
                    elsif (tmp = post.at_css('dc|date'))
-                     Refresh.log "INFO: dc:date used", :warning
                      tmp.content
                    else
-                     Refresh.log "NO DATE: '#{attrs[:title]}'.", :warning
+                     Refresh.log "NO TIME: '#{attrs[:title]}', setting to current time.", :warning
                      Time.now.to_s
                    end
     attrs[:url] = if !(link = post.at_css('link')).nil?
