@@ -15,16 +15,20 @@ module Amethyst
       end
 
       def short_datetime(time)
-        today = Date.today
-        fmt = if time.to_date == today
-                 '%-l:%M%P'
-              elsif time.year == today.year
-                '%-m/%-e'
-              else
-                # should be extended for full century?
-                '%-m/%-e/%y'
-              end
-        time.strftime(fmt)
+        if time.nil?
+          'nil'
+        else
+          today = Date.today
+          fmt = if time.to_date == today
+                  '%-l:%M%P'
+                elsif time.year == today.year
+                  '%-m/%-e'
+                else
+                  # should be extended for full century?
+                  '%-m/%-e/%y'
+                end
+          time.strftime(fmt)
+        end
       end
     end
 
