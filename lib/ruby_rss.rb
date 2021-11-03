@@ -59,8 +59,12 @@ module RubyRSS
             case post.class.to_s
             when 'RSS::Atom::Feed::Entry'
               description = post.content
-              ident = post.id.to_s
-              published_at = strip_tags(post.updated.to_s)
+              ident = (post.respond_to?(:guid) ? post.guid : post.link).to_s
+              time = strip_tags(post.updated.to_s)
+            when 'RSS::Rss::Channel::Item'
+              description = post.description
+              ident = post.link
+              time = post.pubDate
             else
               description = post.description
               ident = (post.respond_to?(:guid) ? post.guid : post.link).to_s
@@ -69,35 +73,32 @@ module RubyRSS
                 Refresh.log "DATES: pubDate: #{post.pubDate}, date: #{post.date},  dc_date: #{post.dc_date}.", :warning
               end
               if post.class.to_s == 'RSS::RDF::Item'
-                published_at = first_nonblank(post.date, post.dc_date, now)
+                time = first_nonblank(post.date, post.dc_date, now)
               else
-                published_at = first_nonblank(post.pubDate, post.date, post.dc_date, now)
+                time = first_nonblank(post.pubDate, post.date, post.dc_date, now)
               end
             end
             ident.strip!
-
+            description.strip!
+            time.strip! if time.is_a?(String)
+            Refresh.log("'#{title}' missing time, setting to current time.", :error) if time.nil?
             ident = title if ident.empty?
 
             Post.update_or_create(feed_id: feed.id, ident: ident) do |p|
               if p.new?
                 feed.ema_volume += ALPHA
 
-                p.title = title.empty? ? nil : title
-                p.description = description.to_s.strip
-#                p.ident = ident.to_s.strip
-                p.published_at = Refresh.raw2time(published_at)
-                p.time = published_at.strip	# actual String
+                p.title = title
+                p.description = description
+                p.published_at = !time.is_a?(String) ? time : Refresh.raw2time(time.to_s)
+                p.time = time.to_s
                 if post.class != RSS::Atom::Feed::Entry
                   p.url = post.link.to_s.strip
                 else
                   p.url = post.link.href.to_s.strip
                 end
 
-                if post.class == RSS::Atom::Feed::Entry
-                  Refresh.log("ATOM: #{p.name}", :highlight)
-                else
-                  Refresh.log("NEW: #{p.name}", :highlight)
-                end
+                Refresh.log("NEW: #{p.name}", :highlight)
               end
               p.previous_refresh = now
             end
