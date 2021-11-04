@@ -81,7 +81,6 @@ module RubyRSS
             ident.strip!
             description.strip!
             time.strip! if time.is_a?(String)
-            Refresh.log("'#{title}' missing time, setting to current time.", :error) if time.nil?
             ident = title if ident.empty?
 
             Post.update_or_create(feed_id: feed.id, ident: ident) do |p|
@@ -91,6 +90,10 @@ module RubyRSS
                 p.title = title
                 p.description = description
                 p.published_at = !time.is_a?(String) ? time : Refresh.raw2time(time.to_s)
+                if time.nil?
+                  time = Time.now
+                  Refresh.log("'#{title}' missing time, setting to current time.", :warning)
+                end
                 p.time = time.to_s
                 if post.class != RSS::Atom::Feed::Entry
                   p.url = post.link.to_s.strip
