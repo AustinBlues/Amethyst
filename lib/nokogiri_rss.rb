@@ -148,10 +148,10 @@ module NokogiriRSS
                           end
     
     # NOTE: ident uses .to_s instead of .content for compatibility with RubyRSS module
-    attrs[:ident] = if (tmp = post.at_css('guid'))
-                      tmp.to_s
-                    elsif (tmp = post.at_css('link'))
+    attrs[:ident] = if (tmp = post.at_css('link'))
                       strip_tags(tmp.content)
+                    elsif (tmp = post.at_css('guid'))
+                      tmp.to_s
                     else
                       feed.status = 'missing ident'
                       Refresh.log "NO IDENT: '#{attrs[:title]}'.", :warning
