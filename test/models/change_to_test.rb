@@ -12,8 +12,8 @@ describe "change_to instance method" do
   it 'change_to() duplicates actions of click!, hide!, etc' do
     feed_old_way = Feed.create(title: 'Feed old way', clicks: 0, hides: 0, down_votes: 0, rss_url: 'http://127.0.0.1/old')
     feed_new_way = Feed.create(title: 'Feed new way', clicks: 0, hides: 0, down_votes: 0, rss_url: 'http://127.0.0.1/new')
-    post_old_way = Post.create(title: 'Post old way', feed_id: feed_old_way.id, url: 'http://127.0.0.1/post/old')
-    post_new_way = Post.create(title: 'Post old way', feed_id: feed_old_way.id, url: 'http://127.0.0.1/post/new')
+    post_old_way = Post.create(feed_id: feed_old_way.id, title: 'Post old way', url: 'http://127.0.0.1/post/old')
+    post_new_way = Post.create(feed_id: feed_old_way.id, title: 'Post new way', url: 'http://127.0.0.1/post/new')
     for i in 0..15 do
       pre_state = TRANSITIONS[i]
       post_old_way[:state] = post_new_way[:state] = pre_state
