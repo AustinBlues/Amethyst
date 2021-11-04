@@ -47,21 +47,20 @@ module RubyRSS
             Refresh.log "MISSING TITLE: '#{feed.name}'.", :warning
           end
 
-          unless (f.items[0].class == RSS::Rss::Channel::Item) || (f.items[0].class == RSS::Atom::Feed::Entry) ||
-                 (f.items[0].class == RSS::RDF::Item)
-            Refresh.log "CLASS: #{f.items[0].class}.", :info
+          unless (f.class == RSS::Rss) || (f.class == RSS::Atom::Feed) || (f.class == RSS::RDF)
+            Refresh.log "CLASS: #{f.class}.", :info
           end
 
           f.items.each do |post|
             title = strip_tags(post.title.to_s)
             title.strip!
-
-            case post.class.to_s
-            when 'RSS::Atom::Feed::Entry'
-              description = post.content
-              ident = (post.respond_to?(:guid) ? post.guid : post.link).to_s
+            case f.class.to_s
+            when 'RSS::Atom::Feed'
+              description = post.content.content
+#              ident = post.link.href
+              ident = post.id.to_s
               time = strip_tags(post.updated.to_s)
-            when 'RSS::Rss::Channel::Item'
+            when 'RSS::Rss'
               description = post.description
               ident = post.link
               time = post.pubDate
