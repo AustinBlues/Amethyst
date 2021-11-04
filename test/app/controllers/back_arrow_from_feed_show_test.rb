@@ -7,7 +7,7 @@ describe "/feed" do
     now = Time.now - PAGE_SIZE
     @feed = Feed.create(title: 'Feed 1', rss_url: 'http://127.0.0.1', previous_refresh: now, next_refresh: now)
     @posts = (PAGE_SIZE+5).times.map do |i|
-      Post.create(title: "Post #{i+1}", feed_id: @feed[:id], ident: i, url: "http://127.0.0.1/#{i}",
+      Post.create(feed_id: @feed[:id], ident: i, url: "http://127.0.0.1/#{i}", title: "Post #{i+1}",
                   description: "Post #{i+1} content.", published_at: now+i)
     end
     @origin = "/feed/#{@feed[:id]}?origin=#{CGI.escape('/feed')}"
