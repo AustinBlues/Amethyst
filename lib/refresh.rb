@@ -9,7 +9,7 @@ require 'logger'
 
 
 module Refresh
-  NOKOGIRI = true
+  NOKOGIRI = false
   CYCLE_TIME = 60 * 60	# time to refresh all Feeds: 1 hour
   INTERVAL_TIME = 5 * 60	# how often to refresh a slice: 5 minutes
   INTERVALS = CYCLE_TIME/INTERVAL_TIME
@@ -50,7 +50,7 @@ module Refresh
             when /^\d{4}-?\d{2}-?\d{2}T\d{2}:?\d{2}:?\d{2}(\.\d{2,3})?(Z|[+-]\d{2}:?\d{2})$/
               # this case ISO8601 can also be handled by Time.parse
               time = Time.iso8601(raw)
-              STDERR.puts("ISO8601: '#{raw}' => '#{time}' (#{time.zone})") unless time.zone == 'UTC'
+#              STDERR.puts("ISO8601: '#{raw}' => '#{time}' (#{time.zone})")
               time
             when /^[a-zA-Z]+, \d+ [a-zA-Z]+ \d+ \d+:\d+:\d+ (GMT|UTC)$/
               time = Time.httpdate(raw)
