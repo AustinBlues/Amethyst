@@ -3,7 +3,7 @@
       <hr style="height: 0; margin: 0; border: 1px solid; color: #DDD">
     <% end %>
 
-    <div style="font-size: x-large; text-align: center">
+    <div class="paginate">
       <%= pagination.first_page? ? LAQUO : link_to(LAQUO, url_for(@controller, @action, @pagination.merge(page: 1)),
       	     title: 'first page') %>
       <%= pagination.first_page? ? LSAQUO : link_to(LSAQUO, url_for(@controller, @action,
