@@ -1,0 +1,46 @@
+require File.expand_path(File.dirname(__FILE__) + '/../../test_config.rb')
+require 'nokogiri'
+
+
+describe '/feed/show links' do
+  EXTRA = 5
+  
+  before do
+    # Create Feed and Posts in database
+    now = Time.now - PAGE_SIZE
+    @feed = Feed.create(title: 'Feed 1', rss_url: 'http://127.0.0.1', previous_refresh: now, next_refresh: now)
+    @posts = (PAGE_SIZE+EXTRA).times.map do |i|
+      Post.create(feed_id: @feed[:id], ident: i, url: "http://127.0.0.1/#{i}", title: "Post #{i}",
+                  description: "Post #{i} content.", published_at: now+i)
+    end
+
+    @origin = "/feed/#{@feed[:id]}?page=2&origin=#{CGI.escape('/feed')}"
+  end
+
+  after do
+    Feed.all{|f| f.destroy}	# show destroy all Posts too
+#    Post.truncate
+  end
+
+
+  describe 'when displaying Feeds show' do
+    it 'should return Feed show, page 2' do
+      get '/feed'
+      p = Nokogiri::HTML.parse(last_response.body)
+      link = p.at_css('tbody tr td a').attr('href')
+      STDERR.puts "LINK: #{link.inspect}."
+
+      get link
+      p = Nokogiri::HTML.parse(last_response.body)
+      link = p.css('.pagination a')
+      STDERR.puts "LINK: #{link[-1].attr('href').inspect}."
+      assert_equal 2, link.size
+
+      get link[-1].attr('href')
+
+      p = Nokogiri::HTML.parse(last_response.body)
+      l = p.at_css('div.card-header a.btn')
+      assert_match('/feed', l.attr('href'))
+    end
+  end
+end
