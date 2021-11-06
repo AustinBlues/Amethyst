@@ -30,17 +30,17 @@ describe '/feed/show links' do
       link = p.at_css('tbody tr td a').attr('href')
       STDERR.puts "LINK: #{link.inspect}."
 
-      get link
+      get link	# Feed#show of first (only) listed Feed
       p = Nokogiri::HTML.parse(last_response.body)
-      link = p.css('.pagination a')
-      STDERR.puts "LINK: #{link[-1].attr('href').inspect}."
+      link = p.css('.paginate a')
       assert_equal 2, link.size
+      STDERR.puts "LINK: #{link[-1].attr('href').inspect}."
 
-      get link[-1].attr('href')
+      get link[-1].attr('href')	# get 2nd page of Posts
 
       p = Nokogiri::HTML.parse(last_response.body)
-      l = p.at_css('div.card-header a.btn')
-      assert_match('/feed', l.attr('href'))
+      l = p.at_css('div.card-header a.btn')	# link for BACK_ARROW
+      assert_equal('/feed', l.attr('href'))
     end
   end
 end
