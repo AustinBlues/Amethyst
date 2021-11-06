@@ -41,7 +41,6 @@ Amethyst::App.controllers :feed do
       if page > @posts.page_count
         redirect url_for(:feed, :show, id: @feed[:id], page: @posts.page_count)
       else
-STDERR.puts "FULLPATH: #{request.fullpath}; ORIGIN: #{@origin}."
         @context = @feed.name	# allow URL for new Feeds that haven't refreshed or have no title tag
 
         @datetime_only = true
