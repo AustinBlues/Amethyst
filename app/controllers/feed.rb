@@ -8,7 +8,6 @@ Amethyst::App.controllers :feed do
               else
                 params.delete(:origin)
               end
-    puts("Feed ORIGIN: #{@origin}.") if Padrino.env != :test
   end
 
 

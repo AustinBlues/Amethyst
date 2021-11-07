@@ -8,7 +8,6 @@ Amethyst::App.controllers :post do
               else
                 params.delete(:origin)
               end
-    puts("ORIGIN: #{@origin}.") if Padrino.env != :test
   end
 
   
@@ -70,7 +69,7 @@ Amethyst::App.controllers :post do
                     'to Search'
                   else
                     flash[:error] = 'Unknown origin'
-                    STDERR.puts "UNKNOWN ORIGIN: #{params[:origin]}."
+                    Refresh.log "UNKNOWN ORIGIN: #{params[:origin]}.", :error
                     'UNKNOWN'
                   end
     @datetime_only = false
@@ -110,7 +109,6 @@ Amethyst::App.controllers :post do
 
     if !params[:search].nil?
       params[:origin] = @origin
-      puts "HIDE from SEARCH ORIGIN: #{@origin}."
       redirect url_for(:post, :search, params)
     elsif @origin =~ %r{^/post}
       redirect url_for(@origin)
@@ -131,7 +129,6 @@ Amethyst::App.controllers :post do
 
     if !params[:search].nil?
       params[:origin] = @origin
-      puts "HIDE from SEARCH ORIGIN: #{@origin}."
       redirect url_for(:post, :search, params)
     elsif @origin =~ %r{^/post}
       redirect url_for(@origin)
