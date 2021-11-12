@@ -20,9 +20,11 @@ Amethyst::App.controllers :post do
         # KLUDGE this is more my use culling The Hill feeds
         now = Time.now
         midnight = Time.new(now.year, now.month, now.day)
-#        tmp = Post.unread.where{published_at < midnight}
-        tmp = Post.unread.where(Sequel.lit('published_at < ?', midnight))
-        @posts = Post.where(title: tmp.map{|p| p[:title]}).order(:title).paginate(@page, PAGE_SIZE)
+        titles = Post.unread.where(Sequel.lit('published_at < ?', midnight)).map{|p| p[:title]}
+#        @posts = Post.where(title: tmp.map{|p| p[:title]}).order(:title).paginate(@page, PAGE_SIZE)
+        tmp = Post.select(Sequel[:posts][:id], Sequel[:posts][:title], :description, :feed_id, :published_at, :state).
+                where(Sequel[:posts][:title] => titles)
+        @posts = tmp.join(:feeds, id: :feed_id).order(Sequel[:posts][:title], Sequel.desc(:score)).paginate(@page, PAGE_SIZE)
       else
         order = case params[:order]
                 when 'title'
