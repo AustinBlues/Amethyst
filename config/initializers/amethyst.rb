@@ -25,9 +25,14 @@ RSAQUO = SafeBuffer.new('&rsaquo;')
 RAQUO = SafeBuffer.new('&raquo;')
 SEARCH_ICON = "\u{1F50E}"
 #SWAP_ICON = '⇅'
-SWAP_ICON = '↕'
+#SWAP_ICON = '↕'
 #SWAP_ICON = "\u{1F5D8}"
+SWAP_ICON = SafeBuffer.new('<img src="cycle.png" alt="Cycle thru indexes" style="width:32px;height:32px;">')
 TIMES = SafeBuffer.new('&times;')
+#TO_FEED_ICON = "\u{25B2}"	# up pointing triangle
+TO_FEED_ICON = SWAP_ICON
+#TO_POST_ICON = "\u{25BC}"	# down pointing triangle
+TO_POST_ICON = SWAP_ICON
 #UNDO_ICON = "\u{21A9}"	# left hook arrow
 UNDO_ICON = '↩'
 
