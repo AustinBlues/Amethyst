@@ -218,7 +218,7 @@ module Refresh
       # Update all Feeds in the slice
       feeds = Feed.slice(slice_size, now + INTERVAL_TIME/2)
       if (fetch_cnt = feeds.count) <= 0
-        log "Too early to fetch any feeds.", :warning
+        log "Too early to fetch feeds at #{Time.now.strftime('%l:%M%P').strip}.", :info
       else
         feeds.each do |f|
           refreshed_at = f.previous_refresh
