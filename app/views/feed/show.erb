@@ -1,16 +1,19 @@
 <div class="card">
   <div class="card-header bg-info">
-    <%= link_to BACK_ICON, @origin, title: 'to Feeds', class: 'btn btn-link navigation' %>
+    <%= link_to BACK_ICON, @origin, title: 'to Feeds', class: 'navigation',
+    	  style: 'font-size: xxx-large; font-weight: bold' %>
 
-    <button type="button" class="btn btn-default btn-lg"  data-toggle="modal" data-target="#deleteModal"
-            aria-label="Delete" style="float:right">
-      &times;
-    </button>
+    <div class="actions">
+      <button type="button" class="btn btn-default btn-lg action"  data-toggle="modal" data-target="#editModal"
+            aria-label="Edit">
+        <%= EDIT_ICON %>
+      </button>
 
-    <button type="button" class="btn btn-default btn-lg"  data-toggle="modal" data-target="#editModal"
-        aria-label="Edit" style="float:right">
-      <%= EDIT_ICON %>
-    </button>
+      <button type="button" class="btn btn-default btn-lg action"  data-toggle="modal" data-target="#deleteModal"
+            aria-label="Delete">
+        &times;
+      </button>
+    </div>
     
     <h2 class="card-title"><%= @context %></h2>
 

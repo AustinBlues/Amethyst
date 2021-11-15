@@ -7,9 +7,8 @@
   <div class="card-header bg-info">
     <%= link_to BACK_ICON, @origin, title: @back_title, class: 'btn btn-link navigation' %>
     
-    <div style="float: right">
-      <%= link_to UNDO_ICON, unclick_url, method: :put, title: 'unclick', class: 'btn btn-link action',
-            style: 'font-size: x-large' %>
+    <div class="actions">
+      <%= link_to UNDO_ICON, unclick_url, method: :put, title: 'unclick', class: 'btn btn-link action' %>
       <%= link_to DELETE_ICON, hide_url, method: :put, title: 'hide', class: 'btn btn-link action' %>
       <%= link_to DOWN_VOTE_ICON, down_url, method: :put, title: 'down vote', class: 'btn btn-link action' %>
     </div>
