@@ -9,7 +9,8 @@ Download the code:
   Note: the directory name is used to namespace the database and the Redis
   data.  You may wish to change the directory name to avoid clashes with other
   applications using the database server and the Redis in-memory key–value
-  database.
+  database.  You will need to adjust the direction below if you use a
+  different directory name.
 
 Change to the Amethyst directory:
   cd Amethyst
