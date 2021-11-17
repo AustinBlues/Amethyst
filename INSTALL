@@ -20,9 +20,9 @@ Create the database(s) and and give user necessary privilege as MariaDB or MySQL
   create database Amethyst_test;
   create database Amethyst_production;
   create database Amethyst_development;
-  grant all privileges on AmethystBeta2_test.* TO 'amethyst'@'localhost' identified by 'mypwd';
-  grant all privileges on AmethystBeta2_development.* TO 'amethyst'@'localhost' identified by 'mypwd';
-  grant all privileges on AmethystBeta2_production.* TO 'amethyst'@'localhost' identified by 'mypwd';
+  grant all privileges on Amethyst_test.* TO 'amethyst'@'localhost' identified by 'mypwd';
+  grant all privileges on Amethyst_development.* TO 'amethyst'@'localhost' identified by 'mypwd';
+  grant all privileges on Amethyst_production.* TO 'amethyst'@'localhost' identified by 'mypwd';
   quit;
 
 Install Ruby (2.4.0 preferred) and Redis.  They are included in most Linux
