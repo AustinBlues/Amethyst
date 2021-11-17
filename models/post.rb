@@ -3,10 +3,13 @@ require File.expand_path(File.dirname(__FILE__) + '/../lib/nokogiri_rss.rb')
 class Post < Sequel::Model
   many_to_one :feed
   many_to_many :word, join_table: :occurrences
+  include Sanitize
   extend Amethyst::App::AmethystHelper
 
   ONE_DAY = 24 * 60 * 60
   WORDS_LIMIT = 300	# maximum words in word cloud
+
+  VERBOSE = false
 
   # state enumeration
   UNREAD = 0
@@ -80,10 +83,27 @@ class Post < Sequel::Model
     Word.join(:occurrences, post_id: self[:id], word_id: :id).where(flags: 0).where{frequency > limit}.all
   end
 
+
+  def title=(str)
+    self[:title] = str
+    if sanitize!(:title, VARCHAR_MAX)
+      Refresh.log(feed.status = 'Post title sanitized', :info) if VERBOSE
+    end
+  end
+
   
   def name
     (!self[:title].nil? && !self[:title].empty?) ? self[:title] : SafeBuffer.new("<b><em>Post #{self[:id].inspect}</em></b>")
   end
+
+
+  def description=(str)
+    self[:description] = str
+    if sanitize!(:description, TEXT_MAX)
+      Refresh.log(feed.status = 'Post description sanitized', :info) if VERBOSE
+    end
+  end
+
 
   def clicked?
     self[:state] == READ

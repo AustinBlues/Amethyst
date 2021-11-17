@@ -3,11 +3,21 @@ require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/amethyst_help
 class Feed < Sequel::Model
   one_to_many :post
   extend Amethyst::App::AmethystHelper
+  include Sanitize
 
-  
+  VERBOSE = false
+
   def before_create
-    # Set score so initially in the middle of the Feed.index
     self[:score] ||= (Feed.count == 0) ? 0.0 : (Feed.avg(:score) + Feed.order(:score).first.score)/2.0
+    super
+  end
+
+
+  def before_save
+    if changed_columns.include?(:rss_url)
+      # Initial queue is highest priority (higher than Refresh or daily).
+      Resque.enqueue_to('Initial', Refresh, self[:id]) if Padrino.env != :test
+    end
     super
   end
 
@@ -18,9 +28,17 @@ class Feed < Sequel::Model
     Resque.enqueue_to('Initial', Refresh, self[:id]) if Padrino.env != :test
   end
 
-  
+
+  def title=(str)
+    self[:title] = str
+    if sanitize!(:title, VARCHAR_MAX)
+      Refresh.log(feed.status = 'Feed title sanitized', :info) if VERBOSE
+    end
+  end
+
+
   def name
-    (title.nil? || title.empty?) ? rss_url : title
+    (self[:title] && !self[:title].empty?) ? self[:title] : rss_url
   end
 
   
