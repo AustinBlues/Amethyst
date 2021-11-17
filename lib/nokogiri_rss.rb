@@ -85,6 +85,8 @@ module NokogiriRSS
                       attrs[:description] = 'No description'
                       Refresh.log "MISSING DESCRIPTION: '#{attrs[:title]}.", :warning
                     end
+                    p.description = attrs.delete(:description)
+                    attrs[:published_at] = Refresh.raw2time(attrs[:time])
                     p.set(attrs)
                   end
                   p.previous_refresh = now
@@ -162,8 +164,6 @@ module NokogiriRSS
                      Refresh.log "NO DATE: '#{attrs[:title]}'.", :warning
                      Time.now.to_s
                    end
-#    attrs[:published_at] = Time.parse(attrs[:time])
-    attrs[:published_at] = Refresh.raw2time(attrs[:time])
     attrs[:url] = if !(link = post.at_css('link')).nil?
                     link.content
                   elsif !(link = post.at_css('enclosure')).nil?
