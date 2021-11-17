@@ -1,0 +1,863 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://purl.org/rss/1.0/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:sy="http://purl.org/rss/modules/syndication/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dwsyn="http://rss.dw.com/syndication/dwsyn/">
+ <channel rdf:about="https://rss.dw.com/syndication/feeds/rss-en-all.1573.rdf">
+  <description>Deutsche Welle</description>
+  <link>http://www.dw.com/english/?maca=en-rss-en-all-1573-rdf</link>
+  <title>Deutsche Welle</title>
+  <sy:updatePeriod>hourly</sy:updatePeriod>
+  <sy:updateFequency>4</sy:updateFequency>
+  <sy:updateBase>2002-05-01T00:00:00Z</sy:updateBase>
+  <dc:date>2021-11-04T17:46:41Z</dc:date>
+  <image rdf:resource="https://rss.dw.com/images/DW-L-RGB_whitebg.png"/>
+  <items>
+   <rdf:Seq>
+    <rdf:li rdf:resource="https://www.dw.com/en/opinion-ethiopia-at-risk-of-balkanization/a-59723284?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/germany-tina-turner-sues-over-doppelgänger-tribute-show-poster/a-59722119?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/kashmir-migrant-worker-killings-spur-exodus-halt-industries/a-59721940?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/covid-how-india-is-vaccinating-isolated-tribes-in-insurgency-hit-areas/a-59722431?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/china-authorities-delete-tennis-star-s-metoo-post-about-ex-top-official/a-59720890?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/us-biden-administration-sets-january-vaccine-deadline-for-big-companies/a-59720373?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/australia-police-charge-man-in-cleo-smith-abduction/a-59719154?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/cop26-report-covid-stimulus-packages-fail-to-address-climate-change-adaptation/a-59716161?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/norway-s-largest-pension-fund-divests-from-14-arms-firms/a-59718204?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/covid-uk-greenlights-merck-antiviral-pill/a-59718291?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/why-china-s-property-crash-isn-t-a-new-lehman-moment/a-59716702?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/cop26-saudi-arabia-s-climate-strategy-greenwashing-or-genuine-transformation/a-59704908?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/deja-vu-how-the-us-eu-deal-with-extremists-in-bosnia/a-59700541?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/france-and-uk-s-brexit-row-over-fish-drags-on-what-s-the-catch/a-59713683?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/germany-mother-given-life-sentence-for-killing-5-of-her-children/a-59715987?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/covid-germany-cases-hit-record-daily-high/a-59715864?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/coronavirus-digest-europe-back-at-epicenter-says-who/a-59716037?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/israel-budget-passes-ending-years-of-political-uncertainty/a-59715689?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/uk-unveils-mahatma-gandhi-commemorative-collectors-coin/a-59715600?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/opinion-10-years-of-broken-promises-after-nsu-unmasking/a-59713099?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/global-co2-emissions-rebound-to-near-pre-pandemic-levels-study/a-59715004?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/france-s-macron-pays-tribute-bids-adieu-to-merkel/a-59713400?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/un-renews-eu-bosnia-military-mission-as-separatism-fears-grow/a-59714966?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/champions-league-borussia-dortmund-undone-by-mats-hummels-red-card/a-59711264?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/held-british-trawler-sails-free-from-french-port/a-59713833?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/nsu-what-you-need-to-know-about-germany-s-neo-nazi-terror-group/a-39777036?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/damon-galgut-wins-2021-booker-prize-for-fiction/a-59707014?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/oury-jalloh-death-german-prosecutors-accused-of-obstructing-justice/a-59711978?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/la-palma-volcano-heavy-ash-forces-residents-inside/a-59707627?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/afghan-refugees-in-uzbekistan-live-in-uncertainty-facing-deportation/a-59710250?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/opinion-modern-pentathlon-moving-to-get-with-the-times/a-59708867?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/the-germans-and-their-kiosks-a-love-affair/a-55164596?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/cop-26-one-of-the-whitest-climate-conferences-in-years-say-environmentalists/a-59708405?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/james-webb-our-best-ever-space-telescope-is-set-for-launch/a-59649187?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/germany-s-16-states-lower-saxony/a-45215372?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/champions-league-julian-nagelsmann-returns-as-bayern-munich-qualify-for-round-of-16/a-59699017?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/zero-deforestation-commitment-at-cop26-empty-promises-or-a-workable-plan/a-59700862?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/adele-shares-tracks-from-anticipated-30-album/a-59514710?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/dw-festival-concert-rheingau-music-festival/a-59692912?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/saving-precious-seagrass-meadows-in-the-maldives/a-59682874?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/first-chips-now-magnesium-carmakers-grapple-with-the-next-supply-crisis/a-59688374?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/cop26-world-leaders-back-deal-to-end-deforestation-by-2030/a-59689957?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/germany-to-return-mayan-ancient-artifacts-to-guatemala-and-mexico/a-59689334?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/dogan-akhanli-writing-is-my-weapon/a-50194630?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/dreyfus-drei-film-uncovers-a-lost-german-jewish-past/a-59687506?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/bundesliga-high-flying-freiburg-won-t-be-shedding-their-small-club-status/a-59685035?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/amsterdam-cannabis-cafes-fear-foreign-tourist-ban-amid-covid-recovery/a-59638155?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/web-summit-returns-to-lisbon-after-pandemic-forced-it-online-in-2020/a-59679562?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/why-florian-kohfeldt-is-an-astute-gamble-for-wolfsburg/a-59674656?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/women-s-german-cup-bayern-munich-exact-revenge-to-book-quarterfinals-spot/a-59672386?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/how-the-german-turkish-labor-agreement-influenced-the-arts/a-59665489?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/andrej-kramaric-an-underrated-big-fish-in-one-of-germany-s-smallest-ponds/a-59669582?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/a-german-in-space-last-words-before-weightlessness/a-59662851?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/moldova-eyes-chinese-investment-wary-of-montenegro-route/a-59657451?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/the-coronavirus-pandemic-is-far-from-over/a-53954594?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/super-league-clubs-tackle-monopolistic-uefa-on-eu-law/a-59645489?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/why-even-climate-change-needs-a-good-narrative/a-59451132?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/cop26-has-demonizing-big-oil-backfired/a-59642898?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/facebook-rebrands-as-meta-in-new-focus-on-metaverse/a-59650386?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/rubber-gloves-rub-off-on-fast-food-study-finds/a-59653170?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/bundesliga-why-are-frankfurt-wolfsburg-and-rb-leipzig-struggling/a-59623993?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/erectile-dysfunction-sick-heart-sick-penis/a-59632075?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/living-and-working-on-georgia-s-largest-garbage-dump/a-59570389?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/more-women-have-joined-germany-s-executive-boards-but-not-many/a-59628774?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/un-says-national-climate-targets-fall-far-short/a-59628267?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/who-are-germany-s-extreme-right-group-the-third-path/a-59620861?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/nuclear-power-are-energy-price-hikes-prompting-a-german-rethink/a-59594913?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/criminal-gangs-smuggle-sodas-into-portugal-to-avoid-sugar-tax/a-59549572?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/luxembourg-legalizes-growing-of-cannabis-in-eu-first/a-59588513?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/germany-s-privatization-of-state-assets-a-role-model-for-india/a-59587563?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/do-france-s-plans-for-small-nuclear-reactors-have-hidden-agenda/a-59585614?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/what-s-the-big-deal-about-minimum-wage-in-germany/a-59559933?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/afghans-evacuated-to-germany-face-legal-uncertainty/a-59549917?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/germany-s-bundesbank-chief-jens-weidmann-quits-years-before-the-end-of-his-term/a-59566289?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/climate-crisis-why-do-we-need-cop-anyway/a-59515982?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/how-spain-seeks-to-prop-up-its-young-and-desperate-generation/a-59547349?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/what-exactly-is-the-metaverse/a-59553740?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/breast-cancer-in-africa-a-growing-dilemma/a-59538655?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/what-s-at-stake-at-cop26/a-59509043?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/pacemaker-for-the-brain-relieves-woman-s-severe-depression/a-59472106?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/degrees-of-danger-what-will-the-world-look-like-if-we-miss-our-climate-targets/a-59477442?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/how-holocaust-perpetrators-are-prosecuted-in-germany/a-59442228?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/conflict-being-driven-by-ecological-damage-report-finds/a-59426714?maca=en-rss-en-all-1573-rdf"/>
+    <rdf:li rdf:resource="https://www.dw.com/en/building-what-s-the-big-deal-for-the-environment/a-57850391?maca=en-rss-en-all-1573-rdf"/>
+   </rdf:Seq>
+  </items>
+ </channel>
+ <image rdf:about="https://rss.dw.com/images/DW-L-RGB_whitebg.png">
+  <url>https://rss.dw.com/images/DW-L-RGB_whitebg.png</url>
+  <link>http://www.dw.com/english/?maca=en-rss-en-all-1573-rdf</link>
+  <title>DW.COM</title>
+  <description>News, Analysis and Service from Germany and Europe - in 30 Languages</description>
+ </image>
+ <item rdf:about="https://www.dw.com/en/opinion-ethiopia-at-risk-of-balkanization/a-59723284?maca=en-rss-en-all-1573-rdf">
+  <title>Opinion: Ethiopia at risk of Balkanization</title>
+  <link>https://www.dw.com/en/opinion-ethiopia-at-risk-of-balkanization/a-59723284?maca=en-rss-en-all-1573-rdf</link>
+  <description>Two years after Ethiopian Prime Minister Abiy Ahmed was awarded the Nobel Peace Prize, his country is engulfed in a war with the potential to destabilize the whole region for decades to come, says DW&apos;s Ludger Schadomsky.</description>
+  <dc:date>2021-11-04T17:09:00Z</dc:date>
+  <dc:subject>Opinion</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59723284</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/germany-tina-turner-sues-over-doppelgänger-tribute-show-poster/a-59722119?maca=en-rss-en-all-1573-rdf">
+  <title>Germany: Tina Turner sues over doppelgänger tribute show poster</title>
+  <link>https://www.dw.com/en/germany-tina-turner-sues-over-doppelgänger-tribute-show-poster/a-59722119?maca=en-rss-en-all-1573-rdf</link>
+  <description>A German court has heard a case American singer Tina Turner brought against a look-alike&apos;s tribute show. The presiding judge said he was inclined to side with a lower court&apos;s ruling upholding free expression.</description>
+  <dc:date>2021-11-04T16:46:00Z</dc:date>
+  <dc:subject>News</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59722119</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/kashmir-migrant-worker-killings-spur-exodus-halt-industries/a-59721940?maca=en-rss-en-all-1573-rdf">
+  <title>Kashmir: Migrant worker killings spur exodus, halt industries</title>
+  <link>https://www.dw.com/en/kashmir-migrant-worker-killings-spur-exodus-halt-industries/a-59721940?maca=en-rss-en-all-1573-rdf</link>
+  <description>Businesses fear a sizable reduction in output, after many migrant laborers fled due to targeted killings. Experts say that tensions are on the rise between locals and migrants over fears of a demographic transition.</description>
+  <dc:date>2021-11-04T15:43:00Z</dc:date>
+  <dc:subject>World</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59721940</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/covid-how-india-is-vaccinating-isolated-tribes-in-insurgency-hit-areas/a-59722431?maca=en-rss-en-all-1573-rdf">
+  <title>COVID: How India is vaccinating isolated tribes in insurgency-hit areas</title>
+  <link>https://www.dw.com/en/covid-how-india-is-vaccinating-isolated-tribes-in-insurgency-hit-areas/a-59722431?maca=en-rss-en-all-1573-rdf</link>
+  <description>Despite vaccine hesitancy and inaccessibility, a push by a collective of NGOs, local networks and health volunteers has helped the inoculation drive and convinced people to accept the shots.</description>
+  <dc:date>2021-11-04T15:41:00Z</dc:date>
+  <dc:subject>World</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59722431</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/china-authorities-delete-tennis-star-s-metoo-post-about-ex-top-official/a-59720890?maca=en-rss-en-all-1573-rdf">
+  <title>China: Authorities delete tennis star&apos;s #MeToo post about ex-top official</title>
+  <link>https://www.dw.com/en/china-authorities-delete-tennis-star-s-metoo-post-about-ex-top-official/a-59720890?maca=en-rss-en-all-1573-rdf</link>
+  <description>Chinese authorities have censored almost all online discussion of a tennis star&apos;s allegations against a former top official. The censorship highlights the sensitivity around the private lives of Communist Party leaders.</description>
+  <dc:date>2021-11-04T15:19:00Z</dc:date>
+  <dc:subject>News</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59720890</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/us-biden-administration-sets-january-vaccine-deadline-for-big-companies/a-59720373?maca=en-rss-en-all-1573-rdf">
+  <title>US: Biden administration sets January vaccine deadline for big companies</title>
+  <link>https://www.dw.com/en/us-biden-administration-sets-january-vaccine-deadline-for-big-companies/a-59720373?maca=en-rss-en-all-1573-rdf</link>
+  <description>Tens of millions of working Americans will need to be vaccinated or tested weekly for COVID-19 by early January under new government rules. Companies that fail to comply could be fined thousands of dollars.</description>
+  <dc:date>2021-11-04T13:25:00Z</dc:date>
+  <dc:subject>News</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59720373</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/australia-police-charge-man-in-cleo-smith-abduction/a-59719154?maca=en-rss-en-all-1573-rdf">
+  <title>Australia police charge man in Cleo Smith abduction</title>
+  <link>https://www.dw.com/en/australia-police-charge-man-in-cleo-smith-abduction/a-59719154?maca=en-rss-en-all-1573-rdf</link>
+  <description>A day earlier, police announced that the 4-year-old girl Cleo had been found &quot;alive and well,&quot; prompting nationwide relief.</description>
+  <dc:date>2021-11-04T11:57:00Z</dc:date>
+  <dc:subject>News</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59719154</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/cop26-report-covid-stimulus-packages-fail-to-address-climate-change-adaptation/a-59716161?maca=en-rss-en-all-1573-rdf">
+  <title>COP26 report: COVID stimulus packages fail to address climate change adaptation</title>
+  <link>https://www.dw.com/en/cop26-report-covid-stimulus-packages-fail-to-address-climate-change-adaptation/a-59716161?maca=en-rss-en-all-1573-rdf</link>
+  <description>Developing countries face a massive funding shortfall in preparing for inevitable climate change. But governments could use COVID-19 recovery funds to create long-term sustainable climate adaptation measures.</description>
+  <dc:date>2021-11-04T11:30:00Z</dc:date>
+  <dc:subject>Environment</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59716161</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/norway-s-largest-pension-fund-divests-from-14-arms-firms/a-59718204?maca=en-rss-en-all-1573-rdf">
+  <title>Norway&apos;s largest pension fund divests from 14 arms firms</title>
+  <link>https://www.dw.com/en/norway-s-largest-pension-fund-divests-from-14-arms-firms/a-59718204?maca=en-rss-en-all-1573-rdf</link>
+  <description>KLP has stopped investing in companies with ties to nuclear and regular arms production. It&apos;s not the first time the fund has made such a move on humanitarian grounds.</description>
+  <dc:date>2021-11-04T11:14:00Z</dc:date>
+  <dc:subject>News</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59718204</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/covid-uk-greenlights-merck-antiviral-pill/a-59718291?maca=en-rss-en-all-1573-rdf">
+  <title>COVID: UK greenlights Merck antiviral pill</title>
+  <link>https://www.dw.com/en/covid-uk-greenlights-merck-antiviral-pill/a-59718291?maca=en-rss-en-all-1573-rdf</link>
+  <description>The oral pill, known as molnupiravir, is the first to have successfully treated COVID-19. However, it is not clear when it will be available.</description>
+  <dc:date>2021-11-04T11:10:00Z</dc:date>
+  <dc:subject>News</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59718291</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/why-china-s-property-crash-isn-t-a-new-lehman-moment/a-59716702?maca=en-rss-en-all-1573-rdf">
+  <title>Why China&apos;s property crash isn&apos;t a new Lehman moment</title>
+  <link>https://www.dw.com/en/why-china-s-property-crash-isn-t-a-new-lehman-moment/a-59716702?maca=en-rss-en-all-1573-rdf</link>
+  <description>On the face of it, Chinese property developers&apos; debts appear big enough to crash the national economy. But several factors could limit the real estate downturn and the threat of global financial contagion.</description>
+  <dc:date>2021-11-04T10:54:00Z</dc:date>
+  <dc:subject>Business</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59716702</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/cop26-saudi-arabia-s-climate-strategy-greenwashing-or-genuine-transformation/a-59704908?maca=en-rss-en-all-1573-rdf">
+  <title>COP26: Saudi Arabia&apos;s climate strategy — Greenwashing or genuine transformation?</title>
+  <link>https://www.dw.com/en/cop26-saudi-arabia-s-climate-strategy-greenwashing-or-genuine-transformation/a-59704908?maca=en-rss-en-all-1573-rdf</link>
+  <description>Saudi Arabia has announced a comprehensive transformation strategy toward a green future. But what are the real drivers of the world&apos;s biggest oil exporter&apos;s &quot;net zero&quot; vision for 2060?</description>
+  <dc:date>2021-11-04T10:29:00Z</dc:date>
+  <dc:subject>World</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59704908</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/deja-vu-how-the-us-eu-deal-with-extremists-in-bosnia/a-59700541?maca=en-rss-en-all-1573-rdf">
+  <title>Deja vu? How the US, EU deal with extremists in Bosnia</title>
+  <link>https://www.dw.com/en/deja-vu-how-the-us-eu-deal-with-extremists-in-bosnia/a-59700541?maca=en-rss-en-all-1573-rdf</link>
+  <description>Serbian and Croatian extremists are chipping away at the Bosnian state. The EU and the US are trying to appease them, repeating mistakes made in the 1990s.</description>
+  <dc:date>2021-11-04T10:05:00Z</dc:date>
+  <dc:subject>News</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59700541</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/france-and-uk-s-brexit-row-over-fish-drags-on-what-s-the-catch/a-59713683?maca=en-rss-en-all-1573-rdf">
+  <title>France and UK&apos;s Brexit row over fish drags on: What’s the catch?</title>
+  <link>https://www.dw.com/en/france-and-uk-s-brexit-row-over-fish-drags-on-what-s-the-catch/a-59713683?maca=en-rss-en-all-1573-rdf</link>
+  <description>Despite its insignificant share of both UK and EU GDP, fisheries were one of the big issues in the Brexit negotiations. It remains an open sore and is at the center of an angry dispute between the UK and France.</description>
+  <dc:date>2021-11-04T09:15:00Z</dc:date>
+  <dc:subject>Business</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59713683</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/germany-mother-given-life-sentence-for-killing-5-of-her-children/a-59715987?maca=en-rss-en-all-1573-rdf">
+  <title>Germany: Mother given life sentence for killing 5 of her children</title>
+  <link>https://www.dw.com/en/germany-mother-given-life-sentence-for-killing-5-of-her-children/a-59715987?maca=en-rss-en-all-1573-rdf</link>
+  <description>The crime occurred in the western German city of Solingen. The 28-year-old allegedly sedated and suffocated her children after seeing a photo of her husband with a new partner.</description>
+  <dc:date>2021-11-04T09:12:00Z</dc:date>
+  <dc:subject>News</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59715987</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/covid-germany-cases-hit-record-daily-high/a-59715864?maca=en-rss-en-all-1573-rdf">
+  <title>COVID: Germany cases hit record daily high</title>
+  <link>https://www.dw.com/en/covid-germany-cases-hit-record-daily-high/a-59715864?maca=en-rss-en-all-1573-rdf</link>
+  <description>The number of new cases has beaten a record set in December 2020. Health officials are set to meet to discuss the possibility of fresh restrictions for the unvaccinated.</description>
+  <dc:date>2021-11-04T08:38:00Z</dc:date>
+  <dc:subject>News</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59715864</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/coronavirus-digest-europe-back-at-epicenter-says-who/a-59716037?maca=en-rss-en-all-1573-rdf">
+  <title>Coronavirus digest: Europe &apos;back at epicenter,&apos; says WHO</title>
+  <link>https://www.dw.com/en/coronavirus-digest-europe-back-at-epicenter-says-who/a-59716037?maca=en-rss-en-all-1573-rdf</link>
+  <description>The WHO Europe chief says that relaxed prevention measures and low vaccination rates in some areas explain the latest surge. Meanwhile, Ukraine&apos;s vaccination drive has been met with protests. DW has the latest.</description>
+  <dc:date>2021-11-04T08:33:00Z</dc:date>
+  <dc:subject>News</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59716037</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/israel-budget-passes-ending-years-of-political-uncertainty/a-59715689?maca=en-rss-en-all-1573-rdf">
+  <title>Israel: Budget passes ending years of political uncertainty</title>
+  <link>https://www.dw.com/en/israel-budget-passes-ending-years-of-political-uncertainty/a-59715689?maca=en-rss-en-all-1573-rdf</link>
+  <description>The passage of the first budget in three years saves the country from facing its fifth election in two years.</description>
+  <dc:date>2021-11-04T06:35:00Z</dc:date>
+  <dc:subject>News</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59715689</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/uk-unveils-mahatma-gandhi-commemorative-collectors-coin/a-59715600?maca=en-rss-en-all-1573-rdf">
+  <title>UK unveils Mahatma Gandhi commemorative collectors coin</title>
+  <link>https://www.dw.com/en/uk-unveils-mahatma-gandhi-commemorative-collectors-coin/a-59715600?maca=en-rss-en-all-1573-rdf</link>
+  <description>Indian independence movement leader, Mahatma Gandhi, has been featured for the first time on an official UK coin, launched on the same day as Hindus celebrate Diwali.</description>
+  <dc:date>2021-11-04T06:19:00Z</dc:date>
+  <dc:subject>News</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59715600</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/opinion-10-years-of-broken-promises-after-nsu-unmasking/a-59713099?maca=en-rss-en-all-1573-rdf">
+  <title>Opinion: 10 years of broken promises after NSU unmasking</title>
+  <link>https://www.dw.com/en/opinion-10-years-of-broken-promises-after-nsu-unmasking/a-59713099?maca=en-rss-en-all-1573-rdf</link>
+  <description>When the German far-right terror group NSU was uncovered on November 4, 2011, Chancellor Angela Merkel promised a sweeping investigation. But the political will needed for it lacks to this day, says Marcel Fürstenau.</description>
+  <dc:date>2021-11-04T06:15:00Z</dc:date>
+  <dc:subject>Opinion</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59713099</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/global-co2-emissions-rebound-to-near-pre-pandemic-levels-study/a-59715004?maca=en-rss-en-all-1573-rdf">
+  <title>Global CO2 emissions rebound to near pre-pandemic levels: study</title>
+  <link>https://www.dw.com/en/global-co2-emissions-rebound-to-near-pre-pandemic-levels-study/a-59715004?maca=en-rss-en-all-1573-rdf</link>
+  <description>After a dramatic drop during the pandemic lockdowns, carbon dioxide emissions are near record levels again, with China&apos;s share increasing to nearly a third of the total, researchers say.</description>
+  <dc:date>2021-11-04T04:27:00Z</dc:date>
+  <dc:subject>News</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59715004</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/france-s-macron-pays-tribute-bids-adieu-to-merkel/a-59713400?maca=en-rss-en-all-1573-rdf">
+  <title>France&apos;s Macron pays tribute, bids &apos;adieu&apos; to Merkel</title>
+  <link>https://www.dw.com/en/france-s-macron-pays-tribute-bids-adieu-to-merkel/a-59713400?maca=en-rss-en-all-1573-rdf</link>
+  <description>French President Emmanuel Macron took Germany&apos;s Angela Merkel to the Burgundy town of Beaune as part of her farewell visit. He presented her with France&apos;s highest award, the Grand Cross of the Legion of Honor.</description>
+  <dc:date>2021-11-04T03:45:00Z</dc:date>
+  <dc:subject>News</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59713400</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/un-renews-eu-bosnia-military-mission-as-separatism-fears-grow/a-59714966?maca=en-rss-en-all-1573-rdf">
+  <title>UN renews EU Bosnia military mission as separatism fears grow</title>
+  <link>https://www.dw.com/en/un-renews-eu-bosnia-military-mission-as-separatism-fears-grow/a-59714966?maca=en-rss-en-all-1573-rdf</link>
+  <description>The UN Security Council has agreed to extend the mandate of a European military mission in Bosnia. The decision came amid a simmering row over a diplomatic report citing a separatist threat.</description>
+  <dc:date>2021-11-04T01:56:00Z</dc:date>
+  <dc:subject>News</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59714966</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/champions-league-borussia-dortmund-undone-by-mats-hummels-red-card/a-59711264?maca=en-rss-en-all-1573-rdf">
+  <title>Champions League: Borussia Dortmund undone by Mats Hummels red card</title>
+  <link>https://www.dw.com/en/champions-league-borussia-dortmund-undone-by-mats-hummels-red-card/a-59711264?maca=en-rss-en-all-1573-rdf</link>
+  <description>Billed as a revenge game for the Bundesliga side, a refereeing decision ended up costing Borussia Dortmund the chance at a win over Ajax. Mats Hummels was controversially sent off in the first half.</description>
+  <dc:date>2021-11-03T22:14:00Z</dc:date>
+  <dc:subject>Sports</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59711264</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/held-british-trawler-sails-free-from-french-port/a-59713833?maca=en-rss-en-all-1573-rdf">
+  <title>Held British trawler sails free from French port</title>
+  <link>https://www.dw.com/en/held-british-trawler-sails-free-from-french-port/a-59713833?maca=en-rss-en-all-1573-rdf</link>
+  <description>The vessel was seized for fishing for scallops in French territorial waters amid a post-Brexit spat between the UK and France over fishing licenses.</description>
+  <dc:date>2021-11-03T22:13:00Z</dc:date>
+  <dc:subject>News</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59713833</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/nsu-what-you-need-to-know-about-germany-s-neo-nazi-terror-group/a-39777036?maca=en-rss-en-all-1573-rdf">
+  <title>NSU: What you need to know about Germany&apos;s neo-Nazi terror group</title>
+  <link>https://www.dw.com/en/nsu-what-you-need-to-know-about-germany-s-neo-nazi-terror-group/a-39777036?maca=en-rss-en-all-1573-rdf</link>
+  <description>It&apos;s been 10 years since the NSU extreme-right terror cell was uncovered. DW answers five key questions from one of Germany&apos;s most high-profile neo-Nazi cases.</description>
+  <dc:date>2021-11-03T20:47:00Z</dc:date>
+  <dc:subject>Germany</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>39777036</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/damon-galgut-wins-2021-booker-prize-for-fiction/a-59707014?maca=en-rss-en-all-1573-rdf">
+  <title>Damon Galgut wins 2021 Booker Prize for fiction</title>
+  <link>https://www.dw.com/en/damon-galgut-wins-2021-booker-prize-for-fiction/a-59707014?maca=en-rss-en-all-1573-rdf</link>
+  <description>It was third time lucky for the South African author, who was also shortlisted in 2003 and 2010. His book &quot;The Promise&quot; was the overwhelming favorite for the prize.</description>
+  <dc:date>2021-11-03T20:25:00Z</dc:date>
+  <dc:subject>Culture</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59707014</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/oury-jalloh-death-german-prosecutors-accused-of-obstructing-justice/a-59711978?maca=en-rss-en-all-1573-rdf">
+  <title>Oury Jalloh death: German prosecutors accused of obstructing justice</title>
+  <link>https://www.dw.com/en/oury-jalloh-death-german-prosecutors-accused-of-obstructing-justice/a-59711978?maca=en-rss-en-all-1573-rdf</link>
+  <description>A new reconstruction of the 2005 burning death of Oury Jalloh in a police cell has again underlined flaws in the official explanation. The Sierra Leonean man&apos;s family believe original investigators obstructed justice.</description>
+  <dc:date>2021-11-03T20:16:00Z</dc:date>
+  <dc:subject>Germany</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59711978</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/la-palma-volcano-heavy-ash-forces-residents-inside/a-59707627?maca=en-rss-en-all-1573-rdf">
+  <title>La Palma volcano: Heavy ash forces residents inside</title>
+  <link>https://www.dw.com/en/la-palma-volcano-heavy-ash-forces-residents-inside/a-59707627?maca=en-rss-en-all-1573-rdf</link>
+  <description>Schools have been closed and flights canceled because of the massive amounts of ash being spewed from the Cumbre Vieja volcano. Scientists have said the eruption on the island of La Palma could last up to three months.</description>
+  <dc:date>2021-11-03T16:52:00Z</dc:date>
+  <dc:subject>News</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59707627</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/afghan-refugees-in-uzbekistan-live-in-uncertainty-facing-deportation/a-59710250?maca=en-rss-en-all-1573-rdf">
+  <title>Afghan refugees in Uzbekistan live in uncertainty, facing deportation</title>
+  <link>https://www.dw.com/en/afghan-refugees-in-uzbekistan-live-in-uncertainty-facing-deportation/a-59710250?maca=en-rss-en-all-1573-rdf</link>
+  <description>Rights groups say hundreds of Afghans fled to neighboring Uzbekistan to escape the Taliban. But, without official refugee status in the Central Asian country, they are vulnerable and could face deportation.</description>
+  <dc:date>2021-11-03T16:24:00Z</dc:date>
+  <dc:subject>World</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59710250</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/opinion-modern-pentathlon-moving-to-get-with-the-times/a-59708867?maca=en-rss-en-all-1573-rdf">
+  <title>Opinion: &apos;Modern&apos; pentathlon moving to get with the times</title>
+  <link>https://www.dw.com/en/opinion-modern-pentathlon-moving-to-get-with-the-times/a-59708867?maca=en-rss-en-all-1573-rdf</link>
+  <description>Modern pentathlon&apos;s governing body has reportedly decided to replace show jumping with a cycling discipline. Not only will the horses benefit from the decision, but the sport will too, DW&apos;s Andreas Sten-Ziemons writes.</description>
+  <dc:date>2021-11-03T15:08:00Z</dc:date>
+  <dc:subject>Business &amp; Sales</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59708867</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/the-germans-and-their-kiosks-a-love-affair/a-55164596?maca=en-rss-en-all-1573-rdf">
+  <title>The Germans and their kiosks — a love affair</title>
+  <link>https://www.dw.com/en/the-germans-and-their-kiosks-a-love-affair/a-55164596?maca=en-rss-en-all-1573-rdf</link>
+  <description>You can take Germans out of a kiosk (and even that might require extremely developed persuasion skills) — but you can&apos;t take the kiosk out of the Germans.</description>
+  <dc:date>2021-11-03T14:42:00Z</dc:date>
+  <dc:subject>Culture</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>55164596</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/cop-26-one-of-the-whitest-climate-conferences-in-years-say-environmentalists/a-59708405?maca=en-rss-en-all-1573-rdf">
+  <title>COP 26: &apos;One of the whitest&apos; climate conferences in years, say environmentalists</title>
+  <link>https://www.dw.com/en/cop-26-one-of-the-whitest-climate-conferences-in-years-say-environmentalists/a-59708405?maca=en-rss-en-all-1573-rdf</link>
+  <description>The countries hit hardest by climate change are struggling to attend a UN climate summit that has been hailed as the &quot;best last chance&quot; to stop global warming. What are the implications?</description>
+  <dc:date>2021-11-03T14:13:00Z</dc:date>
+  <dc:subject>Environment</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59708405</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/james-webb-our-best-ever-space-telescope-is-set-for-launch/a-59649187?maca=en-rss-en-all-1573-rdf">
+  <title>James Webb: Our best-ever space telescope is set for launch</title>
+  <link>https://www.dw.com/en/james-webb-our-best-ever-space-telescope-is-set-for-launch/a-59649187?maca=en-rss-en-all-1573-rdf</link>
+  <description>With the launch of the James Webb Space Telescope, we might be getting closer to answering many questions. &quot;What did the early universe look like?&quot; is just one of them.</description>
+  <dc:date>2021-11-03T07:55:00Z</dc:date>
+  <dc:subject>Science</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59649187</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/germany-s-16-states-lower-saxony/a-45215372?maca=en-rss-en-all-1573-rdf">
+  <title>Germany&apos;s 16 states: Lower Saxony</title>
+  <link>https://www.dw.com/en/germany-s-16-states-lower-saxony/a-45215372?maca=en-rss-en-all-1573-rdf</link>
+  <description>Whether hiking on the mudflats of the North Sea coast or horse riding in the Lüneburger Heide heath — Lower Saxony&apos;s landscape is diverse.</description>
+  <dc:date>2021-11-03T07:53:00Z</dc:date>
+  <dc:subject>Culture</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>45215372</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/champions-league-julian-nagelsmann-returns-as-bayern-munich-qualify-for-round-of-16/a-59699017?maca=en-rss-en-all-1573-rdf">
+  <title>Champions League: Julian Nagelsmann returns as Bayern Munich qualify for round of 16</title>
+  <link>https://www.dw.com/en/champions-league-julian-nagelsmann-returns-as-bayern-munich-qualify-for-round-of-16/a-59699017?maca=en-rss-en-all-1573-rdf</link>
+  <description>Robert Lewandowski hit a hat trick to welcome Julian Nagelsmann back to the dugout and send Bayern into the Champions League knockouts. That the performance came after a tumultuous 10 days speaks to Bayern&apos;s quality.</description>
+  <dc:date>2021-11-02T21:54:00Z</dc:date>
+  <dc:subject>Sports</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59699017</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/zero-deforestation-commitment-at-cop26-empty-promises-or-a-workable-plan/a-59700862?maca=en-rss-en-all-1573-rdf">
+  <title>Zero deforestation commitment at COP26: Empty promises or a workable plan?</title>
+  <link>https://www.dw.com/en/zero-deforestation-commitment-at-cop26-empty-promises-or-a-workable-plan/a-59700862?maca=en-rss-en-all-1573-rdf</link>
+  <description>A pledge to end deforestation by 2030 is the first headline agreement from COP26. But environmentalists say the world&apos;s forests will not be saved by a political declaration alone, with one signatory already backtracking.</description>
+  <dc:date>2021-11-02T20:39:00Z</dc:date>
+  <dc:subject>Environment</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59700862</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/adele-shares-tracks-from-anticipated-30-album/a-59514710?maca=en-rss-en-all-1573-rdf">
+  <title>Adele shares tracks from anticipated &apos;30&apos; album</title>
+  <link>https://www.dw.com/en/adele-shares-tracks-from-anticipated-30-album/a-59514710?maca=en-rss-en-all-1573-rdf</link>
+  <description>The British superstar singer teased fans with the full list of songs to feature on her fourth album — dubbed the &apos;divorce album&apos; — to be released on November 19.</description>
+  <dc:date>2021-11-02T15:47:00Z</dc:date>
+  <dc:subject>Culture</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59514710</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/dw-festival-concert-rheingau-music-festival/a-59692912?maca=en-rss-en-all-1573-rdf">
+  <title>DW Festival Concert: Rheingau Music Festival</title>
+  <link>https://www.dw.com/en/dw-festival-concert-rheingau-music-festival/a-59692912?maca=en-rss-en-all-1573-rdf</link>
+  <description>What do you think of when you hear the word romantic? Roses and chocolates perhaps? How about stormy seas, heavenly landscapes and solemn symphonic chorales?</description>
+  <dc:date>2021-11-02T13:25:00Z</dc:date>
+  <dc:subject>Culture</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59692912</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/saving-precious-seagrass-meadows-in-the-maldives/a-59682874?maca=en-rss-en-all-1573-rdf">
+  <title>Saving precious seagrass meadows in the Maldives</title>
+  <link>https://www.dw.com/en/saving-precious-seagrass-meadows-in-the-maldives/a-59682874?maca=en-rss-en-all-1573-rdf</link>
+  <description>Vital marine ecosystems, seagrass meadows have for years been threatened by tourism and overdevelopment. Now conservationists are fighting to protect them for the future.</description>
+  <dc:date>2021-11-02T11:03:00Z</dc:date>
+  <dc:subject>Environment</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59682874</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/first-chips-now-magnesium-carmakers-grapple-with-the-next-supply-crisis/a-59688374?maca=en-rss-en-all-1573-rdf">
+  <title>First chips, now magnesium: Carmakers grapple with the next supply crisis</title>
+  <link>https://www.dw.com/en/first-chips-now-magnesium-carmakers-grapple-with-the-next-supply-crisis/a-59688374?maca=en-rss-en-all-1573-rdf</link>
+  <description>An energy crisis in China has dramatically cut magnesium production there. That has led to a supply crisis for aluminum-makers that depend on the metal. That in turn, has caused major worries for carmakers.</description>
+  <dc:date>2021-11-02T08:34:00Z</dc:date>
+  <dc:subject>Business</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59688374</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/cop26-world-leaders-back-deal-to-end-deforestation-by-2030/a-59689957?maca=en-rss-en-all-1573-rdf">
+  <title>COP26: World leaders back deal to end deforestation by 2030</title>
+  <link>https://www.dw.com/en/cop26-world-leaders-back-deal-to-end-deforestation-by-2030/a-59689957?maca=en-rss-en-all-1573-rdf</link>
+  <description>More than 100 world leaders, including Brazil&apos;s Jair Bolsonaro, are supporting the agreement at the COP26 climate summit. Activists say it greenlights &quot;another decade of deforestation.&quot;</description>
+  <dc:date>2021-11-01T23:27:00Z</dc:date>
+  <dc:subject>News</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59689957</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/germany-to-return-mayan-ancient-artifacts-to-guatemala-and-mexico/a-59689334?maca=en-rss-en-all-1573-rdf">
+  <title>Germany to return Mayan ancient artifacts to Guatemala and Mexico</title>
+  <link>https://www.dw.com/en/germany-to-return-mayan-ancient-artifacts-to-guatemala-and-mexico/a-59689334?maca=en-rss-en-all-1573-rdf</link>
+  <description>The historic objects were discovered last year in the state of Saxony-Anhalt. The owner says he bought them at a flea market in Leipzig in 2003 not knowing where they came from.</description>
+  <dc:date>2021-11-01T20:20:00Z</dc:date>
+  <dc:subject>News</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59689334</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/dogan-akhanli-writing-is-my-weapon/a-50194630?maca=en-rss-en-all-1573-rdf">
+  <title>Dogan Akhanli: &apos;Writing is my weapon&apos;</title>
+  <link>https://www.dw.com/en/dogan-akhanli-writing-is-my-weapon/a-50194630?maca=en-rss-en-all-1573-rdf</link>
+  <description>A human rights activist in Turkey and beyond, the writer Dogan Akhanli died on October 31 after a short illness. He was 64. In 2019, the Goethe-Institut medal winner talked with DW about writing and state persecution.</description>
+  <dc:date>2021-11-01T18:19:00Z</dc:date>
+  <dc:subject>Culture</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>50194630</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/dreyfus-drei-film-uncovers-a-lost-german-jewish-past/a-59687506?maca=en-rss-en-all-1573-rdf">
+  <title>&apos;Dreyfus Drei&apos;: Film uncovers a lost German-Jewish past</title>
+  <link>https://www.dw.com/en/dreyfus-drei-film-uncovers-a-lost-german-jewish-past/a-59687506?maca=en-rss-en-all-1573-rdf</link>
+  <description>Australian artist Ella Dreyfus goes on a cinematic search for traces of her German-Jewish identity that were left behind when her father fled the Nazis as a child.</description>
+  <dc:date>2021-11-01T16:06:00Z</dc:date>
+  <dc:subject>Culture</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59687506</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/bundesliga-high-flying-freiburg-won-t-be-shedding-their-small-club-status/a-59685035?maca=en-rss-en-all-1573-rdf">
+  <title>Bundesliga: High-flying Freiburg won&apos;t be shedding their small-club status</title>
+  <link>https://www.dw.com/en/bundesliga-high-flying-freiburg-won-t-be-shedding-their-small-club-status/a-59685035?maca=en-rss-en-all-1573-rdf</link>
+  <description>Four clubs remain unbeaten in Europe&apos;s top five leagues. In Italy, Napoli and AC Milan are level on points at the top of the table. Liverpool are fighting for a title with a star-studded squad. And then there&apos;s Freiburg.</description>
+  <dc:date>2021-11-01T15:40:00Z</dc:date>
+  <dc:subject>Sports</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59685035</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/amsterdam-cannabis-cafes-fear-foreign-tourist-ban-amid-covid-recovery/a-59638155?maca=en-rss-en-all-1573-rdf">
+  <title>Amsterdam cannabis cafes fear foreign tourist ban amid COVID recovery</title>
+  <link>https://www.dw.com/en/amsterdam-cannabis-cafes-fear-foreign-tourist-ban-amid-covid-recovery/a-59638155?maca=en-rss-en-all-1573-rdf</link>
+  <description>Authorities in one of Europe&apos;s most visited cities are eyeing a ban on pot for tourists as a way to cut down on rowdy travelers, but critics say such a measure could push the industry underground.</description>
+  <dc:date>2021-11-01T08:43:00Z</dc:date>
+  <dc:subject>Culture</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59638155</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/web-summit-returns-to-lisbon-after-pandemic-forced-it-online-in-2020/a-59679562?maca=en-rss-en-all-1573-rdf">
+  <title>Web Summit returns to Lisbon after pandemic forced it online in 2020</title>
+  <link>https://www.dw.com/en/web-summit-returns-to-lisbon-after-pandemic-forced-it-online-in-2020/a-59679562?maca=en-rss-en-all-1573-rdf</link>
+  <description>Web Summit was one of several major global exhibition events that was forced online in 2020 due to the pandemic. It returns to Lisbon this week, albeit with strict rules for attendees.</description>
+  <dc:date>2021-11-01T08:04:00Z</dc:date>
+  <dc:subject>Business</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59679562</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/why-florian-kohfeldt-is-an-astute-gamble-for-wolfsburg/a-59674656?maca=en-rss-en-all-1573-rdf">
+  <title>Why Florian Kohfeldt is an astute gamble for Wolfsburg</title>
+  <link>https://www.dw.com/en/why-florian-kohfeldt-is-an-astute-gamble-for-wolfsburg/a-59674656?maca=en-rss-en-all-1573-rdf</link>
+  <description>Months after being sacked by Werder Bremen, Florian Kohfeldt celebrated a win on his coaching debut with Wolfsburg. While the move may be a risk for the Champions League club, it may be an astute gamble on a young coach.</description>
+  <dc:date>2021-10-30T17:53:00Z</dc:date>
+  <dc:subject>Sports</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59674656</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/women-s-german-cup-bayern-munich-exact-revenge-to-book-quarterfinals-spot/a-59672386?maca=en-rss-en-all-1573-rdf">
+  <title>Women&apos;s German Cup: Bayern Munich exact revenge to book quarterfinals spot</title>
+  <link>https://www.dw.com/en/women-s-german-cup-bayern-munich-exact-revenge-to-book-quarterfinals-spot/a-59672386?maca=en-rss-en-all-1573-rdf</link>
+  <description>Two weeks after their league win, Eintracht Frankfurt traveled to Munich to dump Bayern out of the German Cup. What followed was proof that the pair can only play wildly entertaining games against one another.</description>
+  <dc:date>2021-10-30T13:37:00Z</dc:date>
+  <dc:subject>Sports</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59672386</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/how-the-german-turkish-labor-agreement-influenced-the-arts/a-59665489?maca=en-rss-en-all-1573-rdf">
+  <title>How the German-Turkish labor agreement influenced the arts</title>
+  <link>https://www.dw.com/en/how-the-german-turkish-labor-agreement-influenced-the-arts/a-59665489?maca=en-rss-en-all-1573-rdf</link>
+  <description>Germany has become the second home for many Turkish immigrants who came to the country following the 1961 labor agreement. Over the last six decades, many have used their creativity to express their life experiences.</description>
+  <dc:date>2021-10-30T08:23:00Z</dc:date>
+  <dc:subject>Culture</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59665489</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/andrej-kramaric-an-underrated-big-fish-in-one-of-germany-s-smallest-ponds/a-59669582?maca=en-rss-en-all-1573-rdf">
+  <title>Andrej Kramaric: An underrated big fish in one of Germany’s smallest ponds</title>
+  <link>https://www.dw.com/en/andrej-kramaric-an-underrated-big-fish-in-one-of-germany-s-smallest-ponds/a-59669582?maca=en-rss-en-all-1573-rdf</link>
+  <description>In his six years at the club, Andrej Kramaric has been the man Hoffenheim have turned to in their moments of greatest need. His talents are worthy of bigger stage, but his loyalty is to be admired in the modern age.</description>
+  <dc:date>2021-10-29T21:06:00Z</dc:date>
+  <dc:subject>Sports</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59669582</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/a-german-in-space-last-words-before-weightlessness/a-59662851?maca=en-rss-en-all-1573-rdf">
+  <title>A German in space: Last words before weightlessness</title>
+  <link>https://www.dw.com/en/a-german-in-space-last-words-before-weightlessness/a-59662851?maca=en-rss-en-all-1573-rdf</link>
+  <description>German Matthias Maurer starts his expedition to the International Space Station on October 31. Only two Germans have gone before him. He&apos;s patiently awaited his turn.</description>
+  <dc:date>2021-10-29T11:11:00Z</dc:date>
+  <dc:subject>Science</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59662851</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/moldova-eyes-chinese-investment-wary-of-montenegro-route/a-59657451?maca=en-rss-en-all-1573-rdf">
+  <title>Moldova eyes Chinese investment, wary of Montenegro route</title>
+  <link>https://www.dw.com/en/moldova-eyes-chinese-investment-wary-of-montenegro-route/a-59657451?maca=en-rss-en-all-1573-rdf</link>
+  <description>Moldova is in a perilous place, pleasing neither the Moscow nor the Brussels bean counters. China in this context may appear to be an honest broker and friendly investor, but could a Montenegro-style debt trap await?</description>
+  <dc:date>2021-10-29T10:30:00Z</dc:date>
+  <dc:subject>Business</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59657451</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/the-coronavirus-pandemic-is-far-from-over/a-53954594?maca=en-rss-en-all-1573-rdf">
+  <title>The coronavirus pandemic is far from over</title>
+  <link>https://www.dw.com/en/the-coronavirus-pandemic-is-far-from-over/a-53954594?maca=en-rss-en-all-1573-rdf</link>
+  <description>Some countries are reporting more new coronavirus infections compared with the previous two weeks. Global data trends show that the pandemic isn&apos;t over yet. DW sums up the current situation in three charts.</description>
+  <dc:date>2021-10-29T09:20:00Z</dc:date>
+  <dc:subject>Science</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>53954594</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/super-league-clubs-tackle-monopolistic-uefa-on-eu-law/a-59645489?maca=en-rss-en-all-1573-rdf">
+  <title>Super League clubs tackle &apos;monopolistic&apos; UEFA on EU law</title>
+  <link>https://www.dw.com/en/super-league-clubs-tackle-monopolistic-uefa-on-eu-law/a-59645489?maca=en-rss-en-all-1573-rdf</link>
+  <description>When 12 elite European football clubs tried to form a breakaway league, the idea collapsed amid farce and fury. Yet those behind the idea have not given up and are pursuing a legal case that could transform the game.</description>
+  <dc:date>2021-10-29T07:58:00Z</dc:date>
+  <dc:subject>Business</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59645489</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/why-even-climate-change-needs-a-good-narrative/a-59451132?maca=en-rss-en-all-1573-rdf">
+  <title>Why even climate change needs a good narrative</title>
+  <link>https://www.dw.com/en/why-even-climate-change-needs-a-good-narrative/a-59451132?maca=en-rss-en-all-1573-rdf</link>
+  <description>Have scientists failed to tell the story of climate change? Do fiction writers do it better? A climate scientist and science fiction writer in conversation.</description>
+  <dc:date>2021-10-29T07:49:00Z</dc:date>
+  <dc:subject>Science</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59451132</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/cop26-has-demonizing-big-oil-backfired/a-59642898?maca=en-rss-en-all-1573-rdf">
+  <title>COP26: Has demonizing Big Oil backfired?</title>
+  <link>https://www.dw.com/en/cop26-has-demonizing-big-oil-backfired/a-59642898?maca=en-rss-en-all-1573-rdf</link>
+  <description>Fossil fuels will be with us for decades, no matter what pledges are made at the UN climate summit in Glasgow. With banks and pension funds cutting investment, who will control oil, gas and coal supply in the future?</description>
+  <dc:date>2021-10-29T07:27:00Z</dc:date>
+  <dc:subject>Business</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59642898</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/facebook-rebrands-as-meta-in-new-focus-on-metaverse/a-59650386?maca=en-rss-en-all-1573-rdf">
+  <title>Facebook rebrands as &apos;Meta&apos; in new focus on metaverse</title>
+  <link>https://www.dw.com/en/facebook-rebrands-as-meta-in-new-focus-on-metaverse/a-59650386?maca=en-rss-en-all-1573-rdf</link>
+  <description>Facebook has changed its name to &quot;Meta&quot; in a shift away from social media and towards developing &quot;the metaverse,&quot; a digital world that could be the next generation of the internet. Here&apos;s what they have planned.</description>
+  <dc:date>2021-10-28T18:21:00Z</dc:date>
+  <dc:subject>Business</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59650386</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/rubber-gloves-rub-off-on-fast-food-study-finds/a-59653170?maca=en-rss-en-all-1573-rdf">
+  <title>Rubber gloves rub off on fast food, study finds</title>
+  <link>https://www.dw.com/en/rubber-gloves-rub-off-on-fast-food-study-finds/a-59653170?maca=en-rss-en-all-1573-rdf</link>
+  <description>Traces of toxic chemicals from vinyl gloves have been found in fast food in the US. Researchers say marginalized groups are at higher risk than others.</description>
+  <dc:date>2021-10-28T13:46:00Z</dc:date>
+  <dc:subject>Science</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59653170</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/bundesliga-why-are-frankfurt-wolfsburg-and-rb-leipzig-struggling/a-59623993?maca=en-rss-en-all-1573-rdf">
+  <title>Bundesliga: Why are Frankfurt, Wolfsburg and RB Leipzig struggling?</title>
+  <link>https://www.dw.com/en/bundesliga-why-are-frankfurt-wolfsburg-and-rb-leipzig-struggling/a-59623993?maca=en-rss-en-all-1573-rdf</link>
+  <description>Eintracht Frankfurt, Wolfsburg and RB Leipzig all finished in European qualification places last year, but this season they are struggling. Jasmine Baba explains why things are different for the Bundesliga trio.</description>
+  <dc:date>2021-10-28T09:11:00Z</dc:date>
+  <dc:subject>Sports</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59623993</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/erectile-dysfunction-sick-heart-sick-penis/a-59632075?maca=en-rss-en-all-1573-rdf">
+  <title>Erectile dysfunction: Sick heart, sick penis</title>
+  <link>https://www.dw.com/en/erectile-dysfunction-sick-heart-sick-penis/a-59632075?maca=en-rss-en-all-1573-rdf</link>
+  <description>Heart disease, diabetes, depression: Lots of things cause erectile dysfunction. It can be treated but you need to get over the shame and visit a doctor.</description>
+  <dc:date>2021-10-27T13:41:00Z</dc:date>
+  <dc:subject>Science</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59632075</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/living-and-working-on-georgia-s-largest-garbage-dump/a-59570389?maca=en-rss-en-all-1573-rdf">
+  <title>Living and working on Georgia&apos;s largest garbage dump</title>
+  <link>https://www.dw.com/en/living-and-working-on-georgia-s-largest-garbage-dump/a-59570389?maca=en-rss-en-all-1573-rdf</link>
+  <description>Environmentalists fear pollution from the Gonio landfill is seeping into the air, soil and waters of the Black Sea. But government plans to close it have left many waste pickers worrying about an uncertain future.</description>
+  <dc:date>2021-10-27T08:02:00Z</dc:date>
+  <dc:subject>Environment</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59570389</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/more-women-have-joined-germany-s-executive-boards-but-not-many/a-59628774?maca=en-rss-en-all-1573-rdf">
+  <title>More women have joined Germany&apos;s executive boards — but not many</title>
+  <link>https://www.dw.com/en/more-women-have-joined-germany-s-executive-boards-but-not-many/a-59628774?maca=en-rss-en-all-1573-rdf</link>
+  <description>The number of women on the executive boards of Germany&apos;s publicly traded companies is slowly going up. But when it comes to gender parity, Germany still lags far behind other developed countries.</description>
+  <dc:date>2021-10-27T06:18:00Z</dc:date>
+  <dc:subject>Business</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59628774</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/un-says-national-climate-targets-fall-far-short/a-59628267?maca=en-rss-en-all-1573-rdf">
+  <title>UN says national climate targets &apos;fall far short&apos;</title>
+  <link>https://www.dw.com/en/un-says-national-climate-targets-fall-far-short/a-59628267?maca=en-rss-en-all-1573-rdf</link>
+  <description>The UN&apos;s latest Emissions Gap Report shows that the world is on track for a temperature rise of 2.7 degrees Celsius this century. Ahead of next week&apos;s COP26 climate summit, it said nations must act urgently.</description>
+  <dc:date>2021-10-26T13:15:00Z</dc:date>
+  <dc:subject>Environment</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59628267</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/who-are-germany-s-extreme-right-group-the-third-path/a-59620861?maca=en-rss-en-all-1573-rdf">
+  <title>Who are Germany&apos;s extreme-right group the &apos;Third Path&apos;?</title>
+  <link>https://www.dw.com/en/who-are-germany-s-extreme-right-group-the-third-path/a-59620861?maca=en-rss-en-all-1573-rdf</link>
+  <description>Members of the neo-Nazi party the Third Path were stopped over the weekend attempting to turn themselves into an anti-migrant border patrol. Who is the small but very active extremist group?</description>
+  <dc:date>2021-10-25T15:26:00Z</dc:date>
+  <dc:subject>Germany</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59620861</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/nuclear-power-are-energy-price-hikes-prompting-a-german-rethink/a-59594913?maca=en-rss-en-all-1573-rdf">
+  <title>Nuclear power: Are energy price hikes prompting a German rethink?</title>
+  <link>https://www.dw.com/en/nuclear-power-are-energy-price-hikes-prompting-a-german-rethink/a-59594913?maca=en-rss-en-all-1573-rdf</link>
+  <description>Energy prices are soaring globally, and Germany&apos;s neighbors are building new nuclear reactors.  Some want to revisit the commitment to go nuclear-free.  </description>
+  <dc:date>2021-10-25T12:27:00Z</dc:date>
+  <dc:subject>Germany</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59594913</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/criminal-gangs-smuggle-sodas-into-portugal-to-avoid-sugar-tax/a-59549572?maca=en-rss-en-all-1573-rdf">
+  <title>Criminal gangs smuggle sodas into Portugal to avoid sugar tax</title>
+  <link>https://www.dw.com/en/criminal-gangs-smuggle-sodas-into-portugal-to-avoid-sugar-tax/a-59549572?maca=en-rss-en-all-1573-rdf</link>
+  <description>A Portuguese tax on sugar has led to a new group of organized criminals smuggling soda over the border from Spain.</description>
+  <dc:date>2021-10-24T09:44:00Z</dc:date>
+  <dc:subject>World</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59549572</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/luxembourg-legalizes-growing-of-cannabis-in-eu-first/a-59588513?maca=en-rss-en-all-1573-rdf">
+  <title>Luxembourg legalizes growing of cannabis in EU first</title>
+  <link>https://www.dw.com/en/luxembourg-legalizes-growing-of-cannabis-in-eu-first/a-59588513?maca=en-rss-en-all-1573-rdf</link>
+  <description>Luxembourg joins only two other countries and a handful of US states in decriminalizing the cultivation of cannabis for recreational use. However, Germany may not be far behind.</description>
+  <dc:date>2021-10-22T12:32:00Z</dc:date>
+  <dc:subject>News</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59588513</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/germany-s-privatization-of-state-assets-a-role-model-for-india/a-59587563?maca=en-rss-en-all-1573-rdf">
+  <title>Germany&apos;s privatization of state assets: A role model for India?</title>
+  <link>https://www.dw.com/en/germany-s-privatization-of-state-assets-a-role-model-for-india/a-59587563?maca=en-rss-en-all-1573-rdf</link>
+  <description>India is in the process of privatizing large state-owned companies and many people are wondering what advantages and disadvantages this will bring. A look at Germany reveals who the winners and losers could be.</description>
+  <dc:date>2021-10-22T11:39:00Z</dc:date>
+  <dc:subject>Business</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59587563</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/do-france-s-plans-for-small-nuclear-reactors-have-hidden-agenda/a-59585614?maca=en-rss-en-all-1573-rdf">
+  <title>Do France&apos;s plans for small nuclear reactors have hidden agenda?</title>
+  <link>https://www.dw.com/en/do-france-s-plans-for-small-nuclear-reactors-have-hidden-agenda/a-59585614?maca=en-rss-en-all-1573-rdf</link>
+  <description>Although France plans to invest in small modular nuclear reactors, experts doubt that this is ecologically and economically sensible. Yet it may be more about geopolitical strategy than energy.</description>
+  <dc:date>2021-10-22T09:30:00Z</dc:date>
+  <dc:subject>Business</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59585614</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/what-s-the-big-deal-about-minimum-wage-in-germany/a-59559933?maca=en-rss-en-all-1573-rdf">
+  <title>What&apos;s the big deal about minimum wage in Germany?</title>
+  <link>https://www.dw.com/en/what-s-the-big-deal-about-minimum-wage-in-germany/a-59559933?maca=en-rss-en-all-1573-rdf</link>
+  <description>Germany is relatively new to the list of countries with a minimum wage. Now, government coalition talks are considering raising it without using the country&apos;s independent expert commission. There are pros and cons.</description>
+  <dc:date>2021-10-21T08:26:00Z</dc:date>
+  <dc:subject>Business</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59559933</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/afghans-evacuated-to-germany-face-legal-uncertainty/a-59549917?maca=en-rss-en-all-1573-rdf">
+  <title>Afghans evacuated to Germany face legal uncertainty</title>
+  <link>https://www.dw.com/en/afghans-evacuated-to-germany-face-legal-uncertainty/a-59549917?maca=en-rss-en-all-1573-rdf</link>
+  <description>After their dangerous evacuation from Kabul, many Afghans in Germany are struggling with bureaucratic hurdles. It has left many frustrated.</description>
+  <dc:date>2021-10-21T04:46:00Z</dc:date>
+  <dc:subject>Germany</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59549917</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/germany-s-bundesbank-chief-jens-weidmann-quits-years-before-the-end-of-his-term/a-59566289?maca=en-rss-en-all-1573-rdf">
+  <title>Germany&apos;s Bundesbank chief Jens Weidmann quits years before the end of his term</title>
+  <link>https://www.dw.com/en/germany-s-bundesbank-chief-jens-weidmann-quits-years-before-the-end-of-his-term/a-59566289?maca=en-rss-en-all-1573-rdf</link>
+  <description>The ECB&apos;s longest-serving council member and chief of the Bundesbank has remained skeptical of asset purchases and sustained ultra-low interest rates. His exit comes amid heated debate about the future of ECB policies.</description>
+  <dc:date>2021-10-20T16:55:00Z</dc:date>
+  <dc:subject>Business</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59566289</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/climate-crisis-why-do-we-need-cop-anyway/a-59515982?maca=en-rss-en-all-1573-rdf">
+  <title>Climate crisis: Why do we need COP anyway?</title>
+  <link>https://www.dw.com/en/climate-crisis-why-do-we-need-cop-anyway/a-59515982?maca=en-rss-en-all-1573-rdf</link>
+  <description>With the UN climate conference poised to start in Glasgow next week, DW looks at what has — and has not — been achieved over the past quarter century of such global gatherings.</description>
+  <dc:date>2021-10-20T13:37:00Z</dc:date>
+  <dc:subject>Environment</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59515982</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/how-spain-seeks-to-prop-up-its-young-and-desperate-generation/a-59547349?maca=en-rss-en-all-1573-rdf">
+  <title>How Spain seeks to prop up its young and desperate generation</title>
+  <link>https://www.dw.com/en/how-spain-seeks-to-prop-up-its-young-and-desperate-generation/a-59547349?maca=en-rss-en-all-1573-rdf</link>
+  <description>A grave lack of state support programs has driven many young Spaniards to despair in recent years, which were marked by multiple economic crises. As students are suffering the most, efforts are underway to help them.</description>
+  <dc:date>2021-10-20T08:01:00Z</dc:date>
+  <dc:subject>Business</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59547349</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/what-exactly-is-the-metaverse/a-59553740?maca=en-rss-en-all-1573-rdf">
+  <title>What exactly is &apos;the metaverse&apos;?</title>
+  <link>https://www.dw.com/en/what-exactly-is-the-metaverse/a-59553740?maca=en-rss-en-all-1573-rdf</link>
+  <description>Facebook has announced major investments in &quot;the metaverse,&quot; a virtual reality that could one day coexist alongside the physical world. DW breaks down what it is — and how you might already be in it.</description>
+  <dc:date>2021-10-20T07:01:00Z</dc:date>
+  <dc:subject>Business</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59553740</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/breast-cancer-in-africa-a-growing-dilemma/a-59538655?maca=en-rss-en-all-1573-rdf">
+  <title>Breast cancer in Africa: A growing dilemma</title>
+  <link>https://www.dw.com/en/breast-cancer-in-africa-a-growing-dilemma/a-59538655?maca=en-rss-en-all-1573-rdf</link>
+  <description>As the world marks Breast Cancer Awareness Month, DW examines the rising rates of breast cancer in Nigeria, Uganda and Malawi. Lifesaving information is often scarce, and many patients lack access to adequate treatment.</description>
+  <dc:date>2021-10-18T14:34:00Z</dc:date>
+  <dc:subject>World</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59538655</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/what-s-at-stake-at-cop26/a-59509043?maca=en-rss-en-all-1573-rdf">
+  <title>What&apos;s at stake at COP26?</title>
+  <link>https://www.dw.com/en/what-s-at-stake-at-cop26/a-59509043?maca=en-rss-en-all-1573-rdf</link>
+  <description>A UN climate summit in Glasgow will pressure world leaders to stop burning fossil fuels, stabilize global temperatures and share money to adapt to increasingly extreme weather.</description>
+  <dc:date>2021-10-18T09:18:00Z</dc:date>
+  <dc:subject>Environment</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59509043</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/pacemaker-for-the-brain-relieves-woman-s-severe-depression/a-59472106?maca=en-rss-en-all-1573-rdf">
+  <title>&apos;Pacemaker for the brain&apos; relieves woman&apos;s severe depression</title>
+  <link>https://www.dw.com/en/pacemaker-for-the-brain-relieves-woman-s-severe-depression/a-59472106?maca=en-rss-en-all-1573-rdf</link>
+  <description>Sarah is the first documented depression patient to receive personalized deep brain stimulation. The results are promising.</description>
+  <dc:date>2021-10-13T08:34:00Z</dc:date>
+  <dc:subject>Science</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59472106</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/degrees-of-danger-what-will-the-world-look-like-if-we-miss-our-climate-targets/a-59477442?maca=en-rss-en-all-1573-rdf">
+  <title>Degrees of danger: What will the world look like if we miss our climate targets?</title>
+  <link>https://www.dw.com/en/degrees-of-danger-what-will-the-world-look-like-if-we-miss-our-climate-targets/a-59477442?maca=en-rss-en-all-1573-rdf</link>
+  <description>With the plans currently on the table, we are gearing up for an increase of 2.7 degrees Celsius. That would be much worse for the planet than adhering to the agreed-upon Paris goal of 1.5 C.</description>
+  <dc:date>2021-10-12T12:30:00Z</dc:date>
+  <dc:subject>Environment</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59477442</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/how-holocaust-perpetrators-are-prosecuted-in-germany/a-59442228?maca=en-rss-en-all-1573-rdf">
+  <title>How Holocaust perpetrators are prosecuted in Germany</title>
+  <link>https://www.dw.com/en/how-holocaust-perpetrators-are-prosecuted-in-germany/a-59442228?maca=en-rss-en-all-1573-rdf</link>
+  <description>German prosecutors are working to bring the last surviving Holocaust perpetrators to court. But what are the legal hurdles they need to clear? And why have they waited so long?</description>
+  <dc:date>2021-10-07T16:27:00Z</dc:date>
+  <dc:subject>Germany</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59442228</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/conflict-being-driven-by-ecological-damage-report-finds/a-59426714?maca=en-rss-en-all-1573-rdf">
+  <title>Conflict being driven by ecological damage, report finds </title>
+  <link>https://www.dw.com/en/conflict-being-driven-by-ecological-damage-report-finds/a-59426714?maca=en-rss-en-all-1573-rdf</link>
+  <description>Countries hit by ecological damage and conflict are trapped in a vicious cycle where one problem reinforces the other. And climate change is expected to make things worse.</description>
+  <dc:date>2021-10-07T04:02:00Z</dc:date>
+  <dc:subject>Environment</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>59426714</dwsyn:contentID>
+ </item>
+ <item rdf:about="https://www.dw.com/en/building-what-s-the-big-deal-for-the-environment/a-57850391?maca=en-rss-en-all-1573-rdf">
+  <title>Building: What&apos;s the big deal for the environment?</title>
+  <link>https://www.dw.com/en/building-what-s-the-big-deal-for-the-environment/a-57850391?maca=en-rss-en-all-1573-rdf</link>
+  <description>The world&apos;s cities are growing — and the billions who inhabit them need places to live and work. But how does all that construction affect the planet?</description>
+  <dc:date>2021-10-06T13:35:00Z</dc:date>
+  <dc:subject>Environment</dc:subject>
+  <dc:language>en</dc:language>
+  <dwsyn:contentID>57850391</dwsyn:contentID>
+ </item>
+</rdf:RDF>

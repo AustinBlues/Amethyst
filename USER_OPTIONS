@@ -1,0 +1,22 @@
+Amethyst can be customized at run time by setting environment variables.  It
+is also possible to change them by altering them in
+config/initializers/user_options.rb though this will cause conflicts that have
+to be resolved by hand when pulling new verions from Github.
+
+Items per page (PAGE_SIZE)
+  The default is 10.  For unusually large or small screens you may wish to
+change it
+
+Pagination (AMETHYST_PAGINATION)
+  Usual practice has been to put the pagination links below the list.  Because
+RSS item title can be more than one line, this causes the absolute location of
+the links to shift up and down.  The default in Amethyst is to put them above
+the list.  The default can be overridden at run time with the
+AMETHYST_PAGINATION shell environment variable.  Its value is interpreted as a
+binary number.  Set it to OR of the values you want:
+  FEED_TOP = 0b1000
+  FEED_BOTTOM = 0b0100
+  POST_TOP = 0b0010
+  POST_BOTTOM = 0b0001
+For example: "export AMETHYST_PAGINATION=0101" enables bottom pagination.  It
+is possible to top paginate Feeds and bottom paginate Posts (1001).

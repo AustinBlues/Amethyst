@@ -3,11 +3,22 @@ require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/amethyst_help
 class Feed < Sequel::Model
   one_to_many :post
   extend Amethyst::App::AmethystHelper
+  include Sanitize
 
-  
+  VERBOSE = false
+
   def before_create
     # Set score so initially in the middle of the Feed.index
     self[:score] ||= (Feed.count == 0) ? 0.0 : (Feed.avg(:score) + Feed.order(:score).first.score)/2.0
+    super
+  end
+
+
+  def before_save
+    if changed_columns.include?(:rss_url)
+      # Initial queue is highest priority (higher than Refresh or daily).
+      Resque.enqueue_to('Initial', Refresh, self[:id]) if Padrino.env != :test
+    end
     super
   end
 
@@ -18,9 +29,17 @@ class Feed < Sequel::Model
     Resque.enqueue_to('Initial', Refresh, self[:id]) if Padrino.env != :test
   end
 
-  
+
+  def title=(str)
+    self[:title] = str
+    if sanitize!(:title, VARCHAR_MAX)
+      Refresh.log(feed.status = 'Feed title sanitized', :info) if VERBOSE
+    end
+  end
+
+
   def name
-    (title.nil? || title.empty?) ? rss_url : title
+    (self[:title] && !self[:title].empty?) ? self[:title] : rss_url
   end
 
   
@@ -34,7 +53,7 @@ class Feed < Sequel::Model
     # refresh for new Feed may not have occurred yet, i.e. ema_volume == 0.0; so no low volume adjust
 #    adjust = (self[:ema_volume] == 0.0) ? 1.0 : amt * (0.5 + [0.25/self[:ema_volume], 3.0].min)
 #    adjust = (self[:ema_volume] == 0.0) ? 1.0 : amt * (0.6 + [0.25/self[:ema_volume], 2.0].min)
-    adjust = (self[:ema_volume] == 0.0) ? 1.0 : amt * (0.3 + [0.25/self[:ema_volume], 2.0].min)
+    adjust = (self[:ema_volume] == 0.0) ? 1.0 : amt * (0.3 + [0.1/self[:ema_volume], 2.0].min)
     self[:score] += adjust
   end
 

@@ -12,7 +12,7 @@ fi
 date -I | diff -N -w - .cron.daily > /dev/null
 if [ $? -ne 0 ]
 then
-   SINATRA_ACTIVESUPPORT_WARNING=false ~/.rvm/wrappers/ruby-2.4.0/bundle exec padrino rake db:backup -e development MAX=6
+   SINATRA_ACTIVESUPPORT_WARNING=false ~/.rvm/wrappers/ruby-2.4.0/bundle exec padrino rake db:backup -e production MAX=6
    SINATRA_ACTIVESUPPORT_WARNING=false ~/.rvm/wrappers/ruby-2.4.0/bundle exec padrino run -e production Post.zombie_listing
    ~/.rvm/wrappers/ruby-2.4.0/ruby enqueue_daily.rb
 

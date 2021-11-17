@@ -3,16 +3,16 @@
       <hr style="height: 0; margin: 0; border: 1px solid; color: #DDD">
     <% end %>
 
-    <div style="font-size: x-large; text-align: center">
-      <%= pagination.first_page? ? LAQUO : link_to(LAQUO, url_for(@controller, @action, @options.merge(page: 1)),
+    <div class="paginate">
+      <%= pagination.first_page? ? LAQUO : link_to(LAQUO, url_for(@controller, @action, @pagination.merge(page: 1)),
       	     title: 'first page') %>
-      <%= pagination.first_page? ? LSAQUO : link_to(LSAQUO, url_for(@controller, @action, @options.merge(page: pagination.prev_page)),
-      	     title: 'previous page') %>
+      <%= pagination.first_page? ? LSAQUO : link_to(LSAQUO, url_for(@controller, @action,
+            @pagination.merge(page: pagination.prev_page)), title: 'previous page') %>
       <span style="font-size: large"> <%= "#{pagination.current_page} of #{pagination.page_count}" %> </span>
-      <%= pagination.last_page? ? RSAQUO : link_to(RSAQUO, url_for(@controller, @action, @options.merge(page: pagination.next_page)),
-      	     title: 'next page') %>
-      <%= pagination.last_page? ? RAQUO : link_to(RAQUO, url_for(@controller, @action, @options.merge(page: pagination.page_count)),
-      	     title: 'last page') %>
+      <%= pagination.last_page? ? RSAQUO : link_to(RSAQUO, url_for(@controller, @action,
+            @pagination.merge(page: pagination.next_page)), title: 'next page') %>
+      <%= pagination.last_page? ? RAQUO : link_to(RAQUO, url_for(@controller, @action,
+            @pagination.merge(page: pagination.page_count)), title: 'last page') %>
     </div>
 
     <% if ENV['TOP_PAGINATION'] %>
