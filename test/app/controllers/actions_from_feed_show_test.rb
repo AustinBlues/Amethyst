@@ -29,7 +29,7 @@ describe "/feed" do
       get @origin
 #      puts last_response.body
       p = Nokogiri::HTML.parse(last_response.body)
-      header = p.at_css('div.card-header a.btn')
+      header = p.at_css('div.card-header a.navigation')
 #      puts "HEADER: #{header.inspect}."
       assert_equal('to Feeds', header.attr('title'))
 #      assert_equal("/feed/#{@feed[:id]}?page=2&origin=#{CGI.escape('/feed')}", header.attr('href'))

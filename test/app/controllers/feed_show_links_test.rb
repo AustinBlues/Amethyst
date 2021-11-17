@@ -39,7 +39,7 @@ describe '/feed/show links' do
       get link[-1].attr('href')	# get 2nd page of Posts
 
       p = Nokogiri::HTML.parse(last_response.body)
-      l = p.at_css('div.card-header a.btn')	# link for BACK_ARROW
+      l = p.at_css('div.card-header a.navigation')	# link for BACK_ARROW
       assert_equal('/feed', l.attr('href'))
     end
   end
