@@ -29,7 +29,7 @@ describe "/post" do
 
       p = Nokogiri::HTML.parse(last_response.body)
       
-      link = p.at_css('.card-header a.btn')
+      link = p.at_css('.card-header a.navigation')
       assert_equal(link.attr('title'), 'to Feeds')
       assert_equal(link.attr('href'), '/feed')
 
@@ -37,7 +37,7 @@ describe "/post" do
       assert_equal(@posts[EXTRA-1][:title], p.at_css('td:first-child a').content.strip)
 
       # check first Post has correct action links
-      links = p.css('tbody:first-child a.btn')
+      links = p.css('tbody:first-child a.action')
 
       # HIDE, and DOWN links
       assert_equal("/post/#{@posts[EXTRA-1][:id]}/hide?origin=#{CGI.escape('/post?page=2')}", links[0].attr('href'))
@@ -57,17 +57,17 @@ describe "/post" do
       assert_equal(title.attr('href'), @posts[0][:url])
 
       # check Post has expected title and URL
-      link = p.at_css('.card-header a.btn')
+      link = p.at_css('.card-header a.navigation')
       assert_equal(link.attr('title'), 'to Posts')
       assert_equal(link.attr('href'), '/post?page=1')
 
       # check first Post has correct action links
-      links = p.css('.card-header div a.btn')
+      links = p.css('.card-header .actions a.action')
 
       # UNCLICK, HIDE, and DOWN links
       ACTIONS = %w{unclick hide down}
       links.each_with_index do |l, i|
-        assert_equal("/post/#{@posts[0][:id]}/#{ACTIONS[i]}?#{origin}", links[i].attr('href'))
+        assert_equal("/post/#{@posts[0][:id]}/#{ACTIONS[i]}?#{origin}", l.attr('href'))
       end
     end
   end

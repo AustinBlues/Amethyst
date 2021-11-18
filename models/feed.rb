@@ -8,7 +8,6 @@ class Feed < Sequel::Model
   VERBOSE = false
 
   def before_create
-    # Set score so initially in the middle of the Feed.index
     self[:score] ||= (Feed.count == 0) ? 0.0 : (Feed.avg(:score) + Feed.order(:score).first.score)/2.0
     super
   end

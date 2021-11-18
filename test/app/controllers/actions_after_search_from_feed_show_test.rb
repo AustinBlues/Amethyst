@@ -39,7 +39,7 @@ describe '/feed/search' do
       search = "/post/search?page=2&search=Post&origin=#{CGI.escape(@origin)}"
       get search
       p = Nokogiri::HTML.parse(last_response.body)
-      l = p.at_css('div.card-header a.btn')
+      l = p.at_css('div.card-header a.navigation')
       # KLUDGE this is how it is.  Maybe it show read 'to Feed show'
       assert_equal('to Feeds', l.attr('title'))
       assert_match(@origin, l.attr('href'))
@@ -73,18 +73,19 @@ describe '/feed/search' do
       # check Post show has expected description
       assert_equal(@posts[0][:description], p.at_css('p').content.strip)
       
-      links = p.css('a.btn')
+      link = p.at_css('.card .card-header a.navigation')
       # back arrow (LEFT_ARROW)
-      assert_equal('to Feed show', links[0].attr('title'))
-      assert_match(@origin, links[0].attr('href'))
+      assert_equal('to Feed show', link.attr('title'))
+      assert_match(@origin, link.attr('href'))
 
       # UNCLICK, HIDE, and DOWN links
-      (1..3).each do |i|
-        assert_match(/origin=#{CGI.escape(@origin)}/, links[i].attr('href'))
+      links = p.css('.card .card-header .actions a.action')
+      links.each do |l|
+        assert_match(/origin=#{CGI.escape(@origin)}/, l.attr('href'))
       end
 
       # UNCLICK has expected redirect (HIDE and DOWN check above)
-      get links[1].attr('href')
+      get links[0].attr('href')
       assert_equal("http://example.org#{@origin}", last_response.location.encode('utf-8'))
     end
   end

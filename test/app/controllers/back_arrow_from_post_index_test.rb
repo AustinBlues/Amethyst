@@ -20,8 +20,8 @@ describe "/post" do
 
   after do
     Feed.all{|f| f.destroy}
-#    Post.truncate
   end
+
 
   describe 'when showing Post index' do
     it "should return Post index, 2nd page" do
@@ -33,12 +33,14 @@ describe "/post" do
       get "/post/#{@posts[0][:id]}?origin=#{CGI.escape(@origin)}"
       p = Nokogiri::HTML.parse(last_response.body)
       assert_equal(@posts[0][:description], p.at_css('p').content.strip)
-      links = p.css('div.card a.btn')
-      assert_equal('to Posts', links[0].attr('title'))
-      assert_match(@origin, links[0].attr('href'))
+      link = p.at_css('.card-header a.navigation')
+      assert_equal('to Posts', link.attr('title'))
+      assert_match(@origin, link.attr('href'))
+
+      links = p.css('.card-header .actions a.action')
       # unclick, hide, down links
-      (1..3).each do |i|
-        assert_match(/origin=#{CGI.escape(@origin)}/, links[i].attr('href'))
+      links.each do |l|
+        assert_match(/origin=#{CGI.escape(@origin)}/, l.attr('href'))
       end
     end
   end

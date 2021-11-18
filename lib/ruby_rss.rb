@@ -59,7 +59,6 @@ module RubyRSS
             case f.class.to_s
             when 'RSS::Atom::Feed'
               description = post.content.content
-#              ident = post.link.href
               ident = post.id.to_s
               time = strip_tags(post.updated.to_s)
             when 'RSS::Rss'

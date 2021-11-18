@@ -4,6 +4,7 @@ class Post < Sequel::Model
   include Sanitize
   many_to_one :feed
   many_to_many :word, join_table: :occurrences
+  include Sanitize
   extend Amethyst::App::AmethystHelper
 
   ONE_DAY = 24 * 60 * 60

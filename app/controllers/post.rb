@@ -101,13 +101,18 @@ Amethyst::App.controllers :post do
     if RELATED_POSTS_MAX <= 0
       @related = []
     else
-      @words = @post.word_cloud(0.5).sort{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}
+      @words = @post.word_cloud.sort{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}
       word_id = @post.word.map(&:id)
 
+      word_strength = Hash.new
+      @words.each{|w| word_strength[w[:word_id]] = w[:count]/w[:frequency]}
+
       relatedness = Hash.new(0)
-      Occurrence.where(word_id: word_id).join(:words, id: :word_id).each do |w|
-        relatedness[w[:post_id]] += w[:count]/w[:frequency]
+      Occurrence.where(word_id: word_id).join(:words, id: :word_id).
+            exclude(post_id: @post[:id]).where(flags: 0).each do |w|
+        relatedness[w[:post_id]] += w[:count]/w[:frequency] + word_strength[w[:word_id]]
       end
+
       if true
         related_posts = Post.where(id: relatedness.keys, state: Post::UNREAD).order(:id).all
         ids = related_posts.map{|p| p[:id]}
@@ -130,22 +135,8 @@ Amethyst::App.controllers :post do
         related_posts.each do |rp|
           rp[:wic].sort!{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}
         end
-      else
-        related_posts = Post.where(id: relatedness.keys, state: Post::UNREAD).all
-        related_posts.each do |t|
-          t[:strength] = (100 * relatedness[t[:id]]).to_i	# 100 to move into human range
-          # Words In Common, intersection of Post's words and Posts with those same words
-          wic = t.word_cloud.delete_if{|w| !word_id.include?(w[:id])}
-          t[:wic] = wic.first(DISPLAY_WORDS)
-          if true
-            t[:wic].sort!{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}
-          else
-            t[:wic].sort!{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}.map do |w|
-              {name: w[:name], count: w[:count], frequency: w[:frequency]}
-            end
-          end
-        end
       end
+
       related_posts.delete_if{|t| t[:wic].size < WIC_MIN}	# must have at least WIC_MIN Words In Common
       related_posts.sort!{|a, b| b[:strength] <=> a[:strength]}
 

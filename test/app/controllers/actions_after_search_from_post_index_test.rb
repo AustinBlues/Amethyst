@@ -38,12 +38,12 @@ describe '/post/search' do
 
 #      puts last_response.body
 
-      link = p.at_css('.card-header a.btn')
+      link = p.at_css('.card-header a.navigation')
       assert_equal(link.attr('title'), 'to Feeds')
       assert_equal(link.attr('href'), '/feed')
 
       # check Post show for correct action links
-      links = p.css('tbody:first-child a.btn')
+      links = p.css('tbody:first-child a.action')
 
       # UNCLICK, HIDE, and DOWN links
       links.each do |l|
@@ -67,7 +67,7 @@ describe '/post/search' do
       p = Nokogiri::HTML.parse(last_response.body)
 #      puts last_response.body
       assert_equal(@posts[PAGE_SIZE+EXTRA-1][:title], p.at_css('td a').content.strip)
-      l = p.at_css('div.card-header a.btn')
+      l = p.at_css('div.card-header a.navigation')
       # KLUDGE this is how it is.  Maybe it should read 'to Feed show'
       assert_equal('to Posts', l.attr('title'))
       assert_match(@origin, l.attr('href'))	# back arrow
