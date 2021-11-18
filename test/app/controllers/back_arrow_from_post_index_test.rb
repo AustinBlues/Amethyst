@@ -10,21 +10,18 @@ describe "/post" do
 
     # Create Feed and Posts in database
     now = Time.now - PAGE_SIZE
-    @feed = Feed.create(title: 'Feed 1', rss_url: 'http://127.0.0.1', previous_refresh: now)
+    @feed = Feed.create(title: 'Feed 1', rss_url: 'http://127.0.0.1', previous_refresh: now, next_refresh: now)
     @posts = (PAGE_SIZE+5).times.map do |i|
-      p = Post.create(feed_id: @feed[:id], ident: i, url: "http://127.0.0.1/#{i}",
-                      description: "Post #{i+1} content.", published_at: now+i)
-      p.update(title: "Post #{i+1}")
+      Post.create(feed_id: @feed[:id], ident: i, url: "http://127.0.0.1/#{i}", title: "Post #{i+1}",
+                  description: "Post #{i+1} content.", published_at: now+i)
     end
     @origin = "/post?page=2"
   end
 
   after do
-    Occurrence.where(true).delete
-    Word.all{|w| w.delete}
-    Post.all{|p| p.delete}
-    Feed.all{|f| f.delete}
+    Feed.all{|f| f.destroy}
   end
+
 
   describe 'when showing Post index' do
     it "should return Post index, 2nd page" do

@@ -1,11 +1,13 @@
 Amethyst::App.controllers :feed do
   before do
-    @origin = if [:index, :show].include?(request.action)
-                request.fullpath
+    @controller = :feed
+    @action = request.action
+    @current_url = request.fullpath
+    @origin = if [:index].include?(@action)
+                @current_url
               else
                 params.delete(:origin)
               end
-#    puts("ORIGIN: #{@origin}.") if Padrino.env != :test
   end
 
 
@@ -20,11 +22,7 @@ Amethyst::App.controllers :feed do
         redirect url_for(:feed, :index, page: @feeds.page_count)
       else
         @context = 'Feeds'
-
-        @controller = :feed
-        @action = :index
-
-        @options = {page: @page}
+        @pagination = {page: @page}
 
         render 'index'
       end
@@ -44,13 +42,9 @@ Amethyst::App.controllers :feed do
       else
         @context = @feed.name	# allow URL for new Feeds that haven't refreshed or have no title tag
 
-        @controller = :feed
-        @action = :show
-
         @datetime_only = true
-
-        @options = {id: params[:id], page: @feed.page_number}
-
+        @pagination = {id: params[:id], origin: @origin}
+        
         render 'show'
       end
     end
@@ -86,6 +80,8 @@ Amethyst::App.controllers :feed do
           end
         end
       rescue Exception => e
+#        STDERR.puts "Exception in Feed controller: #{$!}."
+        Refresh.log "Exception in Feed controller: #{$!}.", :error
         flash[:error] = "Unknown exception: #{e}."
       end
 
@@ -113,9 +109,8 @@ Amethyst::App.controllers :feed do
       flash[:error] = (/unique_(\w+)s'/ =~ e.to_s) ? "Duplicate #{$~[1]}." : 'Unique Constraint Violation'
     rescue
       flash[:error] = 'Unknown exception'
-    ensure
-      feed ||= Feed.with_pk! params[:id]
     end
+    feed ||= Feed.with_pk! params[:id]
 
     redirect url(:feed, :index, page: feed.page_number)
   end

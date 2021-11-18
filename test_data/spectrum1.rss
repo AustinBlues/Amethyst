@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<rss version='2.0' xmlns:atom='http://www.w3.org/2005/Atom' xmlns:media='http://www.w3.org/2005/Media'>
+  <channel>
+    <atom:link rel='self' type='application/rss+xml' href='http://www.spectrumlocalnews.com/services/contentfeed.tx|austin|news.landing.rss' />
+    <title>Local News | Austin | Spectrum News 1</title>
+    <description>Your source for South Texas news from Spectrum News Austin.</description>
+    <link>http://www.spectrumlocalnews.com/tx/austin/news</link>
+    <docs>http://backend.userland.com/rss</docs>
+    <generator>RSS.NET: http://www.rssdotnet.com/</generator>
+    <item>
+      <title>Cold front brings chilly changes</title>
+      <description>A slow-moving cold front is set to bring rain and much cooler air on Wednesday. </description>
+      <image>
+        <url>https://s7d2.scene7.com/is/image/TWCNews/TX_Stormy_Skies_Clouds_092021_Mary_Wasson</url>
+      </image>
+      <link>http://www.spectrumlocalnews.com/tx/austin/news/2020/05/14/austin-weather-forecast</link>
+      <section>APP Daily Forecast</section>
+      <author>Meteorologist Mary Wasson</author>
+      <protected />
+      <pubDate>Tue, 02 Nov 2021 03:00 PM CDT</pubDate>
+      <ticker>Cold front brings chilly changes</ticker>
+    </item>
+    <item>
+      <title>Free entrance to Texas state parks Nov. 14 in honor of Veterans Day</title>
+      <description>Daily entrance fees at all parks on Sunday Nov. 14.</description>
+      <image>
+        <url>https://s7d2.scene7.com/is/image/TWCNews/texas park resized</url>
+      </image>
+      <link>http://www.spectrumlocalnews.com/tx/austin/news/2021/11/02/free-entrance-to-texas-state-parks-nov--14-in-honor-of-veterans-day</link>
+      <section>Veteran's Month 2021</section>
+      <author>Sunny Tsai</author>
+      <protected />
+      <pubDate>Tue, 02 Nov 2021 12:31 PM CDT</pubDate>
+      <ticker>Free entrance to Texas state parks Nov. 14 in honor of Veterans Day</ticker>
+    </item>
+    <item>
+      <title>Gov. Abbott calls for crackdown on 'pornography,' 'inappropriate content' in Texas schools</title>
+      <description>Gov. Abbott joins Krause's campaign to investigate books that cover race, gender identity and sexual orientation in public schools.</description>
+      <image>
+        <url>https://s7d2.scene7.com/is/image/TWCNews/Greg_Abbott_AP45</url>
+      </image>
+      <link>http://www.spectrumlocalnews.com/tx/austin/news/2021/11/02/texas-governor-adopts-lawmaker-s-probe-of-books-in-schools</link>
+      <section>Top Stories</section>
+      <author>Associated Press</author>
+      <protected />
+      <pubDate>Tue, 02 Nov 2021 09:45 AM CDT</pubDate>
+      <ticker>Gov. Abbott calls for crackdown on 'pornography,' 'inappropriate content' in Texas schools</ticker>
+    </item>
+  </channel>
+</rss>

@@ -1,21 +1,21 @@
 <% unclick_url = url_for(:post, :unclick, id: @post.id, origin: @origin) %>
 <% hide_url = url_for(:post, :hide, id: @post.id, origin: @origin) %>
 <% down_url = url_for(:post, :down, id: @post.id, origin: @origin) %>
+<% title = "#{@post.feed.name} #{short_datetime(@post.published_at)}" %>
 
 <div class="card">
   <div class="card-header bg-info">
-    <%= link_to LEFT_ARROW, @origin, title: @back_title, class: 'btn btn-link navigation' %>
+    <%= link_to BACK_ICON, @origin, title: @back_title, class: 'btn btn-link navigation' %>
     
-    <div style="float: right">
-      <%= link_to UNDO, unclick_url, method: :put, title: 'unclick', class: 'btn btn-link action', style: 'font-size: x-large' %>
-      <%= link_to MINUS, hide_url, method: :put, title: 'hide', class: 'btn btn-link action' %>
-      <%= link_to DOWN_ARROW, down_url, method: :put, title: 'down vote', class: 'btn btn-link action' %>
+    <div class="actions">
+      <%= link_to UNDO_ICON, unclick_url, method: :put, title: 'unclick', class: 'btn btn-link action' %>
+      <%= link_to DELETE_ICON, hide_url, method: :put, title: 'hide', class: 'btn btn-link action' %>
+      <%= link_to DOWN_VOTE_ICON, down_url, method: :put, title: 'down vote', class: 'btn btn-link action' %>
     </div>
-    
-    <h2 class="card-title"><%= link_to(@post.name, @post.url, target: '_blank',
-	  title: "#{@post.feed.name}  #{short_datetime(@post.published_at)}") %>
-    </h2>
 
+    <h2 class="card-title">
+      <%= link_to(@post.name, @post.url, target: '_blank', title: title) %>
+    </h2>
 
     <%= partial 'layouts/flash' %>
   </div>

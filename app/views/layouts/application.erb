@@ -23,19 +23,13 @@
   </head>
   <body>
     <div id="header">
-      <div id="logo" style="height:1in">
-        <a href="<%= url_for(:home) %>">
-	  <span style="font-size:x-large; color:purple; font-style:oblique; font-family:sans-serif">
-	    <%= ROOT %>
-	  </span>
-        </a>
+      <%= link_to ROOT, url_for(:home), id: 'logo' %>
 
-	<% form_tag '/post/search', method: :get, class: 'form-inline d-flex', style: 'float: right' do %>
-          <%= SEARCH %>&nbsp;
-          <%= search_field_tag :search, placeholder: 'Search this website...' %>
-	  <%= hidden_field_tag(:origin, value: @origin) %>
-        <% end %>
-      </div>
+      <% form_tag '/post/search', method: :get, class: 'form-inline d-flex', style: 'float: right' do %>
+        <%= SEARCH_ICON %>&nbsp;
+        <%= search_field_tag :search, placeholder: 'Search this website...' %>
+	<%= hidden_field_tag(:origin, value: @origin) %>
+      <% end %>
     </div>
 
     <div id="body" class="container" style="max-width:60em">

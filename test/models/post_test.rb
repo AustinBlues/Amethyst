@@ -3,7 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../test_config.rb')
 describe "Post Model" do
   before do
     @feed = Feed.create(title: 'Dummy Feed for testing', rss_url: 'http://example.com/')
-    @post = Post.create(feed_id: @feed[:id], url: 'http://example.com/post/13')
+    @post = Post.create(feed_id: @feed[:id], title: 'Dummy Post for testing', url: 'http://example.com/post/13')
   end
 
   after do

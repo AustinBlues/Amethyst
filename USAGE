@@ -1,0 +1,43 @@
+The initial screen is the Post index.  It will be empty until you add a Feed.
+Click the left/right arrow of the left side of the banner of the Feed and Post
+indexes to cycle between them.  Navigation links are black and and on the left
+side).  Links that change the database (e.g. read, edit, delete, unclick, and
+down vote) are white ("white writes) and on the right side of the blue header.
+
+In the Feed screen, click the plus sign in the upper right to add RSS URLs.
+The feed will be added, initially with the URL as the title.  Wait a several
+seconds for the feed to download and then click on it.  The Post titles will
+be listed.  Click on a Post title to open it.  You will see the title in the
+blue box and the description below it.  The post is now considered read and
+will not show again. Clicking on the title will open the original post in a
+new window/tab.  Clicking on the left hooking arrow will mark it as unread and
+return to the original listing of posts.  Clicking on the '-' to the right of
+that will hide the post, i.e the post is not read and its Feed's score will
+not increase (see SCORING below).  Clicking on the down arrow will decrease
+the post's feed's score.  Use the left arrow to return to the Feed (or Post
+screen).
+
+You can return to the Feed screen, then click the left/right arrow to go to
+the Post screen.  The posts will be listed newest at the top.
+
+To get the most out of Amethyst, it best to not use the browser's back and
+forward arrows.
+
+SCORING
+  Feeds are listed in order of decreasing score, i.e., highest first.
+The more posts in a Feed you read, the higher the score.
+
+REFRESH
+  Feeds are refreshed every hour.  How often an RSS feed is updated can be
+specified in it.  Every feed I've seen with it, has been one hour.
+Accomodating anything different would be a complexity that, IMHO, is
+unnecessary.  Refreshing is spread as evenly as possible across the hour,
+e.g. with two feeds, they will be refreshed a half hour apart.  Five minutes
+has been picked as a convenient interval to run the refresh (the first of the
+two cron jobs above).  Changing it is left as an exercise for the user.
+
+Once a day, old posts are deleted and other daily cleanup and backup is done
+by the second cron of the cron jobs listed in INSTALL.  cron_daily is a script
+to do this.  It accommodates computers that may not always be on.  The cron
+job assumes the computer is on at least an hour a day.  Run it more frequently
+if needed.  Or once a day for a computer that is always on.

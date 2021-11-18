@@ -3,6 +3,8 @@ require 'nokogiri'
 
 
 describe '/feed/search' do
+  EXTRA = 5
+  
   before do
     Occurrence.where(true).delete
     Word.all{|w| w.delete}
@@ -11,22 +13,18 @@ describe '/feed/search' do
 
     # Create Feed and Posts in database
     now = Time.now - PAGE_SIZE
-    @feed = Feed.create(rss_url: 'http://127.0.0.1', previous_refresh: now)
-    @feed.update(title: 'Feed 1')
-    @posts = (PAGE_SIZE+5).times.map do |i|
-      p = Post.create(feed_id: @feed[:id], ident: i, url: "http://127.0.0.1/#{i}",
-                      description: "Post #{i+1} content.", published_at: now+i)
-      p.update(title: "Post #{i+1}")
+    @feed = Feed.create(title: 'Feed 1', rss_url: 'http://127.0.0.1', previous_refresh: now, next_refresh: now)
+    @posts = (PAGE_SIZE+EXTRA).times.map do |i|
+      Post.create(feed_id: @feed[:id], ident: i, url: "http://127.0.0.1/#{i}", title: "Post #{i}",
+                  description: "Post #{i} content.", published_at: now+i)
     end
 
-    @origin = "/feed/#{@feed[:id]}?page=2"
+    @origin = "/feed/#{@feed[:id]}?page=2&origin=#{CGI.escape('/feed')}"
   end
 
   after do
-    Occurrence.where(true).delete
-    Word.all{|w| w.delete}
-    Post.all{|p| p.delete}
-    Feed.all{|f| f.delete}
+    Feed.all{|f| f.destroy}	# show destroy all Posts too
+#    Post.truncate
   end
 
 
@@ -37,28 +35,36 @@ describe '/feed/search' do
       assert_match(/#{@feed[:title]}/, last_response.body)
     end
 
-    it 'should return all Posts' do
-      get "/post/search?search=Post&origin=#{CGI.escape(@origin)}"
+    it 'search should return all Posts' do
+      search = "/post/search?page=2&search=Post&origin=#{CGI.escape(@origin)}"
+      get search
       p = Nokogiri::HTML.parse(last_response.body)
-#      puts last_response.body
-      assert_equal(@posts[0][:title], p.at_css('td a').content.strip)
       l = p.at_css('div.card-header a.btn')
       # KLUDGE this is how it is.  Maybe it show read 'to Feed show'
       assert_equal('to Feeds', l.attr('title'))
       assert_match(@origin, l.attr('href'))
 
+#      puts last_response.body
+      
+      # Check 1st Post title
+      assert_equal(@posts[EXTRA-1][:title], p.at_css('table td a').content.strip)
+
       # hide, down links
-      actions = p.css('a.action')
+      actions = p.css('tbody:first-child a.action')
+ #     puts "ACTIONS: #{actions}."
       hide = actions[0].attr('href')
-      assert_equal("/post/#{@posts[0][:id]}/hide?origin=#{CGI.escape(@origin)}", hide)
+      assert_equal("/post/#{@posts[EXTRA-1][:id]}/hide?origin=#{CGI.escape(search)}", hide)
       down = actions[1].attr('href')
-      assert_equal("/post/#{@posts[0][:id]}/down?origin=#{CGI.escape(@origin)}", down)
+      assert_equal("/post/#{@posts[EXTRA-1][:id]}/down?origin=#{CGI.escape(search)}", down)
 
       # check HIDE and DOWN have expected redirect
       get hide
-      assert_equal("http://example.org#{@origin}", last_response.location.encode('utf-8'))
+      assert_equal("http://example.org#{search}", last_response.location.encode('utf-8'))
+
+      get search
       get down
-      assert_equal("http://example.org#{@origin}", last_response.location.encode('utf-8'))
+      puts last_response.body
+      assert_equal("http://example.org#{search}", last_response.location.encode('utf-8'))
 
       # check Post show for correct action links
       get "/post/#{@posts[0][:id]}?origin=#{CGI.escape(@origin)}"

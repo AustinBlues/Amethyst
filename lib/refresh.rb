@@ -18,7 +18,7 @@ module Refresh
   REDIS_KEY = 'residue'
   extend NOKOGIRI ? NokogiriRSS : RubyRSS
   extend Padrino::Helpers::FormatHelpers
-  extend Amethyst::App::AmethystHelper
+#  extend Amethyst::App::AmethystHelper
   extend Amethyst::App::PostHelper
   
   LVL2CLR = {error: :red, warning: :yellow, highlight: :green, info: :default, debug: :cyan, devel: :magenta}
@@ -34,36 +34,40 @@ module Refresh
 
 
   def self.raw2time(raw)
-    verbose = false
-    if true
+    if false
       tmp = Time.parse(raw)	# good enough
       verbose = true
     else
+      verbose = false
       tmp = case raw
             when /^[a-zA-Z]+, \d+ [a-zA-Z]+ \d+ \d+:\d+:\d+ [-+]\d+$/
               time = Time.rfc2822(raw)
 #              STDERR.puts "RFC2822: '#{raw}' => '#{time}' (#{time.zone})"
               time
-            # this case ISO8601 can also be handled by Time.parse
-            when /^\d+-\d+-\d+T\d+:\d+:\d+-\d+:\d+$/
+            when /^[a-zA-Z]+, \d+ [a-zA-Z]+ \d+ \d+:\d{2}(:\d{2})? \w+( \w+)?$/
+              # unsure what standard this is
+              time = Time.parse(raw)
+            when /^\d{4}-?\d{2}-?\d{2}T\d{2}:?\d{2}:?\d{2}(\.\d{2,3})?(Z|[+-]\d{2}:?\d{2})$/
+              # this case ISO8601 can also be handled by Time.parse
               time = Time.iso8601(raw)
-#              STDERR.puts "ISO8601: '#{raw}' => '#{time}' (#{time.zone})"
+#              STDERR.puts("ISO8601: '#{raw}' => '#{time}' (#{time.zone})")
               time
             when /^[a-zA-Z]+, \d+ [a-zA-Z]+ \d+ \d+:\d+:\d+ (GMT|UTC)$/
               time = Time.httpdate(raw)
 #              STDERR.puts "RFC 2616: '#{raw}' => '#{time}' (#{time.zone})"
               time
+            when /^\d{4}-?\d{2}-?\d{2} \d{2}:?\d{2}:?\d{2} [+-]\d{2}:?\d{2}/
+              # unsure what standard this is
+              time = Time.parse(raw)
             else
               time = Time.parse(raw)
               verbose = true
               time
             end
     end
-    # KLUDGE
-    tmp = tmp.localtime if tmp.zone.nil?
-#    STDERR.puts("TIME: '#{raw}' => '#{tmp}' (#{tmp.zone})") if verbose 
-    STDERR.puts("TIME: '#{raw}' => '#{tmp}' (#{tmp.zone})") if tmp.zone.nil?
-    tmp
+    STDERR.puts("TIME: '#{raw}' => '#{tmp}' (#{tmp.zone})") if verbose 
+#    STDERR.puts("TIME: '#{raw}' => '#{tmp}' (#{tmp.zone})") if tmp.zone.nil?
+    tmp.localtime
   end
 
   
@@ -91,6 +95,7 @@ module Refresh
         else          
           f = Feed.with_pk(args)
           refresh_feed(f, fetch(f), time)
+          @@redis.INCR(REDIS_KEY)
           log("First fetch: #{f.name} at #{short_datetime(time)}.")
         end
       else
@@ -215,31 +220,34 @@ module Refresh
     else
       # Update all Feeds in the slice
       feeds = Feed.slice(slice_size, now + INTERVAL_TIME/2)
-      fetch_cnt = feeds.count
-      feeds.each do |f|
-        refreshed_at = f.previous_refresh
-        if refresh_feed(f, fetch(f), now)
-          sludge_filter(f, SLUDGE) if SLUDGE
+      if (fetch_cnt = feeds.count) <= 0
+        log "Too early to fetch feeds at #{Time.now.strftime('%l:%M%P').strip}.", :info
+      else
+        feeds.each do |f|
+          refreshed_at = f.previous_refresh
+          if refresh_feed(f, fetch(f), now)
+            sludge_filter(f, SLUDGE) if SLUDGE
 
-          # Hide unread Posts older than UNREAD_LIMIT
-          cutoff = Post.where(feed_id: f[:id], state: Post::UNREAD).order(Sequel.desc(:published_at)).
-                     offset(UNREAD_LIMIT-1).get(:published_at)
-          if cutoff
-            n = Post.where(feed_id: f[:id], state: Post::UNREAD).where{published_at < cutoff}.update(state: Post::HIDDEN)
-            log("Hiding #{n} older post(s).", :debug) if n > 0
+            # Hide unread Posts older than UNREAD_LIMIT
+            cutoff = Post.where(feed_id: f[:id], state: Post::UNREAD).order(Sequel.desc(:published_at)).
+                       offset(UNREAD_LIMIT-1).get(:published_at)
+            if cutoff
+              n = Post.where(feed_id: f[:id], state: Post::UNREAD).where{published_at < cutoff}.update(state: Post::HIDDEN)
+              log("Hiding #{n} older post(s).", :debug) if n > 0
+            end
+          end
+          
+          if refreshed_at
+            log "Previous '#{f.name}' refresh #{Refresh.time_ago_in_words(refreshed_at, true)} ago."
+          else
+            log "Refreshed '#{f.name}' (no previous refresh)."
           end
         end
-        
-        if refreshed_at
-          log "Previous '#{f.name}' refresh #{Refresh.time_ago_in_words(refreshed_at, true)} ago."
-        else
-          log "Refreshed '#{f.name}' (no previous refresh)."
-        end
+      
+        # Report progress.  The second case is when Amethyst catching up after not running (e.g. hibernation).
+        tmp = (fetch_cnt == max_refresh) ? max_refresh : "#{fetch_cnt}:#{max_refresh}"
+        log "Fetched #{tmp}/#{feed_count} channels at #{Time.now.strftime('%l:%M%P').strip}."
       end
-
-      # Report progress.  The second case is when Amethyst catching up after not running (e.g. hibernation).
-      tmp = (fetch_cnt == max_refresh) ? max_refresh : "#{fetch_cnt}:#{max_refresh}"
-      log "Fetched #{tmp}/#{feed_count} channels at #{Time.now.strftime('%l:%M%P').strip}."
     end
   end
 end
