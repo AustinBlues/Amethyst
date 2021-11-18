@@ -22,9 +22,9 @@ Amethyst::App.controllers :post do
         midnight = Time.new(now.year, now.month, now.day)
         titles = Post.unread.where(Sequel.lit('published_at < ?', midnight)).map{|p| p[:title]}
 #        @posts = Post.where(title: tmp.map{|p| p[:title]}).order(:title).paginate(@page, PAGE_SIZE)
-        tmp = Post.select(Sequel[:posts][:id], Sequel[:posts][:title], :description, :feed_id, :published_at, :state).
-                where(Sequel[:posts][:title] => titles)
-        @posts = tmp.join(:feeds, id: :feed_id).order(Sequel[:posts][:title], Sequel.desc(:score)).paginate(@page, PAGE_SIZE)
+        tmp = Post.select(Sequel[:posts][:id], Sequel[:posts][:title], :description, :feed_id, :published_at, :state)
+        tmp = tmp.where(Sequel[:posts][:title] => titles).join(:feeds, id: :feed_id)
+        @posts = tmp.order(Sequel[:posts][:title], Sequel.desc(Sequel[:feeds][:score])).paginate(@page, PAGE_SIZE)
       else
         order = case params[:order]
                 when 'title'
