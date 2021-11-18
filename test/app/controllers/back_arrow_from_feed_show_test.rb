@@ -34,12 +34,14 @@ describe "/feed" do
       get "/post/#{@posts[0][:id]}?origin=#{CGI.escape(@origin)}"
       p = Nokogiri::HTML.parse(last_response.body)
       assert_equal(@posts[0][:description], p.at_css('p').content.strip)
-      links = p.css('div.card a.btn')
-      assert_equal('to Feed show', links[0].attr('title'))
-      assert_match(@origin, links[0].attr('href'))
-      # unclick, hide, down links
-        (1..3).each do |i|
-        assert_match(/origin=#{CGI.escape(@origin)}/, links[i].attr('href'))
+      link = p.at_css('.card .card-header a.navigation')
+      assert_equal('to Feed show', link.attr('title'))
+      assert_match(@origin, link.attr('href'))
+
+      # UNCLICK, HIDE, DOWN links
+      links = p.css('.card .card-header .actions a.action')
+      links.each do |l|
+        assert_match(/origin=#{CGI.escape(@origin)}/, l.attr('href'))
       end
     end
   end

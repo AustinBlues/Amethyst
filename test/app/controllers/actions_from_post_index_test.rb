@@ -28,7 +28,7 @@ describe "/post" do
       get @origin
 #      puts last_response.body
       p = Nokogiri::HTML.parse(last_response.body)
-      header = p.at_css('div.card-header a.btn')
+      header = p.at_css('div.card-header a.navigation')
 #      puts "HEADER: #{header.inspect}."
       assert_equal('to Feeds', header.attr('title'))
       assert_equal('/feed', header.attr('href'))
@@ -53,18 +53,19 @@ describe "/post" do
       # check Post show has expected description
       assert_equal(@posts[0][:description], p.at_css('p').content.strip)
       
-      links = p.css('a.btn')
+      link = p.at_css('.card .card-header a.navigation')
       # back arrow (LEFT_ARROW)
-      assert_equal('to Posts', links[0].attr('title'))
-      assert_match(@origin, links[0].attr('href'))
+      assert_equal('to Posts', link.attr('title'))
+      assert_match(@origin, link.attr('href'))
 
       # UNCLICK, HIDE, and DOWN links
-      (1..3).each do |i|
-        assert_match(/origin=#{CGI.escape(@origin)}/, links[i].attr('href'))
+      links = p.css('.card .card-header .actions a.action')
+      links.each do |l|
+        assert_match(/origin=#{CGI.escape(@origin)}/, l.attr('href'))
       end
 
       # UNCLICK has expected redirect (HIDE and DOWN check above)
-      get links[1].attr('href')
+      get links[0].attr('href')
       assert_equal("http://example.org#{@origin}", last_response.location.encode('utf-8'))
     end
   end

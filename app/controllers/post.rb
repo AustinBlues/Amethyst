@@ -135,13 +135,6 @@ Amethyst::App.controllers :post do
         related_posts.each do |rp|
           rp[:wic].sort!{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}
         end
-        # Words In Common, intersection of Post's words and Posts with those same words
-        if word_id.include?(t[:id])
-          related_posts[rp][:wic] << t
-        end
-      end
-      related_posts.each do |rp|
-        rp[:wic].sort!{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}
       end
 
       related_posts.delete_if{|t| t[:wic].size < WIC_MIN}	# must have at least WIC_MIN Words In Common

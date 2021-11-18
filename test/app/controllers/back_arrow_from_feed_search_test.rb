@@ -35,7 +35,7 @@ describe "/feed" do
       p = Nokogiri::HTML.parse(last_response.body)
 #      puts last_response.body
       assert_equal(@posts[EXTRA-1][:title], p.at_css('td a').content.strip)
-      l = p.at_css('div.card-header a.btn')
+      l = p.at_css('div.card-header a.navigation')
       assert_equal('to Feeds', l.attr('title'))
       assert_match(@origin, l.attr('href'))
     end
