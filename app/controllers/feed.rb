@@ -8,6 +8,7 @@ Amethyst::App.controllers :feed do
               else
                 params.delete(:origin)
               end
+#    puts "ORIGIN: #{@origin.inspect}."
   end
 
 
@@ -34,11 +35,11 @@ Amethyst::App.controllers :feed do
     @feed = Feed.with_pk! params[:id]
     page = (params[:page] || 1).to_i
     if page <= 0
-      redirect url_for(:feed, :show, id: @feed[:id], page: 1)
+      redirect url_for(:feed, :show, id: @feed[:id]), page: 1, origin: @origin
     else
-      @posts = Post.unread.where(feed_id: @feed[:id]).order(Sequel.desc(:published_at)).paginate(page, PAGE_SIZE)
+      @posts = Post.unread.where(feed_id: @feed[:id]).reverse(:published_at).paginate(page, PAGE_SIZE)
       if page > @posts.page_count
-        redirect url_for(:feed, :show, id: @feed[:id], page: @posts.page_count)
+        redirect url_for(:feed, :show, id: @feed[:id], page: @posts.page_count, origin: @origin)
       else
         @context = @feed.name	# allow URL for new Feeds that haven't refreshed or have no title tag
 
@@ -124,7 +125,7 @@ Amethyst::App.controllers :feed do
       Resque.enqueue_to('Initial', Refresh, -feed[:id])
       flash[:success] = 'Delete queued'
 
-      redirect url(:feed, :index)
+      redirect url(@origin)
     else
       flash[:warning] = pat(:delete_warning, :model => 'feed', :id => "#{params[:id]}")
       halt 404

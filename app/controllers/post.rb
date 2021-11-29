@@ -16,6 +16,8 @@ Amethyst::App.controllers :post do
     if @page <= 0
       redirect url_for(:post, :index, page: 1)
     else
+      STDERR.puts "PARAMS: #{params.inspect}."
+      STDERR.puts "GET: #{request.GET.inspect}."
       if params[:order] == 'cull'
         # KLUDGE this is more my use culling The Hill feeds
         now = Time.now
@@ -83,6 +85,8 @@ Amethyst::App.controllers :post do
 
 
   get :show, '/post/:id' do
+      STDERR.puts "PARAMS: #{params.inspect}."
+      STDERR.puts "GET: #{request.GET.inspect}."
     @context = 'Post'
     @back_title = case @origin
                   when /search/
