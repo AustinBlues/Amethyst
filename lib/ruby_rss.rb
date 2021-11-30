@@ -90,7 +90,7 @@ module RubyRSS
 
                 p.title = title
                 p.description = description
-                p.published_at = !time.is_a?(String) ? time : Refresh.raw2time(time.to_s)
+                p.published_at = Refresh.raw2time(time.to_s)
                 if time.nil?
                   time = Time.now
                   Refresh.log("'#{title}' missing time, setting to current time.", :warning)
