@@ -1,0 +1,6 @@
+Amethyst2Beta2 is bug fix and improved navigation minor or patch release.
+Bugs: Hiding the last post on a page corrupted the back (left) arrow link.  It
+  would return to the same page in an endless loop.  Note: the Amethyst logo
+  in the upper left corner will always return to the home page, "/post".
+Navigation improvement: Deleting a feed will now return to the same page as
+  the feed was on instead of the first page.
