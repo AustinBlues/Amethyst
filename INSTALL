@@ -5,6 +5,7 @@ access from other computers) as an ordinary user, not root.
 
 Download the code:
   git clone https://github.com/AustinBlues/Amethyst.git
+  git checkout tags/Amethyst2Beta1
 
   Note: the directory name is used to namespace the database and the Redis
   data.  You may wish to change the directory name to avoid clashes with other
