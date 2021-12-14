@@ -244,6 +244,16 @@ class Post < Sequel::Model
     zombie_cnt = zombie.count
     unread_cnt = zombie.where(state: UNREAD).count
     puts "Deleting all #{DAYS_OF_THE_DEAD}+ day zombies: #{zombie_cnt}, #{unread_cnt} unread."
-    zombie.delete
+    if true
+      zombie.each do |z|
+        begin
+          z.destroy
+        rescue
+          STDERR.puts "Exception(#{$!}) destroying '#{z.name}' (#{z[:id]})."
+        end
+      end
+    else
+      zombie.delete
+    end
   end
 end
