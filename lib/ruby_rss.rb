@@ -35,7 +35,8 @@ module RubyRSS
           when 'UTF-8'
             # preferred/assumed/Ruby native encoding
           when nil, ''
-            Refresh.log("NO ENCODING specified.", :warning)
+            # only log on create or update (edit)
+            Refresh.log("NO ENCODING specified.", :warning) if f.previous_refresh.nil?
           else
             Refresh.log("ENCODING: #{f.encoding.inspect}.", :warning)
           end
@@ -45,7 +46,7 @@ module RubyRSS
           elsif f.respond_to?(:title)
             feed.title ||= strip_tags(f.title.to_s).strip
           else
-            Refresh.log "MISSING TITLE: '#{feed.name}'.", :warning
+            Refresh.log "MISSING FEED TITLE: '#{feed.name}'.", :warning
           end
 
           unless (f.class == RSS::Rss) || (f.class == RSS::Atom::Feed) || (f.class == RSS::RDF)
@@ -54,7 +55,7 @@ module RubyRSS
 
           f.items.each do |post|
             title = strip_tags(post.title.to_s)
-            title.strip!
+            title.strip! if title
 
             case f.class.to_s
             when 'RSS::Atom::Feed'
@@ -78,9 +79,14 @@ module RubyRSS
                 time = first_nonblank(post.pubDate, post.date, post.dc_date, now)
               end
             end
-            ident.strip!
-            description.strip!
-            time.strip! if time.is_a?(String)
+            if ident
+              ident.strip!
+            else
+              ident = strip(post.link || post.guid)
+              Refresh.log "MISSING POST IDENT: '#{post.link || post.guid}'.", :warning
+            end
+            description.strip! if description
+            time.strip! if time && time.is_a?(String)
 
             ident = title if ident.empty?
 
@@ -88,8 +94,17 @@ module RubyRSS
               if p.new?
                 feed.ema_volume += ALPHA
 
-                p.title = title
-                p.description = description
+                if title
+                  p.title = title
+                else
+                  Refresh.log "MISSING POST TITLE: '#{post.link || post.guid}'.", :warning
+                end
+                if description
+                  p.description = description
+                else
+                  p.description = 'MISSING DESCRIPTION'
+                  Refresh.log "MISSING POST DESCRIPTION: '#{title || post.link || post.guid}.", :warning
+                end
                 p.published_at = Refresh.raw2time(time.to_s)
                 if time.nil?
                   time = Time.now
