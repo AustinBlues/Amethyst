@@ -35,7 +35,8 @@ module RubyRSS
           when 'UTF-8'
             # preferred/assumed/Ruby native encoding
           when nil, ''
-            Refresh.log("NO ENCODING specified.", :warning)
+            # Only log on create or update/edit.
+            Refresh.log("NO ENCODING specified.", :warning) if feed.previous_refresh.nil?
           else
             Refresh.log("ENCODING: #{f.encoding.inspect}.", :warning)
           end
