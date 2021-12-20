@@ -49,11 +49,12 @@ class Feed < Sequel::Model
 
   
   def add_score(amt)
-    # refresh for new Feed may not have occurred yet, i.e. ema_volume == 0.0; so no low volume adjust
-#    adjust = (self[:ema_volume] == 0.0) ? 1.0 : amt * (0.5 + [0.25/self[:ema_volume], 3.0].min)
-#    adjust = (self[:ema_volume] == 0.0) ? 1.0 : amt * (0.6 + [0.25/self[:ema_volume], 2.0].min)
-    adjust = (self[:ema_volume] == 0.0) ? 1.0 : amt * (0.3 + [0.1/self[:ema_volume], 2.0].min)
-    self[:score] += adjust
+    if amt != 0.0
+      # refresh for new Feed may not have occurred yet, i.e. ema_volume == 0.0; so no low volume adjust
+      adjust =  amt * ((self[:ema_volume] == 0.0) ? 0.5 : (0.3 + 2.0/(1.0 + self[:ema_volume])))
+      puts "ADJUST: #{'%0.4f' % adjust}."
+      self[:score] += adjust
+    end
   end
 
 
