@@ -15,6 +15,7 @@ module Refresh
   INTERVALS = CYCLE_TIME/INTERVAL_TIME
   VERBOSITY = 2		# default sludge_filter() verbosity
   SLUDGE_HORIZON = 2*3600	# how long to log posts w/ sludge; currently 2 hours, i.e., twice
+  SLUDGE_STATE = Post.const_get(SLUDGE_ACTION)
   REDIS_KEY = 'residue'
   extend NOKOGIRI ? NokogiriRSS : RubyRSS
   extend Padrino::Helpers::FormatHelpers
@@ -133,18 +134,16 @@ module Refresh
       log(query.sql, :debug) if verbosity >= 3
       query.each do |q|
         if q[:score] >= 0.5
+          post = Post[q[:id]]
+          post.state_to(SLUDGE_STATE)
+          post.save(changed: true)
           if verbosity >= 0
             log("(#{'%0.2f' % q[:score]}) #{!q[:title].empty? ? q[:title] : q[:description]}".colorize(:red))
           end
-          if false
-            q.update(state: Post::HIDDEN)
-          else
-            post = Post[q[:id]]
-            post.down_vote!
-            post.save(changed: true)
-          end
         elsif q[:score] >= 0.25
-          q.update(state: Post::HIDDEN)
+          post = Post[q[:id]]
+          post.state_to(SLUDGE_STATE)
+          post.save(changed: true)
           if verbosity >= 1
             log("(#{'%0.2f' % q[:score]}) #{!q[:title].empty? ? q[:title] : q[:description]}".colorize(:yellow))
           end

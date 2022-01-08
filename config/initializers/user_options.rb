@@ -17,6 +17,9 @@ RELATED_POSTS_MAX = ENV['RELATED_POSTS_MAX'] ? ENV['RELATED_POSTS_MAX'].to_i : 5
 # How many Word frequency and count (Post specfic) to display beside the description (zero to not display them)
 DISPLAY_WORDS = ENV['DISPLAY_WORDS'] ? ENV['DISPLAY_WORDS'].to_i : 12
 
+# What to do with sludge
+SLUDGE_ACTION = ENV['SLUDGE_ACTION'] || 'HIDDEN'
+
 # How many days for Feed score Exponential Moving Average (EMA)
 # Twice as long between posts of least frequent post is a good starting value
 EMA_DAYS = ENV['EMA_DAYS'] ? ENV['EMA_DAYS'].to_i : 7
