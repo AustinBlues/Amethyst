@@ -12,6 +12,9 @@ TOP_PAGINATION = FEED_TOP | POST_TOP	# PAGINATION default value
 BOTTOM_PAGINATION = FEED_BOTTOM | POST_BOTTOM
 
 
+UNICODE_REPLACEMENT = "\u{FFFD}"
+
+
 # HTML entities & Icons
 ADD_ICON = SafeBuffer.new('&plus;')
 #BACK_ICON = SafeBuffer.new('&larr;')
