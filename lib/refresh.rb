@@ -5,6 +5,7 @@ require 'redis-namespace'
 require 'time'
 require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/post_helper.rb')
 require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/amethyst_helper.rb')
+require File.expand_path(File.dirname(__FILE__) + '/../models/post.rb')
 require 'logger'
 
 
