@@ -74,6 +74,7 @@
 	</div>
         <div class="modal-footer">
           <% form_tag url(:feed, :destroy, id: @feed[:id]), method: :delete do %>
+	    <%= hidden_field_tag :origin, value: @origin %>
             <button type="button" class="btn btn-secondary" data-dismiss="modal">cancel</button>
 	    <%= submit_tag 'Delete', class: 'btn btn-danger btn-small' %>
 	  <% end %>

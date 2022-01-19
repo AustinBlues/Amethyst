@@ -6,10 +6,11 @@ module Sanitize
   def sanitize!(which, max_length)
     sanitized = false
     if self[which]
-      self[which].gsub!("\u{1F449}", "\u{261E}")	# MariaDB doesn't accept Unicode white right pointing index
-      sanitized ||= !$~.nil?
+#      self[which].gsub!("\u{1F449}", "\u{261E}")	# MariaDB doesn't accept Unicode white right pointing index
+#      sanitized ||= !$~.nil?
       original_length = self[which].length
       self[which] = @@entities_decoder.decode(self[which])
+      self[which].encode!('UTF-8', invalid: :replace, undef: :replace)
       sanitized ||= (original_length != self[which].length)
     end
     sanitized
