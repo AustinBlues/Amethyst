@@ -48,7 +48,6 @@
       <% @related.each do |r| %>
         <tr>
 	  <td style="vertical-align: top">
-	    <br>
 	    <h4><%= link_to_post_show(r, @origin, false) %>&nbsp;(<%= r[:strength].round %>)</h4>
 
 	    <p class="card-text">
@@ -56,6 +55,12 @@
 	    </p>
 	  </td>
 	  <td style="vertical-align: top">
+	    <b>
+	      <%= "Max: #{r[:max].round(2)}" %><br>
+	      <%= "Avg: #{r[:avg].round(3)}" %><br>
+	      <%= "Min: #{'%0.3g' % r[:min]}" %><br>
+	      <%= "Cull: #{r[:cull_size]}/#{r[:wic].size}" %>
+	    </b>
 	    <% r[:wic].take(DISPLAY_WORDS).each do |w| %>
 	      <br><%= w[:name] %>&nbsp;(<%= w[:count] %>:<%= w[:frequency].round %>)
 	    <% end %>

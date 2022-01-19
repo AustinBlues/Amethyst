@@ -101,19 +101,20 @@ class Post < Sequel::Model
         avg += value[:strength]
       end
       avg /= wc.size
-      puts "AVG: #{avg}."
+#      puts "AVG: #{'%0.3g' % avg}."
 
       # cull low strength words
       limit = 0.5 * avg
       x = wc.sort_by{|key, value| value[:strength]}
       i = 0
       while x[i][1][:strength] <= limit do
-        puts "Culling: '#{x[i][0]}' #{x[i][1][:count]}/#{x[i][1][:frequency].to_i}."
+#        puts "Culling: '#{x[i][0]}' #{x[i][1][:count]}/#{x[i][1][:frequency].to_i}."
         limit -= x[i][1][:strength]
         wc.delete(x[i][0])
         i += 1
       end
-#      puts "Culled: #{x.size-wc.size}/#{x.size}."
+      puts "Culled: #{x.size-wc.size}/#{x.size}."
+
       # write the rest to the database
       wc.each do |key, value|
         word = Word.update_or_create(name: key) do |p|
