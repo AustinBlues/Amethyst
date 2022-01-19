@@ -43,7 +43,9 @@ class Post < Sequel::Model
     begin
       open(self[:url]) do |f|
         f.unlink if f.is_a?(Tempfile)	# Tempfile recommended best practices
-        puts("URL(#{f.class.inspect}): #{self[:url]}.") unless f.is_a?(Tempfile) || f.is_a?(StringIO)	# debugging/exploration
+#        unless f.is_a?(Tempfile) || f.is_a?(StringIO)	# debugging/exploration
+#          puts("URL(#{f.class.inspect}): #{self[:url]}.")
+#        end
         doc = Nokogiri::HTML.parse(f)
         content = doc.css('p').map{|i| i.content}.join(' ')
         tmp = content.split(/[^[[:word:]]]+/)
@@ -64,20 +66,79 @@ class Post < Sequel::Model
 
     words = (cwords.size > dwords.size) ? cwords : dwords
 
-    words.each do |word|
-      if word !~ /^\s*$/
-        w = Word.update_or_create(name: word) do |w|
-          if w.new? || w[:frequency].nil?
-            w[:frequency] = 1.0
+    if true
+      wc = {}
+      words.each do |word|
+        if word !~ /^\s*$/
+          if wc.key?(word)
+            wc[word][:frequency] += 1
           else
-            w[:frequency] += 1.0
+            w = Word.update_or_create(name: word) do |w|
+              if w.new? || w[:frequency].nil?
+                w[:frequency] = 1
+              else
+                w[:frequency] += 1
+              end
+            end
+
+            wc[word] = {frequency: w[:frequency].to_i}
+            if !Occurrence.where(post_id: self[:id], word_id: w[:id]).get(1)
+              Occurrence.create(post_id: self[:id], word_id: w[:id], count: 1)
+              wc[word][:count] = 1
+            else
+              count = Occurrence.where(post_id: self[:id], word_id: w[:id]).get(:count)
+              wc[word][:count] = count
+            end
+            wc[word][:strength] = wc[word][:count].to_f/wc[word][:frequency].to_f
           end
         end
+      end
 
-        if !Occurrence.where(post_id: self[:id], word_id: w[:id]).get(1)
-          Occurrence.create(post_id: self[:id], word_id: w[:id], count: 1)
-        else
-          Occurrence.where(post_id: self[:id], word_id: w[:id]).update(Sequel.lit('count = count + 1'))
+      # calculate word strengths
+      avg = 0.0
+      wc.each do |key, value|
+        value[:strength] = value[:count].to_f/value[:frequency].to_f
+        avg += value[:strength]
+      end
+      avg /= wc.size
+      puts "AVG: #{avg}."
+
+      # cull low strength words
+      limit = 0.5 * avg
+      x = wc.sort_by{|key, value| value[:strength]}
+      i = 0
+      while x[i][1][:strength] <= limit do
+        puts "Culling: '#{x[i][0]}' #{x[i][1][:count]}/#{x[i][1][:frequency].to_i}."
+        limit -= x[i][1][:strength]
+        wc.delete(x[i][0])
+        i += 1
+      end
+#      puts "Culled: #{x.size-wc.size}/#{x.size}."
+      # write the rest to the database
+      wc.each do |key, value|
+        word = Word.update_or_create(name: key) do |p|
+          p[:frequency] = value[:frequency]
+        end
+        Occurrence.update_or_create(post_id: self[:id], word_id: word[:id]) do |occ|
+          occ[:count] = value[:count]
+        end
+      end
+    else
+      word.each do |word|
+        if word !~ /^\s*$/
+          w = Word.update_or_create(name: word) do |w|
+            if w.new? || w[:frequency].nil?
+              w[:frequency] = 1.0
+            else
+              w[:frequency] += 1.0
+            end
+          end
+
+          if !Occurrence.where(post_id: self[:id], word_id: w[:id]).get(1)
+            Occurrence.create(post_id: self[:id], word_id: w[:id], count: 1)
+          else
+            Occurrence.where(post_id: self[:id], word_id: w[:id]).update(Sequel.lit('count = count+1'))
+          end
         end
       end
     end
