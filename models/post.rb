@@ -113,7 +113,7 @@ class Post < Sequel::Model
         wc.delete(x[i][0])
         i += 1
       end
-      puts "Culled: #{x.size-wc.size}/#{x.size}."
+#      puts "Culled: #{x.size-wc.size}/#{x.size}."
 
       # write the rest to the database
       wc.each do |key, value|
