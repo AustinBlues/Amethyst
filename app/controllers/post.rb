@@ -96,70 +96,75 @@ Amethyst::App.controllers :post do
                   else
                     'Unknown'
                   end
-    @post = Post.with_pk! params[:id]
-    @post.click!
-    @post.save(changed: true)
-
-    if RELATED_POSTS_MAX <= 0
-      @related = []
+    @post = Post.with_pk params[:id]
+    if !@post
+      flash[:error] = "Post #{params[:id]} not found"
+      redirect @origin
     else
-      @words = @post.word_cloud.sort{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}
-      word_id = @post.word.map(&:id)
+      @post.click!
+      @post.save(changed: true)
 
-      word_strength = Hash.new
-      @words.each{|w| word_strength[w[:word_id]] = w[:count]/w[:frequency]}
+      if RELATED_POSTS_MAX <= 0
+        @related = []
+      else
+        @words = @post.word_cloud.sort{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}
+        word_id = @post.word.map(&:id)
 
-      relatedness = Hash.new(0)
-      Occurrence.where(word_id: word_id).join(:words, id: :word_id).
-            exclude(post_id: @post[:id]).where(flags: 0).each do |w|
-        relatedness[w[:post_id]] += w[:count]/w[:frequency] + word_strength[w[:word_id]]
-      end
+        word_strength = Hash.new
+        @words.each{|w| word_strength[w[:word_id]] = w[:count]/w[:frequency]}
 
-      if true
-        related_posts = Post.where(id: relatedness.keys, state: Post::UNREAD).order(:id).all
-        ids = related_posts.map{|p| p[:id]}
-        tmp = Word.join(:occurrences, post_id: ids, word_id: :id).where(flags: 0).where{frequency > 1.0}.
-                order(:post_id).all
-        related_posts.each do |rp|
-          rp[:strength] = (100 * relatedness[rp[:id]]).to_i	# 100 to move into human range
-          rp[:wic] = []
+        relatedness = Hash.new(0)
+        Occurrence.where(word_id: word_id).join(:words, id: :word_id).
+          exclude(post_id: @post[:id]).where(flags: 0).each do |w|
+          relatedness[w[:post_id]] += w[:count]/w[:frequency] + word_strength[w[:word_id]]
         end
-        rp = 0
-        tmp.each do |t|
-          while related_posts[rp][:id] != t[:post_id] do
-            rp += 1
+
+        if true
+          related_posts = Post.where(id: relatedness.keys, state: Post::UNREAD).order(:id).all
+          ids = related_posts.map{|p| p[:id]}
+          tmp = Word.join(:occurrences, post_id: ids, word_id: :id).where(flags: 0).where{frequency > 1.0}.
+                  order(:post_id).all
+          related_posts.each do |rp|
+            rp[:strength] = (100 * relatedness[rp[:id]]).to_i	# 100 to move into human range
+            rp[:wic] = []
           end
-          # Words In Common, intersection of Post's words and Posts with those same words
-          if word_id.include?(t[:id])
-            related_posts[rp][:wic] << t
+          rp = 0
+          tmp.each do |t|
+            while related_posts[rp][:id] != t[:post_id] do
+              rp += 1
+            end
+            # Words In Common, intersection of Post's words and Posts with those same words
+            if word_id.include?(t[:id])
+              related_posts[rp][:wic] << t
+            end
           end
-        end
-        related_posts.each do |rp|
-          rp[:wic].sort!{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}
-          rp[:max] = rp[:wic].first[:count]/rp[:wic].first[:frequency]
-          rp[:avg] = rp[:wic].sum{|w| w[:count]/w[:frequency]} / rp[:wic].size
-          rp[:min] = rp[:wic].last[:count]/rp[:wic].last[:frequency]
-          rp[:size] = rp[:wic].size
-          rp[:cull_score] = 0.0
-          rp[:cull_size] = 0
-          limit = 0.5 * rp[:avg]
-          rp[:wic].reverse_each do |word|
-            score = word[:count]/word[:frequency]
-            if score + rp[:cull_score] <= limit
-              rp[:cull_score] += score
-              rp[:cull_size] += 1
+          related_posts.each do |rp|
+            rp[:wic].sort!{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}
+            rp[:max] = rp[:wic].first[:count]/rp[:wic].first[:frequency]
+            rp[:avg] = rp[:wic].sum{|w| w[:count]/w[:frequency]} / rp[:wic].size
+            rp[:min] = rp[:wic].last[:count]/rp[:wic].last[:frequency]
+            rp[:size] = rp[:wic].size
+            rp[:cull_score] = 0.0
+            rp[:cull_size] = 0
+            limit = 0.5 * rp[:avg]
+            rp[:wic].reverse_each do |word|
+              score = word[:count]/word[:frequency]
+              if score + rp[:cull_score] <= limit
+                rp[:cull_score] += score
+                rp[:cull_size] += 1
+              end
             end
           end
         end
+
+        related_posts.delete_if{|t| t[:wic].size < WIC_MIN}	# must have at least WIC_MIN Words In Common
+        related_posts.sort!{|a, b| b[:strength] <=> a[:strength]}
+
+        @related = related_posts.first(RELATED_POSTS_MAX)
       end
 
-      related_posts.delete_if{|t| t[:wic].size < WIC_MIN}	# must have at least WIC_MIN Words In Common
-      related_posts.sort!{|a, b| b[:strength] <=> a[:strength]}
-
-      @related = related_posts.first(RELATED_POSTS_MAX)
+      render 'show'
     end
-
-    render 'show'
   end
 
 
