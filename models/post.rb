@@ -8,7 +8,8 @@ class Post < Sequel::Model
   extend Amethyst::App::AmethystHelper
 
   ONE_DAY = 24 * 60 * 60
-  WORDS_LIMIT = 300	# maximum words in word cloud
+#  WORDS_LIMIT = 300	# maximum words in word cloud
+  WORDS_LIMIT = 500	# maximum words in word cloud
 
   VERBOSE = false
 
@@ -104,7 +105,7 @@ class Post < Sequel::Model
 #      puts "AVG: #{'%0.3g' % avg}."
 
       # cull low strength words
-      limit = 0.5 * avg
+      limit = 3.0 * avg
       x = wc.sort_by{|key, value| value[:strength]}
       i = 0
       while x[i][1][:strength] <= limit do
@@ -114,6 +115,11 @@ class Post < Sequel::Model
         i += 1
       end
 #      puts "Culled: #{x.size-wc.size}/#{x.size}."
+
+      culled_score = 100.0 * wc.inject(0.0){|sum, tuple| sum += tuple[1][:strength]}
+      full_score = 100.0 * x.inject(0.0){|sum, tuple| sum += tuple[1][:strength]}
+#      puts "Score: #{culled_score} vs. #{full_score}"
+      puts "Culled score #{'%0.2g' % (100.0 * (1.0 - (culled_score/full_score)))}% less than full score."
 
       # write the rest to the database
       wc.each do |key, value|
