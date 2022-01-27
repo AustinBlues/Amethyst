@@ -8,8 +8,8 @@ class Post < Sequel::Model
   extend Amethyst::App::AmethystHelper
 
   ONE_DAY = 24 * 60 * 60
-#  WORDS_LIMIT = 300	# maximum words in word cloud
   WORDS_LIMIT = 500	# maximum words in word cloud
+  WC_MIN = 30	# minimum number of words in word cloud for culling
 
   VERBOSE = false
 
@@ -20,6 +20,7 @@ class Post < Sequel::Model
   HIDDEN = 2
   DOWN_VOTED = 3
 
+  # action to score adjustment mapping
   SCORE = {READ => 1.0, DOWN_VOTED => -1.0}
   SCORE.default = 0
 
@@ -67,7 +68,7 @@ class Post < Sequel::Model
 
     words = (cwords.size > dwords.size) ? cwords : dwords
 
-    if true
+    if words.size > WC_MIN
       wc = {}
       words.each do |word|
         if word !~ /^\s*$/
@@ -102,10 +103,9 @@ class Post < Sequel::Model
         avg += value[:strength]
       end
       avg /= wc.size
-#      puts "AVG: #{'%0.3g' % avg}."
 
       # cull low strength words
-      limit = 3.0 * avg
+      limit = 2.0 * avg
       x = wc.sort_by{|key, value| value[:strength]}
       i = 0
       while x[i][1][:strength] <= limit do
@@ -118,8 +118,7 @@ class Post < Sequel::Model
 
       culled_score = 100.0 * wc.inject(0.0){|sum, tuple| sum += tuple[1][:strength]}
       full_score = 100.0 * x.inject(0.0){|sum, tuple| sum += tuple[1][:strength]}
-#      puts "Score: #{culled_score} vs. #{full_score}"
-      puts "Culled score #{'%0.2g' % (100.0 * (1.0 - (culled_score/full_score)))}% less than full score."
+#      puts "Culled score #{'%0.2g' % (100.0 * (1.0 - (culled_score/full_score)))}% less than full score."
 
       # write the rest to the database
       wc.each do |key, value|
@@ -131,11 +130,12 @@ class Post < Sequel::Model
         end
       end
     else
-      word.each do |word|
+#      puts "No culling of weak words."
+      words.each do |word|
         if word !~ /^\s*$/
           w = Word.update_or_create(name: word) do |w|
             if w.new? || w[:frequency].nil?
-              w[:frequency] = 1.0
+
             else
               w[:frequency] += 1.0
             end
