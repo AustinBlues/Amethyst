@@ -62,7 +62,7 @@
 	      <%= "Cull: #{r[:cull_size]}/#{r[:wic].size}" %>
 	    </b>
 	    <% r[:wic].take(DISPLAY_WORDS).each do |w| %>
-	      <br><%= w[:name] %>&nbsp;(<%= w[:count] %>:<%= w[:frequency].round %>)
+	      <br><%= w[:name] %>&nbsp;(<%= w[:count] %>:<%= w[:frequency].to_i %>)
 	    <% end %>
 	  </td>
 	</tr>
