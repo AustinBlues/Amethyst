@@ -108,36 +108,42 @@ Amethyst::App.controllers :post do
         @related = []
       else
         @words = @post.word_cloud.sort{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}
-        word_id = @post.word.map(&:id)
+#        puts "WORDS: #{@words.map(&:name)}."
+        word_id = @words.map(&:id)
 
         word_strength = Hash.new
         @words.each{|w| word_strength[w[:word_id]] = w[:count]/w[:frequency]}
 
-        relatedness = Hash.new(0)
-        Occurrence.where(word_id: word_id).join(:words, id: :word_id).
-          exclude(post_id: @post[:id]).where(flags: 0).each do |w|
-          relatedness[w[:post_id]] += w[:count]/w[:frequency] + word_strength[w[:word_id]]
+        relatedness = Hash.new(nil)
+        Occurrence.where(word_id: word_id).join(:words, id: :word_id).exclude(post_id: @post[:id]).
+              where(flags: 0).each do |w|
+          relatedness[w[:post_id]] ||= word_strength[w[:word_id]]
+          relatedness[w[:post_id]] += w[:count]/w[:frequency]
         end
 
         if true
           related_posts = Post.where(id: relatedness.keys, state: Post::UNREAD).order(:id).all
           ids = related_posts.map{|p| p[:id]}
-          tmp = Word.join(:occurrences, post_id: ids, word_id: :id).where(flags: 0).where{frequency > 1.0}.
-                  order(:post_id).all
+
           related_posts.each do |rp|
             rp[:strength] = (100 * relatedness[rp[:id]]).to_i	# 100 to move into human range
             rp[:wic] = []
           end
-          rp = 0
-          tmp.each do |t|
-            while related_posts[rp][:id] != t[:post_id] do
-              rp += 1
+
+          rp_cnt = 0
+          Word.join(:occurrences, post_id: ids, word_id: :id).where(flags: 0).where{frequency > 1.0}.
+                order(:post_id).each do |t|
+            while related_posts[rp_cnt][:id] != t[:post_id] do
+              rp_cnt += 1
             end
             # Words In Common, intersection of Post's words and Posts with those same words
             if word_id.include?(t[:id])
-              related_posts[rp][:wic] << t
+              t[:count] += (t[:frequency] * word_strength[t[:word_id]]).to_i
+#              puts "T: #{t.inspect}."
+              related_posts[rp_cnt][:wic] << t
             end
           end
+
           related_posts.each do |rp|
             rp[:wic].sort!{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}
             rp[:max] = rp[:wic].first[:count]/rp[:wic].first[:frequency]

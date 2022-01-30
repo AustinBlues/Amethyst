@@ -1,3 +1,4 @@
+# coding: utf-8
 require File.expand_path(File.dirname(__FILE__) + '/../lib/nokogiri_rss.rb')
 
 class Post < Sequel::Model
@@ -49,9 +50,15 @@ class Post < Sequel::Model
 #          puts("URL(#{f.class.inspect}): #{self[:url]}.")
 #        end
         doc = Nokogiri::HTML.parse(f)
-        content = doc.css('p').map{|i| i.content}.join(' ')
-        tmp = content.split(/[^[[:word:]]]+/)
+        content = doc.css('body')
+#        puts("CONTENT: #{content.inspect}.") if self[:title] == 'Dust – a poem by Cathleen Cohen'
+        if true
+          tmp = Post.html2words(content)
+        else
+          tmp = content.split(/[^[[:word:]]]+/)
+        end
         tmp.delete_if{|w| w =~ /^[[:digit]]+$/}
+        puts("TMP: #{tmp.inspect}.") if self[:title] == 'Dust – a poem by Cathleen Cohen'
         cwords = tmp.take(WORDS_LIMIT)
       end
     rescue Errno::ENOENT
@@ -66,7 +73,13 @@ class Post < Sequel::Model
     tmp.delete_if{|w| w =~ /^[[:digit]]+$/}
     dwords = tmp.take(WORDS_LIMIT)
 
-    words = (cwords.size > dwords.size) ? cwords : dwords
+    if true
+      words = dwords
+    else
+      words = (cwords.size > dwords.size) ? cwords : dwords
+      puts("CWORDS(#{self[:title]}): #{cwords.inspect}.") if self[:title] == 'Dust – a poem by Cathleen Cohen'
+    end
+    puts("DWORDS(#{self[:title]}): #{dwords.inspect}.") if self[:title] == 'Dust – a poem by Cathleen Cohen'
 
     if words.size > WC_MIN
       wc = {}
@@ -121,7 +134,8 @@ class Post < Sequel::Model
 #      puts "Culled score #{'%0.2g' % (100.0 * (1.0 - (culled_score/full_score)))}% less than full score."
 
       # write the rest to the database
-      wc.each do |key, value|
+#      puts("WC: #{wc.inspect}.") if self[:title] == 'Dust – a poem by Cathleen Cohen'
+      wc.each do |key, value|    
         word = Word.update_or_create(name: key) do |p|
           p[:frequency] = value[:frequency]
         end
