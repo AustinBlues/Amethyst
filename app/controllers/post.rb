@@ -146,13 +146,13 @@ Amethyst::App.controllers :post do
 
           related_posts.each do |rp|
             rp[:wic].sort!{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}
-            rp[:max] = rp[:wic].first[:count]/rp[:wic].first[:frequency]
+#            rp[:max] = rp[:wic].first[:count]/rp[:wic].first[:frequency]
             rp[:avg] = rp[:wic].sum{|w| w[:count]/w[:frequency]} / rp[:wic].size
-            rp[:min] = rp[:wic].last[:count]/rp[:wic].last[:frequency]
-            rp[:size] = rp[:wic].size
+#            rp[:min] = rp[:wic].last[:count]/rp[:wic].last[:frequency]
+#            rp[:size] = rp[:wic].size
             rp[:cull_score] = 0.0
             rp[:cull_size] = 0
-            limit = 0.5 * rp[:avg]
+            limit = 2.0 * rp[:avg]
             rp[:wic].reverse_each do |word|
               score = word[:count]/word[:frequency]
               if score + rp[:cull_score] <= limit

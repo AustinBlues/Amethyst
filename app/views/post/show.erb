@@ -56,9 +56,6 @@
 	  </td>
 	  <td style="vertical-align: top">
 	    <b>
-	      <%= "Max: #{r[:max].round(2)}" %><br>
-	      <%= "Avg: #{r[:avg].round(3)}" %><br>
-	      <%= "Min: #{'%0.3g' % r[:min]}" %><br>
 	      <%= "Cull: #{r[:cull_size]}/#{r[:wic].size}" %>
 	    </b>
 	    <% r[:wic].take(DISPLAY_WORDS).each do |w| %>
