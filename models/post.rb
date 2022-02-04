@@ -43,43 +43,64 @@ class Post < Sequel::Model
 
   def create_word_cloud
     cwords = []	# force scope
-    begin
-      open(self[:url]) do |f|
-        f.unlink if f.is_a?(Tempfile)	# Tempfile recommended best practices
-#        unless f.is_a?(Tempfile) || f.is_a?(StringIO)	# debugging/exploration
-#          puts("URL(#{f.class.inspect}): #{self[:url]}.")
-#        end
-        doc = Nokogiri::HTML.parse(f)
-        content = doc.css('body')
-#        puts("CONTENT: #{content.inspect}.") if self[:title] == 'Dust – a poem by Cathleen Cohen'
-        if true
-          tmp = Post.html2words(content)
-        else
-          tmp = content.split(/[^[[:word:]]]+/)
+    if feed.log_body? || feed.use_body? || feed.log_body_words?
+      begin
+        open(self[:url]) do |f|
+          f.unlink if f.is_a?(Tempfile)	# Tempfile recommended best practices
+          doc = Nokogiri::HTML.parse(f)
+          if true
+            tmp = []
+            doc.css('body p').each do |p|
+              tmp.concat(p.content.split(/[^[[:word:]]]+/))
+            end
+            STDOUT.puts("BODY: #{doc.css('body').inner_html}.") if feed.log_body?
+          else
+            content = doc.css('body')
+            STDOUT.puts("BODY: #{content.inner_html}.") if feed.log_body?
+            if feed.use_body?
+              if 
+                tmp = Post.html2words(content)
+              else
+                tmp = content.split(/[^[[:word:]]]+/)
+              end
+            end
+          end
+          tmp.delete_if{|w| (w =~ /^[[:xdigit:]]+$/) || (w =~ /^\w+_.*\w$/)}
+          cwords = tmp.take(WORDS_LIMIT)
+          STDOUT.puts("BWORDS: #{cwords.inspect}.") if feed.log_body_words?
         end
-        tmp.delete_if{|w| w =~ /^[[:digit]]+$/}
-        puts("TMP: #{tmp.inspect}.") if self[:title] == 'Dust – a poem by Cathleen Cohen'
-        cwords = tmp.take(WORDS_LIMIT)
+      rescue Errno::ENOENT
+        Refresh.log "URL '#{self[:url]}' not found.", :error
+      rescue OpenURI::HTTPError
+        Refresh.log "URL '#{self[:url]}' forbidden (403).", :error
+      rescue
+        Refresh.log "Unknown error(#{$!.class}): #{$!}.", :error
       end
-    rescue Errno::ENOENT
-      Refresh.log "URL '#{self[:url]}' not found.", :error
-    rescue OpenURI::HTTPError
-      Refresh.log "URL '#{self[:url]}' forbidden (403).", :error
-    rescue
-      Refresh.log "Unknown error(#{$!.class}): #{$!}.", :error
     end
 
-    tmp = Post.html2words(self[:description])
-    tmp.delete_if{|w| w =~ /^[[:digit]]+$/}
-    dwords = tmp.take(WORDS_LIMIT)
-
-    if true
-      words = dwords
-    else
-      words = (cwords.size > dwords.size) ? cwords : dwords
-      puts("CWORDS(#{self[:title]}): #{cwords.inspect}.") if self[:title] == 'Dust – a poem by Cathleen Cohen'
+    dwords = []
+    if feed.log_description? || feed.use_description? || feed.log_description_words?
+      begin
+        STDOUT.puts("DESCRIPTION: #{self[:description]}.") if feed.log_description?
+        if true
+          tmp = self[:description].split(/[^[[:word:]]]+/)
+        else
+          tmp = Post.html2words(self[:description])
+        end
+        n = tmp.size
+#        tmp.delete_if{|w| tmp = (w =~ /^([[:xdigit:]]+|\w+_.*\w)$/); puts("DELETE: '#{w}'") if tmp; tmp}
+        tmp.delete_if{|w| result = (w !~ /^\w+$/); puts("DELETE: '#{w}'") if result; result}
+        n -= tmp.size
+        puts("DWORDS: #{n} numbers and words with underscores deleted.") if n != 0
+        STDOUT.puts("DWORDS(#{self[:title]}): #{tmp.take(WORDS_LIMIT).inspect}.") if feed.log_description_words?
+        dwords = tmp.take(WORDS_LIMIT) if feed.use_description?
+      rescue
+        STDERR.puts "EXCEPTION: {$!}."
+        STDERR.puts $!.backtrace
+      end
     end
-    puts("DWORDS(#{self[:title]}): #{dwords.inspect}.") if self[:title] == 'Dust – a poem by Cathleen Cohen'
+
+    words = (cwords.size > dwords.size) ? cwords : dwords
 
     if words.size > WC_MIN
       wc = {}
@@ -286,12 +307,14 @@ class Post < Sequel::Model
 
   def before_destroy
     word.each do |w|
-      w[:frequency] -= Occurrence.where(word_id: w[:id], post_id: self[:id]).get(:count) || 0.0
-      if w[:frequency] < 0
-        STDERR.puts "OOPS: '#{w[:name]}' frequency is #{w[:frequency]}, resetting to 0.0."
-        w[:frequency] = 0.0
+      if w[:flags] == 0
+        w[:frequency] -= Occurrence.where(word_id: w[:id], post_id: self[:id]).get(:count) || 0.0
+        if w[:frequency] < 0
+          STDERR.puts "OOPS: '#{w[:name]}' frequency is #{w[:frequency]}, resetting to 0.0."
+          w[:frequency] = 0.0
+        end
+        w.save(changed: true)
       end
-      w.save(changed: true)
     end
     remove_all_word
 
