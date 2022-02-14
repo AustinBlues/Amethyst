@@ -43,31 +43,20 @@ class Post < Sequel::Model
 
   def create_word_cloud
     cwords = []	# force scope
-    if feed.log_body? || feed.use_body? || feed.log_body_words?
+    if feed.log_body || feed.use_body || feed.log_body_words
       begin
         open(self[:url]) do |f|
           f.unlink if f.is_a?(Tempfile)	# Tempfile recommended best practices
           doc = Nokogiri::HTML.parse(f)
-          if true
             tmp = []
             doc.css('body p').each do |p|
               tmp.concat(p.content.split(/[^[[:word:]]]+/))
             end
-            STDOUT.puts("BODY: #{doc.css('body').inner_html}.") if feed.log_body?
-          else
-            content = doc.css('body')
-            STDOUT.puts("BODY: #{content.inner_html}.") if feed.log_body?
-            if feed.use_body?
-              if 
-                tmp = Post.html2words(content)
-              else
-                tmp = content.split(/[^[[:word:]]]+/)
-              end
-            end
-          end
-          tmp.delete_if{|w| (w =~ /^[[:xdigit:]]+$/) || (w =~ /^\w+_.*\w$/)}
+            STDOUT.puts("BODY: #{doc.css('body').inner_html}.") if feed.log_body
+          # Delete words that are likely programming code
+          tmp.delete_if{|w| (w =~ /^[[:xdigit:]]+$/) || (w =~ /^\w+_.*\w$/) || (w =~ /^\d\w+\d$/)}
           cwords = tmp.take(WORDS_LIMIT)
-          STDOUT.puts("BWORDS: #{cwords.inspect}.") if feed.log_body_words?
+          STDOUT.puts("BWORDS: #{cwords.inspect}.") if feed.log_body_words
         end
       rescue Errno::ENOENT
         Refresh.log "URL '#{self[:url]}' not found.", :error
@@ -79,23 +68,18 @@ class Post < Sequel::Model
     end
 
     dwords = []
-    if feed.log_description? || feed.use_description? || feed.log_description_words?
+    if feed.log_description || feed.use_description || feed.log_description_words
       begin
-        STDOUT.puts("DESCRIPTION: #{self[:description]}.") if feed.log_description?
-        if true
-          tmp = self[:description].split(/[^[[:word:]]]+/)
-        else
-          tmp = Post.html2words(self[:description])
-        end
+        STDOUT.puts("DESCRIPTION: #{self[:description]}.") if feed.log_description
+        tmp = self[:decription].nil? ? [] : self[:description].split(/[^[[:word:]]]+/)
         n = tmp.size
-#        tmp.delete_if{|w| tmp = (w =~ /^([[:xdigit:]]+|\w+_.*\w)$/); puts("DELETE: '#{w}'") if tmp; tmp}
-        tmp.delete_if{|w| result = (w !~ /^\w+$/); puts("DELETE: '#{w}'") if result; result}
+        tmp.delete_if{|w| result = (w !~ /^\w+$/); puts("DELETE: '#{w}'") if result && feed.log_description; result}
         n -= tmp.size
-        puts("DWORDS: #{n} numbers and words with underscores deleted.") if n != 0
-        STDOUT.puts("DWORDS(#{self[:title]}): #{tmp.take(WORDS_LIMIT).inspect}.") if feed.log_description_words?
-        dwords = tmp.take(WORDS_LIMIT) if feed.use_description?
+        puts("DWORDS: #{n} numbers and words with underscores deleted.") if n != 0 && feed.log_description_words
+        STDOUT.puts("DWORDS(#{self[:title]}): #{tmp.take(WORDS_LIMIT).inspect}.") if feed.log_description_words
+        dwords = tmp.take(WORDS_LIMIT) if feed.use_description
       rescue
-        STDERR.puts "EXCEPTION: {$!}."
+        STDERR.puts "EXCEPTION: #{$!}."
         STDERR.puts $!.backtrace
       end
     end
@@ -170,9 +154,9 @@ class Post < Sequel::Model
         if word !~ /^\s*$/
           w = Word.update_or_create(name: word) do |w|
             if w.new? || w[:frequency].nil?
-
+              w[:frequency] = 1
             else
-              w[:frequency] += 1.0
+              w[:frequency] += 1
             end
           end
 

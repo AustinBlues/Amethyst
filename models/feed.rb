@@ -7,11 +7,6 @@ class Feed < Sequel::Model
 
   VERBOSE = false
 
-  # KLUDGE: hard code Feed ids while deciding if worth putting into database for user selection
-  NO_BODY_LIST = [81, 246, 280]
-  NO_DESCRIPTION_LIST = [1, 6, 71, 143, 30]	# X, X, Writer Unboxed, Poetry Super Highway, David Brooks
-  USE_DESCRIPTION_LIST = [10, 151, 291]	# Austin Kleon, NewPages blog, Art of Noticing
-
 
   def before_create
     self[:score] ||= (Feed.count == 0) ? 0.0 : (Feed.avg(:score) + Feed.order(:score).first.score)/2.0
@@ -46,35 +41,6 @@ class Feed < Sequel::Model
   def name
     (self[:title] && !self[:title].empty?) ? self[:title] : rss_url
   end
-
-
-  def log_description?
-    !(NO_BODY_LIST.include?(self[:id]) || NO_DESCRIPTION_LIST.include?(self[:id]) ||
-      USE_DESCRIPTION_LIST.include?(self[:id]))
-  end
-
-  def log_description_words?
-    !(NO_BODY_LIST.include?(self[:id]) || NO_DESCRIPTION_LIST.include?(self[:id]) ||
-      USE_DESCRIPTION_LIST.include?(self[:id]))
-  end
-
-  def log_body?
-    !(NO_BODY_LIST.include?(self[:id]) || NO_DESCRIPTION_LIST.include?(self[:id]) ||
-      USE_DESCRIPTION_LIST.include?(self[:id]))
-  end
-
-  def log_body_words?
-    !(NO_BODY_LIST.include?(self[:id]) || NO_DESCRIPTION_LIST.include?(self[:id]) ||
-      USE_DESCRIPTION_LIST.include?(self[:id]))
-  end
-
-  def use_description?
-    USE_DESCRIPTION_LIST.include?(self[:id])
-  end
-
-  def use_body?
-    !NO_BODY_LIST.include?(self[:id])
-  end
   
   
   def page_number
@@ -88,7 +54,9 @@ class Feed < Sequel::Model
       # refresh for new Feed may not have occurred yet, i.e. ema_volume == 0.0; so no low volume adjust
 #      adjust = (self[:ema_volume] == 0.0) ? 1.0 : amt * (0.3 + [0.1/self[:ema_volume], 2.0].min)
       adjust =  amt * ((self[:ema_volume] == 0.0) ? 0.5 : (0.3 + 1.0/(1.0 + self[:ema_volume])))
-      puts("ADJUST: #{'%0.4f' % adjust}.")	# just for comparison to new scoring in AmethystMerge
+      if Padrino.env != :test
+        puts("ADJUST: #{'%0.4f' % adjust}.")	# just for comparison to new scoring in AmethystMerge
+      end
       self[:score] += adjust
     end
   end
