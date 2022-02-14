@@ -108,17 +108,16 @@ Amethyst::App.controllers :post do
         @related = []
       else
         @words = @post.word_cloud.sort{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}
-#        puts "WORDS: #{@words.map(&:name)}."
         word_id = @words.map(&:id)
 
         word_strength = Hash.new
-        @words.each{|w| word_strength[w[:word_id]] = w[:count]/w[:frequency]}
+        @words.each{|w| word_strength[w[:word_id]] = w[:count].to_f/w[:frequency].to_f}
 
         relatedness = Hash.new(nil)
         Occurrence.where(word_id: word_id).join(:words, id: :word_id).exclude(post_id: @post[:id]).
               where(flags: 0).each do |w|
           relatedness[w[:post_id]] ||= word_strength[w[:word_id]]
-          relatedness[w[:post_id]] += w[:count]/w[:frequency]
+          relatedness[w[:post_id]] += w[:count].to_f/w[:frequency].to_f
         end
 
         if true
@@ -126,7 +125,7 @@ Amethyst::App.controllers :post do
           ids = related_posts.map{|p| p[:id]}
 
           related_posts.each do |rp|
-            rp[:strength] = (100 * relatedness[rp[:id]]).to_i	# 100 to move into human range
+            rp[:strength] = (100.0 * relatedness[rp[:id]]).to_i	# 100 to move into human range
             rp[:wic] = []
           end
 
@@ -138,28 +137,14 @@ Amethyst::App.controllers :post do
             end
             # Words In Common, intersection of Post's words and Posts with those same words
             if word_id.include?(t[:id])
-              t[:count] += (t[:frequency] * word_strength[t[:word_id]]).to_i
-#              puts "T: #{t.inspect}."
+              t[:count] += (t[:frequency].to_f * word_strength[t[:word_id]]).to_i
               related_posts[rp_cnt][:wic] << t
             end
           end
 
           related_posts.each do |rp|
-            rp[:wic].sort!{|a, b| b[:count]/b[:frequency] <=> a[:count]/a[:frequency]}
-#            rp[:max] = rp[:wic].first[:count]/rp[:wic].first[:frequency]
-            rp[:avg] = rp[:wic].sum{|w| w[:count]/w[:frequency]} / rp[:wic].size
-#            rp[:min] = rp[:wic].last[:count]/rp[:wic].last[:frequency]
-#            rp[:size] = rp[:wic].size
-            rp[:cull_score] = 0.0
-            rp[:cull_size] = 0
-            limit = 2.0 * rp[:avg]
-            rp[:wic].reverse_each do |word|
-              score = word[:count]/word[:frequency]
-              if score + rp[:cull_score] <= limit
-                rp[:cull_score] += score
-                rp[:cull_size] += 1
-              end
-            end
+            rp[:wic].each{|w| w[:strength] = w[:count].to_f/w[:frequency].to_f}
+            rp[:wic].sort!{|a, b| b[:strength] <=> a[:strength]}
           end
         end
 
