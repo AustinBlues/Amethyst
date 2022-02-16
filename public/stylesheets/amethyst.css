@@ -49,3 +49,6 @@ tr a.clicked {
     font-size: x-large;
     text-align: center;
 }
+table.use_log_flags th, td {
+    padding: 5px;
+}

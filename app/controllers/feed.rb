@@ -24,6 +24,7 @@ Amethyst::App.controllers :feed do
       else
         @context = 'Feeds'
         @pagination = {page: @page}
+        @feed = Feed.new
 
         render 'index'
       end
@@ -105,6 +106,10 @@ Amethyst::App.controllers :feed do
     params.delete('_method')
 
     begin
+      %w{use_body log_body log_body_words use_description log_description log_description_words}.each do |flag|
+        params[flag] ||= '0'
+      end
+      puts "PARAMS: #{params.inspect}."
       feed = Feed.load(params).save
     rescue Sequel::UniqueConstraintViolation => e
       flash[:error] = (/unique_(\w+)s'/ =~ e.to_s) ? "Duplicate #{$~[1]}." : 'Unique Constraint Violation'
