@@ -106,10 +106,11 @@ Amethyst::App.controllers :feed do
     params.delete('_method')
 
     begin
+      # Set missing log/use flags to false/zero
       %w{use_body log_body log_body_words use_description log_description log_description_words}.each do |flag|
         params[flag] ||= '0'
       end
-      puts "PARAMS: #{params.inspect}."
+
       feed = Feed.load(params).save
     rescue Sequel::UniqueConstraintViolation => e
       flash[:error] = (/unique_(\w+)s'/ =~ e.to_s) ? "Duplicate #{$~[1]}." : 'Unique Constraint Violation'
