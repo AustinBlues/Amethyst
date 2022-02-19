@@ -1,10 +1,14 @@
 STDERR.puts "ARGV: #{ARGV.inspect}."
-task = if ARGV.include?('resque:work')
+task = if 'resque:work'.start_with?(ARGV[0])
          :background
-       elsif ARGV.include?('start')
+       elsif 'start'.start_with?(ARGV[0])
          :web_server
        elsif Padrino.env == :test
          :test
+       elsif 'run'.start_with?(ARGV[0])
+         :daily
+       elsif 'console'.start_with?(ARGV[0])
+         :console
        else
          nil
        end
@@ -17,7 +21,7 @@ STDERR.puts("PAGE_SIZE: #{PAGE_SIZE}.") if task == :web_server || task == :test
 
 # How many days to keep zombies (Posts that have been dropped from their Feed)
 DAYS_OF_THE_DEAD = ENV['DAYS_OF_THE_DEAD'] ? ENV['DAYS_OF_THE_DEAD'].to_i : 34
-STDERR.puts("DAYS_OF_THE_DEAD: #{DAYS_OF_THE_DEAD}.") if task == :background || task == :test
+STDERR.puts("DAYS_OF_THE_DEAD: #{DAYS_OF_THE_DEAD}.") if task == :background || task == :daily || task == :test
 
 # How many Unread post to keep visible
 UNREAD_LIMIT = ENV['UNREAD_LIMIT'] ? ENV['UNREAD_LIMIT'].to_i : 100
