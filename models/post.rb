@@ -74,9 +74,11 @@ class Post < Sequel::Model
         tmp = self[:description].nil? ? [] : self[:description].split(/[^[[:word:]]]+/)
         n = tmp.size
         tmp.delete_if{|w| result = (w !~ /^\w+$/); puts("DELETE: '#{w}'") if result && feed.log_description; result}
-        n -= tmp.size
-        puts("DWORDS: #{n} numbers and words with underscores deleted.") if n != 0 && feed.log_description_words
-        STDOUT.puts("DWORDS(#{self[:title]}): #{tmp.take(WORDS_LIMIT).inspect}.") if feed.log_description_words
+        if feed.log_description_words
+          n -= tmp.size
+          puts("DWORDS: #{n} numbers and words with underscores deleted.") if n != 0
+          STDOUT.puts("DWORDS(#{self[:title]}): #{tmp.take(WORDS_LIMIT).inspect}.")
+        end
         dwords = tmp.take(WORDS_LIMIT) if feed.use_description
       rescue
         STDERR.puts "EXCEPTION: #{$!}."
