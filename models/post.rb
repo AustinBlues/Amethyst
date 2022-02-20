@@ -71,7 +71,7 @@ class Post < Sequel::Model
     if feed.log_description || feed.use_description || feed.log_description_words
       begin
         STDOUT.puts("DESCRIPTION: #{self[:description]}.") if feed.log_description
-        tmp = self[:decription].nil? ? [] : self[:description].split(/[^[[:word:]]]+/)
+        tmp = self[:description].nil? ? [] : self[:description].split(/[^[[:word:]]]+/)
         n = tmp.size
         tmp.delete_if{|w| result = (w !~ /^\w+$/); puts("DELETE: '#{w}'") if result && feed.log_description; result}
         n -= tmp.size
