@@ -48,11 +48,11 @@ class Post < Sequel::Model
         open(self[:url]) do |f|
           f.unlink if f.is_a?(Tempfile)	# Tempfile recommended best practices
           doc = Nokogiri::HTML.parse(f)
-            tmp = []
-            doc.css('body p').each do |p|
-              tmp.concat(p.content.split(/[^[[:word:]]]+/))
-            end
-            STDOUT.puts("BODY: #{doc.css('body').inner_html}.") if feed.log_body
+          STDOUT.puts("BODY: #{doc.css('body').inner_html}.") if feed.log_body
+          tmp = []
+          doc.css('body p').each do |p|
+            tmp.concat(p.content.split(/[^[[:word:]]]+/))
+          end
           # Delete words that are likely programming code
           tmp.delete_if{|w| (w =~ /^[[:xdigit:]]+$/) || (w =~ /^\w+_.*\w$/) || (w =~ /^\d\w+\d$/)}
           cwords = tmp.take(WORDS_LIMIT)
