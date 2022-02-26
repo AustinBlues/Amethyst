@@ -1,6 +1,6 @@
 <div class="card">
   <div class="card-header bg-info">
-    <%= link_to BACK_ICON, @origin, title: 'to Feeds', class: 'navigation',
+    <%= link_to BACK_ICON, url_for(:feed, :index, current: @feed[:id]), title: 'to Feeds', class: 'navigation',
     	  style: 'font-size: xxx-large; font-weight: bold' %>
 
     <div class="actions">

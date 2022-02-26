@@ -13,7 +13,11 @@ Amethyst::App.controllers :feed do
 
 
   get :index do
-    @page = (params[:page] || 1).to_i
+    @page = if params[:current] && (f = Feed.with_pk(params[:current]))
+              Feed.page_number(Feed.where{score >= f[:score]}.count)
+            else
+              (params[:page] || 1).to_i
+            end
     if @page <= 0
       redirect url_for(:feed, :index, page: 1)
     else
@@ -63,6 +67,7 @@ Amethyst::App.controllers :feed do
 
       params[:next_refresh] = Time.now
 
+      w = nil	# force scope
       begin
         w = Feed.create(params)
       rescue Sequel::UniqueConstraintViolation => e
