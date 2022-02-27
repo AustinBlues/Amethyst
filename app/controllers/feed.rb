@@ -13,8 +13,8 @@ Amethyst::App.controllers :feed do
 
 
   get :index do
-    @page = if params[:current] && (f = Feed.with_pk(params[:current]))
-              Feed.page_number(Feed.where{score >= f[:score]}.count)
+    @page = if params[:current] && (result = Feed.where(id: params[:current]).get(:score))
+              Feed.page_number(Feed.where{score >= result.to_f}.count)
             else
               (params[:page] || 1).to_i
             end
