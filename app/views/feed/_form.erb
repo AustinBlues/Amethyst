@@ -18,29 +18,26 @@
 	      </div>
 	    </div>
 
-	    <div class="form-group row">
-	      <table class="use_log_flags col-sm">
+	    <div class="form-group form-check">
+	      <table class="use_log_flags">
 		<tr>
 		  <th></th>
-		  <t>use</td>
-		    <td>log</td>
-		    <td>log words</td>
-		  </tr>
-		</theader>
-		<tbody>
-		  <tr>
-		    <td>body</>
-		    <td><%= check_box_tag :use_body, checked: @feed[:use_body] %></td>
-	      	    <td><%= check_box_tag :log_body, checked: @feed[:log_body] %></td>
-		    <td><%= check_box_tag :log_body_words, checked: @feed[:log_body_words] %></td>
-		  </tr>
-		  <tr>
-		    <td>description</td>
-		    <td><%= check_box_tag :use_description, checked: @feed[:use_description] %></td>
-		    <td><%= check_box_tag :log_description, checked: @feed[:log_description] %></td>
-		    <td><%= check_box_tag :use_description_words, checked: @feed[:log_description_words] %></td>
-		  </tr>
-		</tbody>
+		  <th>Use</th>
+		  <th>Log</th>
+		  <th>Log words</th>
+		</tr>
+		<tr>
+		  <td>Body</>
+		  <td><%= check_box_tag :use_body, checked: @feed[:use_body] %></td>
+	      	  <td><%= check_box_tag :log_body, checked: @feed[:log_body] %></td>
+		  <td><%= check_box_tag :log_body_words, checked: @feed[:log_body_words] %></td>
+		</tr>
+		<tr>
+		  <td>Description</td>
+		  <td><%= check_box_tag :use_description, checked: @feed[:use_description] %></td>
+		  <td><%= check_box_tag :log_description, checked: @feed[:log_description] %></td>
+		  <td><%= check_box_tag :log_description_words, checked: @feed[:log_description_words] %></td>
+		</tr>
 	      </table>
 	    </div>
           </div>
