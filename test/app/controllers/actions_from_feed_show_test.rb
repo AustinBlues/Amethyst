@@ -39,7 +39,7 @@ describe "/feed" do
       assert_equal('to Feeds', header.attr('title'))
 #      assert_equal("/feed/#{@feed[:id]}?page=2&origin=#{CGI.escape('/feed')}", header.attr('href'))
 #      STDERR.puts "METHODS: #{last_request.methods}."
-      assert_equal('/feed', header.attr('href'))
+      assert_match(%r{^/feed\?current=\d+$}, header.attr('href'))
 
       # hide, down links
       actions = p.css('a.action')

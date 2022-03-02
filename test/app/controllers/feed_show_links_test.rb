@@ -28,7 +28,7 @@ describe '/feed/show links' do
       get '/feed'
       p = Nokogiri::HTML.parse(last_response.body)
       link = p.at_css('tbody tr td a').attr('href')
-      STDERR.puts "LINK: #{link.inspect}."
+#      STDERR.puts "LINK: #{link.inspect}."
 
       get link	# Feed#show of first (only) listed Feed
       p = Nokogiri::HTML.parse(last_response.body)
@@ -40,7 +40,7 @@ describe '/feed/show links' do
 
       p = Nokogiri::HTML.parse(last_response.body)
       l = p.at_css('div.card-header a.navigation')	# link for BACK_ARROW
-      assert_equal('/feed', l.attr('href'))
+      assert_match(%r{^/feed\?current=\d+$}, l.attr('href'))
     end
   end
 end
