@@ -122,6 +122,7 @@ Amethyst::App.controllers :feed do
     rescue
       flash[:error] = 'Unknown exception'
     end
+
     feed ||= Feed.with_pk! params[:id]
 
     redirect url(:feed, :index, page: feed.page_number)
@@ -129,10 +130,8 @@ Amethyst::App.controllers :feed do
 
 
   delete :destroy, with: :id do
-    feed = Feed[params[:id]]
-    if feed
-      feed[:next_refresh] = nil
-      feed.save(changed: true)
+    if (feed = Feed[params[:id]])
+      feed.update(next_refresh: nil)
       Resque.enqueue_to('Initial', Refresh, -feed[:id])
       flash[:success] = 'Delete queued'
 
