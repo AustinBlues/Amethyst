@@ -41,7 +41,7 @@ STDERR.puts("DISPLAY_WORDS: #{DISPLAY_WORDS}.") if task == :web_server
 
 # What to do with sludge
 SLUDGE_ACTION = ENV['SLUDGE_ACTION'] || 'HIDDEN'
-STDERR.puts("SLUDGE_ACTION: #{SLUDGE_ACTION}.") if task == :web_server
+STDERR.puts("SLUDGE_ACTION: #{SLUDGE_ACTION}.") if task == :background
 
 # How many days for Feed score Exponential Moving Average (EMA)
 # Twice as long between posts of least frequent post is a good starting value
