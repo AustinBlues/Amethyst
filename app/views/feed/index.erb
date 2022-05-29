@@ -29,10 +29,8 @@
   <% else %>
     <%= partial('layouts/pagination', object: @feeds) if (PAGINATION & FEED_TOP) != 0 %>
 
-    <table id="feed" class="table table-striped">
-      <tbody>
-        <%= partial 'feed/feed', collection: @feeds %>
-      </tbody>
+    <table id="feed" class="table table-striped" style="margin-bottom: 0">
+      <%= partial 'feed/feed', collection: @feeds %>
     </table>
 
     <%= partial('layouts/pagination', object: @feeds) if (PAGINATION & FEED_BOTTOM) != 0 %>

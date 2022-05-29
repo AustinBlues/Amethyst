@@ -16,10 +16,8 @@
   <% else %>
     <%= partial('layouts/pagination', object: @posts) if (PAGINATION & POST_TOP) != 0 %>
 
-    <table id="post" class="table table-striped">
-      <tbody>
-        <%= partial 'post/post', collection: @posts %>
-      </tbody>
+    <table id="post" class="table table-striped" style="margin-bottom: 0">
+      <%= partial 'post/post', collection: @posts %>
     </table>
 
     <%= partial('layouts/pagination', object: @posts) if (PAGINATION & POST_BOTTOM) != 0%>
