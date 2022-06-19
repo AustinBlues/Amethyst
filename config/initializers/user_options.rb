@@ -50,7 +50,7 @@ STDERR.puts("EMA_DAYS: #{EMA_DAYS}.") if task == :web_server || task == :backgro
 ALPHA = 2.0/(EMA_DAYS + 1.0)	# don't change unless you really understand EMA and know a better way
 
 PAGINATION = ENV['AMETHYST_PAGINATION'] && (Padrino.env != :test) ? ENV['AMETHYST_PAGINATION'].to_i(2) : TOP_PAGINATION
-STDERR.puts("PAGINATION: #{PAGINATION}.") if task == :web_server || task == :test
+STDERR.puts("PAGINATION: #{PAGINATION.to_s(2)}b.") if task == :web_server || task == :test
 PAGINATED = (PAGINATION != 0)
 
 ROOT = ENV['ROOT'] || ENV['PWD'].split('/').last
