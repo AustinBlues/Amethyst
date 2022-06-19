@@ -68,7 +68,8 @@ class Feed < Sequel::Model
   
   
   def before_destroy
-    Post.where(feed_id: self[:id]).destroy
+    post_dataset.destroy
+
     super
   end
   
