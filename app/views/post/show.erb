@@ -48,7 +48,13 @@
       <% @related.each do |r| %>
         <tr>
 	  <td style="vertical-align: top">
-	    <h4><%= link_to_post_show(r, @origin, false) %>&nbsp;(<%= r[:strength] %>)</h4>
+	    <div class="actions">
+	      <span class="fake_h4"><%= link_to_post_show(r, @origin, false) %></span>&nbsp;(<%= r[:strength] %>)
+	      <%= link_to DELETE_ICON, url_for(:post, :hide, id: r.id, origin: request.fullpath),
+	      	    method: :put, title: 'hide', class: 'btn btn-link action' %>
+	      <%= link_to DOWN_VOTE_ICON, url_for(:post, :down, id: r.id, origin: request.fullpath),
+	      	    method: :put, title: 'down vote', class: 'btn btn-link action' %>
+	    </div>
 
 	    <p class="card-text">
 	      <%= truncate(r.description, {length: VARCHAR_MAX, omission: ELLIPSIS}) %>

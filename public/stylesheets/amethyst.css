@@ -52,3 +52,8 @@ tr a.clicked {
 table.use_log_flags th, td {
     padding: 5px;
 }
+.fake_h4 {
+    font-size: x-large;
+    font-weight: bold;
+    color: blue;
+}
