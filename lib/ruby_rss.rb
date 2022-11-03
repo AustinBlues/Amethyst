@@ -26,7 +26,7 @@ module RubyRSS
     if rss
       feed.status = nil
       begin
-        if (f = RSS::Parser.parse(rss)).nil?
+        if (f = RSS::Parser.parse(rss, false)).nil?
           Refresh.log "Feed '#{feed.name}' has no content.", :error
         elsif f.items.size == 0
           Refresh.log "Feed '#{feed.name}' has no posts.", :warning
