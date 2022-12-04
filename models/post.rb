@@ -61,7 +61,10 @@ class Post < Sequel::Model
       rescue Errno::ENOENT
         Refresh.log "URL '#{self[:url]}' not found.", :error
       rescue OpenURI::HTTPError
-        Refresh.log "URL '#{self[:url]}' forbidden (403).", :error
+#        Refresh.log "URL '#{self[:url]}' forbidden (403).", :error
+        Refresh.log "URL '#{self[:url]}' #{$!}.", :error
+      rescue RuntimeError
+        Refresh.log "#{$!}.", :error
       rescue
         Refresh.log "Unknown error(#{$!.class}): #{$!}.", :error
       end
