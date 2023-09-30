@@ -265,7 +265,12 @@ class Post < Sequel::Model
 
   
   def zombie?
-    self[:previous_refresh] && feed[:previous_refresh] && (self[:previous_refresh] < feed[:previous_refresh])
+    if feed
+      self[:previous_refresh] && feed[:previous_refresh] && (self[:previous_refresh] < feed[:previous_refresh])
+    else
+      STDERR.puts "ZOMBIE: #{self.inspect}."
+      false
+    end
   end
 
 
