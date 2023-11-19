@@ -52,7 +52,8 @@ class Feed < Sequel::Model
   def add_score(amt)
     if amt != 0.0
       # refresh for new Feed may not have occurred yet, i.e. ema_volume == 0.0; so no low volume adjust
-      adjust = amt * ((self[:ema_volume] == 0.0) ? 0.5 : (0.3 + 0.75/(1.0 + self[:ema_volume])))
+#      adjust = amt * ((self[:ema_volume] == 0.0) ? 0.5 : (0.3 + 0.75/(1.0 + self[:ema_volume])))
+      adjust = amt * ((self[:ema_volume] == 0.0) ? 0.5 : (0.3 + (1.0 + self[:ema_volume])))
       if Padrino.env != :test
         puts("ADJUST: #{'%0.4f' % adjust}.")	# just for comparison to new scoring in AmethystMerge
       end
