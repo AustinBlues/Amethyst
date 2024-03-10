@@ -11,16 +11,15 @@ require 'logger'
 
 module Refresh
   NOKOGIRI = false
-  CYCLE_TIME = 60 * 60	# time to refresh all Feeds: 1 hour
+  CYCLE_TIME = 60 * 60		# time in seconds to refresh all Feeds: 1 hour
   INTERVAL_TIME = 5 * 60	# how often to refresh a slice: 5 minutes
   INTERVALS = CYCLE_TIME/INTERVAL_TIME
   VERBOSITY = 2		# default sludge_filter() verbosity
-  SLUDGE_HORIZON = 2*3600	# how long to log posts w/ sludge; currently 2 hours, i.e., twice
+  SLUDGE_HORIZON = 2*CYCLE_TIME	# how long to log posts w/ sludge; two CYCLEs
   SLUDGE_STATE = Post.const_get(SLUDGE_ACTION)
   REDIS_KEY = 'residue'
   extend NOKOGIRI ? NokogiriRSS : RubyRSS
   extend Padrino::Helpers::FormatHelpers
-#  extend Amethyst::App::AmethystHelper
   extend Amethyst::App::PostHelper
   
   LVL2CLR = {error: :red, warning: :yellow, highlight: :green, info: :default, debug: :cyan, devel: :magenta}
@@ -41,30 +40,34 @@ module Refresh
       verbose = true
     else
       verbose = false
-      tmp = case raw
-            when /^[a-zA-Z]+, \d+ [a-zA-Z]+ \d+ \d+:\d+:\d+ [-+]\d+$/
-              time = Time.rfc2822(raw)
-#              STDERR.puts "RFC2822: '#{raw}' => '#{time}' (#{time.zone})"
-              time
-            when /^[a-zA-Z]+, \d+ [a-zA-Z]+ \d+ \d+:\d{2}(:\d{2})? \w+( \w+)?$/
-              # unsure what standard this is
-              time = Time.parse(raw)
-            when /^\d{4}-?\d{2}-?\d{2}T\d{2}:?\d{2}:?\d{2}(\.\d{2,3})?(Z|[+-]\d{2}:?\d{2})$/
-              # this case ISO8601 can also be handled by Time.parse
-              time = Time.iso8601(raw)
-#              STDERR.puts("ISO8601: '#{raw}' => '#{time}' (#{time.zone})")
-              time
-            when /^[a-zA-Z]+, \d+ [a-zA-Z]+ \d+ \d+:\d+:\d+ (GMT|UTC)$/
-              time = Time.httpdate(raw)
-#              STDERR.puts "RFC 2616: '#{raw}' => '#{time}' (#{time.zone})"
-              time
-            when /^\d{4}-?\d{2}-?\d{2} \d{2}:?\d{2}:?\d{2} [+-]\d{2}:?\d{2}/
-              # unsure what standard this is
-              time = Time.parse(raw)
+      tmp = if raw.nil? || raw.empty?
+              Time.now
             else
-              time = Time.parse(raw)
-              verbose = true
-              time
+              case raw
+              when /^[a-zA-Z]+, \d+ [a-zA-Z]+ \d+ \d+:\d+:\d+ [-+]\d+$/
+                time = Time.rfc2822(raw)
+#                STDERR.puts "RFC2822: '#{raw}' => '#{time}' (#{time.zone})"
+                time
+              when /^[a-zA-Z]+, \d+ [a-zA-Z]+ \d+ \d+:\d{2}(:\d{2})? \w+( \w+)?$/
+                # unsure what standard this is
+                time = Time.parse(raw)
+              when /^\d{4}-?\d{2}-?\d{2}T\d{2}:?\d{2}:?\d{2}(\.\d{2,3})?(Z|[+-]\d{2}:?\d{2})$/
+                # this case ISO8601 can also be handled by Time.parse
+                time = Time.iso8601(raw)
+#                STDERR.puts("ISO8601: '#{raw}' => '#{time}' (#{time.zone})")
+                time
+              when /^[a-zA-Z]+, \d+ [a-zA-Z]+ \d+ \d+:\d+:\d+ (GMT|UTC)$/
+                time = Time.httpdate(raw)
+#                STDERR.puts "RFC 2616: '#{raw}' => '#{time}' (#{time.zone})"
+                time
+              when /^\d{4}-?\d{2}-?\d{2} \d{2}:?\d{2}:?\d{2} [+-]\d{2}:?\d{2}/
+                # unsure what standard this is
+                time = Time.parse(raw)
+              else
+                time = Time.parse(raw)
+                verbose = true
+                time
+              end
             end
     end
     STDERR.puts("TIME: '#{raw}' => '#{tmp}' (#{tmp.zone})") if verbose 

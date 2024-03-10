@@ -83,6 +83,7 @@ module RubyRSS
               description = post.description
               ident = post.link
               time = post.pubDate
+#              time = Time.now if !time.is_a?(Time) && (time.nil? || time.empty?)
             else
               description = post.description
               ident = (post.respond_to?(:guid) ? post.guid : post.link).to_s
@@ -99,7 +100,7 @@ module RubyRSS
             if ident
               ident.strip!
             else
-              ident = strip(post.link || post.guid)
+              ident = String.strip(post.link || post.guid)
               Refresh.log "MISSING POST IDENT: '#{post.link || post.guid}'.", :warning
             end
             description.strip! if description.is_a?(String)
@@ -149,6 +150,7 @@ module RubyRSS
       rescue
         feed.status = $!.class
         Refresh.log "Exception: #{$!}.", :error
+        Refresh.log $!.backtrace.join("\n")
       else
         feed.previous_refresh = now
       end
