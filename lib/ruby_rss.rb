@@ -82,7 +82,7 @@ module RubyRSS
             if ident
               ident.strip!
             else
-              ident = strip(post.link || post.guid)
+              ident = String.strip(post.link || post.guid)
               Refresh.log "MISSING POST IDENT: '#{post.link || post.guid}'.", :warning
             end
             description.strip! if description
