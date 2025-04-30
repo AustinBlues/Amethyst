@@ -161,10 +161,12 @@ Amethyst::App.controllers :post do
 
 #  put :hide, '/post/:id/hide' do
   get :hide, '/post/:id/hide' do
-    post = Post.with_pk! params.delete('id')
-    post.hide!
-    post.save(changed: true)
-
+    post = Post.with_pk params.delete('id')
+    if post
+      post.hide!
+      post.save(changed: true)
+    end
+    
     if !params[:search].nil?
       params[:origin] = @origin
       redirect url_for(:post, :search, params)
