@@ -221,13 +221,8 @@ module Refresh
     if slice_size == 0
       log "Nothing to fetch at #{Time.now.strftime('%l:%M%P').strip}."
     else
-      feeds = if max_refresh <= slice_size
-                # Update all Feeds in the slice
-                Feed.slice(slice_size, now + INTERVAL_TIME/2)
-              else
-                # Update all Feeds
-                Feed.slice(max_refresh, now + CYCLE_TIME)
-              end
+      # Update all Feeds in the slice
+      feeds = Feed.slice(slice_size, now + INTERVAL_TIME/2)
       if (fetch_cnt = feeds.count) <= 0
         log "Too early to fetch feeds at #{Time.now.strftime('%l:%M%P').strip}.", :info
       else
