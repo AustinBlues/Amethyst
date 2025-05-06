@@ -4,8 +4,13 @@ class Feed < Sequel::Model
   one_to_many :post
   extend Amethyst::App::AmethystHelper
   include Sanitize
-
+  attr_accessor :refused
+  
   VERBOSE = false
+
+  def initialize
+    @refused = false
+  end
 
 
   def before_create

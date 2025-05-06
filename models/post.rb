@@ -36,7 +36,7 @@ class Post < Sequel::Model
 
 
   def after_create
-    create_word_cloud
+    create_word_cloud unless self.feed.refused
     super
   end
 
@@ -61,8 +61,9 @@ class Post < Sequel::Model
       rescue Errno::ENOENT
         Refresh.log "URL '#{self[:url]}' not found.", :error
       rescue OpenURI::HTTPError
-#        Refresh.log "URL '#{self[:url]}' forbidden (403).", :error
         Refresh.log "URL '#{self[:url]}' #{$!}.", :error
+        Refresh.log "Read of post bodies disabled.", :info
+        self.feed.refused = true
       rescue RuntimeError
         Refresh.log "#{$!}.", :error
       rescue
