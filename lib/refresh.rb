@@ -167,8 +167,12 @@ module Refresh
     url = feed.rss_url
     tries = 3
     begin
-      uri = URI.parse(url)
-      f = uri.open(redirect: false)
+      f = if %r|^file://|.match(url)
+            File.open($')
+          else
+            uri = URI.parse(url)
+            uri.open(redirect: false)
+          end
     rescue OpenURI::HTTPRedirect => redirect
       url = redirect.uri.to_s
       case redirect.to_s
