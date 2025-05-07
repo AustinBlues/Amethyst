@@ -17,7 +17,7 @@
   <!-- Modal -->
   <div class="modal fade" id="feedForm" role="dialog">
     <div class="modal-dialog">
-      <%= partial 'feed/form', object: Feed.new,
+      <%= partial 'feed/form', object: @feed,
             locals: {url: url, page: @page, button: button_to('Submit',  url, class: :form)} %>
     </div>
   </div>
