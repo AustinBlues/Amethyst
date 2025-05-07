@@ -72,7 +72,7 @@ Amethyst::App.controllers :feed do
         w = Feed.create(params)
       rescue Sequel::UniqueConstraintViolation => e
         if /unique_(\w+)s'/ !~ e.to_s
-          STDERR.puts "'#{params[:rss_url]}' already followed."
+          Refresh.log "'#{params[:rss_url]}' already followed.", :warn
           w = Feed.where(rss_url: params[:rss_url]).first
           flash[:warning] = "'#{w.name}' already followed."
         else
@@ -87,7 +87,6 @@ Amethyst::App.controllers :feed do
           end
         end
       rescue Exception => e
-#        STDERR.puts "Exception in Feed controller: #{$!}."
         Refresh.log "Exception in Feed controller: #{$!}.", :error
         flash[:error] = "Unknown exception: #{e}."
       end
