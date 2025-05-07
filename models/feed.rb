@@ -1,17 +1,26 @@
 require File.expand_path(File.dirname(__FILE__) + '/../app/helpers/amethyst_helper.rb')
+# require 'active_support' # includes cattr_accessor and a lot more
 
 class Feed < Sequel::Model
   one_to_many :post
   extend Amethyst::App::AmethystHelper
   include Sanitize
-  attr_accessor :refused
+  
+  @@refused = nil
   
   VERBOSE = false
 
   def initialize
-    @refused = false
+    @@refused = false
   end
 
+  def refused=(r)
+    @@refused = r
+  end
+
+  def refused
+    @@refused
+  end
 
   def before_create
     self[:score] ||= (Feed.count == 0) ? 0.0 : (Feed.avg(:score) + Feed.order(:score).first.score)/2.0
