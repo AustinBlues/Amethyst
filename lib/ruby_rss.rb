@@ -149,6 +149,7 @@ module RubyRSS
         Refresh.log "MySQL: #{$!}.", :error
       rescue
         feed.status = $!.class
+        STDERR.puts "FILE: #{feed.rss_url}."
         Refresh.log "Exception: #{$!}.", :error
         Refresh.log $!.backtrace.join("\n")
       else
