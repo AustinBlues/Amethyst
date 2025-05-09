@@ -1,11 +1,9 @@
 class Word < Sequel::Model
   many_to_many :post, join_table: :occurrences
 
-
   def before_destroy
+    remove_all_post
     if true
-      remove_all_post
-    else
       Occurrence.where(word_id: self[:id]).delete
     end
 

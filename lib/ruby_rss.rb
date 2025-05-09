@@ -56,16 +56,34 @@ module RubyRSS
           f.items.each do |post|
             title = strip_tags(post.title.to_s)
             title.strip! if title
+            description = nil	# force scope
 
             case f.class.to_s
             when 'RSS::Atom::Feed'
-              description = post.content.content
+              if post.respond_to?(:summary) && post.summary && !post.summary.content.empty?
+                description = post.summary.content
+              elsif post.respond_to?(:dc_description)
+                description = post.dc_description
+              elsif post.respond_to?(:description) && post.description && !post.description.empty?
+                description = post.description
+              elsif !post.respond_to?(:content)
+                Refresh.log "POST '#{title}' has no content accessor.", :warning
+              else
+                puts "ATOM: #{post.methods}."
+                if post.content.respond_to?(:content)
+                  description = post.content.content
+                else
+                  description = post.content
+                  Refresh.log "POST '#{title}' has no content.content accessor.", :warning
+                end
+              end
               ident = post.id.to_s
               time = strip_tags(post.updated.to_s)
             when 'RSS::Rss'
               description = post.description
               ident = post.link
               time = post.pubDate
+#              time = Time.now if !time.is_a?(Time) && (time.nil? || time.empty?)
             else
               description = post.description
               ident = (post.respond_to?(:guid) ? post.guid : post.link).to_s
@@ -85,7 +103,7 @@ module RubyRSS
               ident = String.strip(post.link || post.guid)
               Refresh.log "MISSING POST IDENT: '#{post.link || post.guid}'.", :warning
             end
-            description.strip! if description
+            description.strip! if description.is_a?(String)
             time.strip! if time && time.is_a?(String)
 
             ident = title if ident.empty?
@@ -133,6 +151,7 @@ module RubyRSS
         feed.status = $!.class
         STDERR.puts "FILE: #{feed.rss_url}."
         Refresh.log "Exception: #{$!}.", :error
+        Refresh.log $!.backtrace.join("\n")
       else
         feed.previous_refresh = now
       end
