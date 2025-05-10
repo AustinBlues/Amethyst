@@ -10,8 +10,12 @@ class Feed < Sequel::Model
   
   VERBOSE = false
 
-  def initialize
+  def initialize(use_body = true, use_description = true)
     @@refused = false
+    @values = {}
+    @values[:use_body] = use_body
+    @values[:use_description] = use_description
+    @values[:log_body] = @values[:log_description] = @values[:log_body_words] = @values[log_description_words] = false
   end
 
   def refused=(r)
