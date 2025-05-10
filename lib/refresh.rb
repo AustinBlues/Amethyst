@@ -10,7 +10,6 @@ require 'logger'
 
 
 module Refresh
-  CATCHUP = false
   NOKOGIRI = false
   CYCLE_TIME = 60 * 60		# time in seconds to refresh all Feeds: 1 hour
   INTERVAL_TIME = 5 * 60	# how often to refresh a slice: 5 minutes
