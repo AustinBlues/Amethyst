@@ -10,6 +10,7 @@ require 'logger'
 
 
 module Refresh
+  CATCHUP = false
   NOKOGIRI = false
   CYCLE_TIME = 60 * 60		# time in seconds to refresh all Feeds: 1 hour
   INTERVAL_TIME = 5 * 60	# how often to refresh a slice: 5 minutes
@@ -27,7 +28,6 @@ module Refresh
   @@redis = Redis::Namespace.new(ROOT, redis: Redis.new)
 
   SLUDGE = ENV['SLUDGE'] || (ARGV.find{|f| f =~ /^SLUDGE=(.*)/} ? $~[1] : nil)
-
 
   def self.log(msg, level = :default)
     logger << msg.colorize(LVL2CLR[level] || :default)
@@ -222,7 +222,7 @@ module Refresh
     feeds = nil	# force scope
     feed_count = Feed.count
 
-    if next_refresh <= now - CYCLE_TIME
+    if CATCHUP & (next_refresh <= now - CYCLE_TIME)
       # catchup mode
       feeds = Feed.slice(Feed.count, horizon)
     else
