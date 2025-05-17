@@ -6,17 +6,9 @@ class Feed < Sequel::Model
   extend Amethyst::App::AmethystHelper
   include Sanitize
   
-  @@refused = nil
+  @@refused = false
   
   VERBOSE = false
-
-  def initialize(use_body = true, use_description = true)
-    @@refused = false
-    @values = {}
-    @values[:use_body] = use_body
-    @values[:use_description] = use_description
-    @values[:log_body] = @values[:log_description] = @values[:log_body_words] = @values[log_description_words] = false
-  end
 
   def refused=(r)
     @@refused = r
@@ -71,9 +63,9 @@ class Feed < Sequel::Model
     if amt != 0.0
       # refresh for new Feed may not have occurred yet, i.e. ema_volume == 0.0; so no low volume adjust
 #      adjust = amt * ((self[:ema_volume] == 0.0) ? 0.5 : (0.3 + 0.75/(1.0 + self[:ema_volume])))
-      adjust = amt * ((self[:ema_volume] == 0.0) ? 0.5 : (0.3 + (1.0 + self[:ema_volume])))
+      adjust = amt * ((self[:ema_volume] == 0.0) ? 0.5 : (0.3 + 1.25/(1.0 + self[:ema_volume])))
       if Padrino.env != :test
-        puts("ADJUST: #{'%0.4f' % adjust}.")	# just for comparison to new scoring in AmethystMerge
+        puts("ADJUST(#{title}): #{'%0.4f' % adjust}.")	# just for comparison to new scoring in AmethystMerge
       end
       self[:score] += adjust
     end

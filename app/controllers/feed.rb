@@ -28,7 +28,7 @@ Amethyst::App.controllers :feed do
       else
         @context = 'Feeds'
         @pagination = {page: @page}
-        @feed = Feed.new
+        @feed = Feed.new(use_body: true, use_description: true)
 
         render 'index'
       end
