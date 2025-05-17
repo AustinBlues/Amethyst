@@ -36,7 +36,8 @@ class Post < Sequel::Model
 
 
   def after_create
-    create_word_cloud unless self.feed.refused
+#    create_word_cloud unless self.feed.refused
+    create_word_cloud unless feed.refused
     super
   end
 
@@ -65,7 +66,9 @@ class Post < Sequel::Model
         Refresh.log "Read of post bodies disabled.", :info
         self.feed.refused = true
       rescue RuntimeError
+        feed.refused = true
         Refresh.log "#{$!}.", :error
+        Refresh.log "Read of post bodies disabled.", :info
       rescue
         Refresh.log "Unknown error(#{$!.class}): #{$!}.", :error
       end
@@ -85,8 +88,8 @@ class Post < Sequel::Model
         end
         dwords = tmp.take(WORDS_LIMIT) if feed.use_description
       rescue
-        STDERR.puts "EXCEPTION: #{$!}."
-        STDERR.puts $!.backtrace
+        Refresh.log "EXCEPTION: #{$!}.", :error
+        Refresh.log $!.backtrace, :info
       end
     end
 
