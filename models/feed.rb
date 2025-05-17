@@ -10,6 +10,7 @@ class Feed < Sequel::Model
   
   VERBOSE = false
 
+
   def refused=(r)
     @@refused = r
   end
