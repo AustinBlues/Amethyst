@@ -54,3 +54,4 @@ STDERR.puts("PAGINATION: #{PAGINATION.to_s(2)}b.") if task == :web_server || tas
 PAGINATED = (PAGINATION != 0)
 
 ROOT = ENV['ROOT'] || ENV['PWD'].split('/').last
+CATCHUP = (ENV['CATCHUP'] != nil)

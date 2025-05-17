@@ -222,7 +222,7 @@ module Refresh
     feeds = nil	# force scope
     feed_count = Feed.count
 
-    if next_refresh <= now - CYCLE_TIME
+    if CATCHUP & (next_refresh <= now - CYCLE_TIME)
       # catchup mode
       feeds = Feed.slice(Feed.count, horizon)
     else
